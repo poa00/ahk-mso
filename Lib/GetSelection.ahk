@@ -1,8 +1,6 @@
-#Include <WinClipAPI>
-#Include <WinClip>
 GetSelection(type:="text"){
 ; Syntax:
-; 	sSelection:=GetSelection("text"*|"html")
+; 	sSelection := GetSelection("text"*|"html")
 ; Default "text"
 ; Calls: WinClip.GetHTML
 
@@ -13,7 +11,11 @@ while(Clipboard){
   Sleep,10
 }
 Send,^c                                          ;Copy selected text to clipboard
-ClipWait
+ClipWait 1
+If ErrorLevel {
+  Clipboard:= OldClipboard 
+  return
+}
 
 If (type = "text") {
   sSelection := clipboard
@@ -23,6 +25,6 @@ If (type = "text") {
 }
 
 ; Restore Clipboard
-Clipboard:= OldClipboard 
+Clipboard := OldClipboard 
 return sSelection
 } 
