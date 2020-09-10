@@ -5,7 +5,7 @@
 ; Source : http://github.conti.de/ContiSource/ahk/blob/master/TeamsShortcuts.ahk
 ;
 
-LastCompiled = 20200304150630
+LastCompiled = 20200806155137
 
 #Include <Teams>
 #Include <PowerTools>
@@ -14,9 +14,7 @@ LastCompiled = 20200304150630
 
 #SingleInstance force ; for running from editor
 
-wc := new WinClip
-
-SubMenuSettings := PTMenuTray()
+SubMenuSettings := PowerTools_MenuTray()
 Menu, SubMenuSettings, Add, Teams PowerShell, MenuCb_ToggleSettingTeamsPowerShell
 RegRead, TeamsPowerShell, HKEY_CURRENT_USER\Software\PowerTools, TeamsPowerShell
 If (TeamsPowerShell) 
@@ -24,10 +22,19 @@ If (TeamsPowerShell)
 Else 
   Menu,SubMenuSettings,UnCheck, Teams PowerShell
 
-
-
 Menu,Tray,NoStandard
 Menu,Tray,Add,Add to Teams Favorites, Link2TeamsFavs
+
+Menu, SubMenuCustomBackgrounds, Add, Open Custom Backgrounds Folder, OpenCustomBackgrounds
+Menu, SubMenuCustomBackgrounds, Add, Open GUIDEs Shared Backgrounds, OpenGUIDEsCustomBackgrounds
+
+Menu, Tray, Add, Custom Backgrounds, :SubMenuCustomBackgrounds
+
+Menu,Tray,Add,Start Second Instance, Teams_OpenSecondInstance
+Menu,Tray,Add,Open Web App, Teams_OpenWebApp
+Menu,Tray,Add
+Menu,Tray,Add,Export Team Members, Users2Excel
+Menu,Tray,Add,Refresh Teams List, Teams_ExportTeams
 Menu,Tray,Add
 Menu,Tray,Standard
 
@@ -43,7 +50,7 @@ sTooltip = Teams Shortcuts %LastMod%`nUse 'Win+T' to open main Menu. Ctrl+Click 
 Menu, Tray, Tip, %sTooltip%
 
 ; -------------------------------------------------------------------------------------------------------------------
-Menu, TeamsShortcutMenu, add, Smart &Reply (Win+R), SmartReply
+Menu, TeamsShortcutMenu, add, Smart &Reply (Win+R), Teams_SmartReply
 Menu, TeamsShortcutMenu, add, Reply with &Quote from Clipboard (Win+Q), ReplyWithQuote
 Menu, TeamsShortcutMenu, add, Create E&mail with link to current conversation (Win+M), ShareByMail
 Menu, TeamsShortcutMenu, add, &New Expanded Conversation (Win+N), NewConversation
@@ -51,6 +58,7 @@ Menu, TeamsShortcutMenu, add, Personalize &Mention (Win+1), PersonalizeMention
 Menu, TeamsShortcutMenu, add, Personalize &Mention with uid (Win+2), PersonalizeMention2
 Menu, TeamsShortcutMenu, add, View &Unread (Win+U), ViewUnread
 Menu, TeamsShortcutMenu, add, View &Saved (Win+S), ViewSaved
+Menu, TeamsShortcutMenu, add, &Pop-out Chat (Win+P), Pop
 Menu, TeamsShortcutMenu, add, Add to &Favorites, Link2TeamsFavs
 ; -------------------------------------------------------------------------------------------------------------------
 
@@ -59,8 +67,7 @@ Menu, TeamsShortcutMenu, add, Add to &Favorites, Link2TeamsFavs
 
 #1:: ; <--- Personalize Mention
 PersonalizeMention:
-GetKeyState, KeyState, Ctrl
-If (KeyState = "D"){
+If GetKeyState("Ctrl") {
 	Run, "https://connext.conti.de/blogs/tdalon/entry/personalize_mention_powertool"
 	return
 }
@@ -69,8 +76,7 @@ return
 
 #2:: ; <--- Personalize Mention
 PersonalizeMention2:
-GetKeyState, KeyState, Ctrl
-If (KeyState = "D"){
+If GetKeyState("Ctrl") {
 	Run, "https://connext.conti.de/blogs/tdalon/entry/personalize_mention_powertool"
 	return
 }
@@ -81,7 +87,9 @@ return
 ; Win + N
 #n::  ; <--- New Expanded Conversation
 NewConversation:
-	Send ^+x ; Ctrl+Shift+x Expand
+	SendInput ^+x ; Ctrl+Shift+x Expand
+	sleep, 300
+    SendInput +{Tab} ; move cursor to subject line
 return
 
 
@@ -89,9 +97,8 @@ return
 ; Win+U
 #u:: ; <--- View Unread
 ViewUnread:
-GetKeyState, KeyState, Ctrl
-If (KeyState = "D") {
-	;Run, "https://connext.conti.de/blogs/tdalon/entry/teams_smart_reply"
+If GetKeyState("Ctrl") {
+	Run, "https://connext.conti.de/blogs/tdalon/entry/teams_shortcuts_ahk" 
 	return
 }
 Send ^e ; Select Search bar
@@ -104,13 +111,26 @@ return
 ; Win+S
 #s:: ; <--- View Saved
 ViewSaved:
-GetKeyState, KeyState, Ctrl
-If (KeyState = "D") {
-	;Run, "https://connext.conti.de/blogs/tdalon/entry/teams_smart_reply"
+If GetKeyState("Ctrl") {
+	Run, "https://connext.conti.de/blogs/tdalon/entry/teams_shortcuts_ahk" 
 	return
 }
 Send ^e ; Select Search bar
 SendInput /saved 
+Sleep 500
+Send {Enter}
+return
+
+; Pop-out chat
+; Win+P
+#p:: ; <--- Pop-out chat
+Pop:
+If GetKeyState("Ctrl") {
+	Run, "https://connext.conti.de/blogs/tdalon/entry/teams_shortcuts_ahk" 
+	return
+}
+Send ^e ; Select Search bar
+SendInput /pop  
 Sleep 500
 Send {Enter}
 return
@@ -141,28 +161,33 @@ return
 TeamsCopyLink()
 return	
 ; -------------------------------------------------------------------------------------------------------------------
-; Win+R - 
-#r:: ; <--- Smart Reply with quotation and link to current thread
-SmartReply:
-TeamsSmartReply()
+; Alt+R - 
+!r:: ; <--- Smart Reply with quotation and link to current thread
+Teams_SmartReply()
+return
+
+; -------------------------------------------------------------------------------------------------------------------
+; Alt+m - 
+!m:: ; <--- New meeting
+SendInput ^4; open calendar
+Sleep, 300
+SendInput !+n ; schedule a meeting alt+shift+n
 return
 
 #q:: ; <--- Reply with quote from clipboard
 ReplyWithQuote:
-GetKeyState, KeyState, Ctrl
-If (KeyState = "D") {
+If GetKeyState("Ctrl") {
 	Run, "https://connext.conti.de/blogs/tdalon/entry/teams_smart_reply#reply_with_quote"
 	return
 }
 sHtml := WinClip.getHTML()
-TeamsSmartReply(sHtml,False)
+Teams_SmartReply(sHtml,False)
 return
 ; -------------------------------------------------------------------------------------------------------------------
 
 #m:: ; <--- Create eMail with link to current conversation
 ShareByMail:
-GetKeyState, KeyState, Ctrl
-If (KeyState = "D") {
+If GetKeyState("Ctrl") {
 	;Run, "https://connext.conti.de/blogs/tdalon/entry/teams_smart_reply"
 	return
 }
@@ -196,8 +221,7 @@ return
 
 ; ----------------------------------------------------------------------
 Link2TeamsFavs:
-GetKeyState, KeyState, Ctrl
-If (KeyState = "D") {
+If GetKeyState("Ctrl") {
 	Run, "https://connext.conti.de/blogs/tdalon/entry/teams_shortcuts_favorites"
 	return
 }
@@ -205,6 +229,33 @@ sUrl := clipboard
 Link2TeamsFav(sUrl)
 return
 
+; ----------------------------------------------------------------------
+Users2Excel:
+TeamLink := Clipboard
+sPat = \?groupId=([^&]*)
+If (RegExMatch(TeamLink,sPat,sId)) {
+	sGroupId := sId1
+	Teams_Users2Excel(sGroupId)
+} Else
+	Teams_Users2Excel()
+return
+
+; ----------------------------------------------------------------------
+OpenCustomBackgrounds:
+If GetKeyState("Ctrl") {
+	Run, "https://connext.conti.de/blogs/tdalon/entry/teams_custom_background"
+	return
+}
+Run, %A_AppData%\Microsoft\Teams\Backgrounds\Uploads
+return
+
+OpenGUIDEsCustomBackgrounds:
+If GetKeyState("Ctrl") {
+	Run, "https://connext.conti.de/blogs/tdalon/entry/teams_custom_background"
+	return
+}
+Run, "https://continental.sharepoint.com/:f:/r/teams/team_10000035/Shared Documents/Collaborate/TEAMS Background Pictures"
+return
 ; ----------------------------------------------------------------------
 
 

@@ -1,10 +1,14 @@
+; You can compile it via running the Ahk2Exe command e.g. D:\Programs\AutoHotkey\Compiler\Ahk2Exe.exe /in "Teamsy.ahk" /icon "icons\Teams.ico"
 Teamsy(A_Args[1])
 
 Teamsy(sInput){
     
 If !WinActive("ahk_exe Teams.exe") {  
-    EnvGet, userprofile , userprofile
-    Run, %userprofile%\AppData\Local\Microsoft\Teams\current\Teams.exe
+    WinActivate, ahk_exe Teams.exe
+    If !WinActive("ahk_exe Teams.exe") { 
+        TeamsExe = C:\Users\%A_UserName%\AppData\Local\Microsoft\Teams\current\Teams.exe
+        Run, %TeamsExe%
+    }
     WinWaitActive, ahk_exe Teams.exe
 }
 If (!sInput) ; empty
@@ -26,7 +30,7 @@ Case "u":
     sKeyword = unread
 Case "f","free","a":
     sKeyword = available
-Case "s":
+Case "s","save":
     sKeyword = saved
 Case "d":
     sKeyword = dnd
@@ -35,10 +39,19 @@ Case "m","meet": ; create a meeting
     Sleep, 300
     SendInput !+n ; schedule a meeting alt+shift+n
     return
+Case "l","leave": ; leave meeting
+    SendInput ^+b  
+    return
+Case "sh","share":     
+    SendInput ^+e ; expand compose box ctrl+shift+e ; does not work if no other has joined
+    ;MsgBox %sKeyword% ; DBG
+    sleep, 1000
+    SendInput {Tab}{Enter} 
+    return
 Case "x","n","new": 
     SendInput ^+x ; expand compose box ctrl+shift+x
     sleep, 300
-    SendInput +{Tab} ; move cursor to subject line shift+tab
+    SendInput +{Tab} ; move cursor back to subject line via shift+tab
     return
 Case "v": ; Activate video with background
     SendInput ^+o ; toggle video Ctl+Shift+o
