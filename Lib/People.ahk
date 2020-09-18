@@ -6,34 +6,14 @@
 
 ; ----------------------------------------------------------------------
 
-GetEmailList(sInput){
-; Get EmailList from input string
-; If no email is found look for html selection
-;   sEmailList := GetEmailList(sInput)
-; Calls: ExtractEmails
-
-sEmailList := ExtractEmails(sInput)
-
-If (sEmailList = "")  { 
-    sInput := GetSelection("html")
-    sInput := StrReplace(sInput,"%40","@") ; for connext profile links
-    sEmailList := ExtractEmails(sInput)
-}
-If (sEmailList = "") { 
-    TrayTipAutoHide("People Connector warning!","No email could be found!")   
-    return
-}
-return sEmailList
-} ; eof
-
 ; ----------------------------------------------------------------------
 
-ExtractEmails(sInput){
+People_GetEmailList(sInput){
+; Get EmailList from input string
 ; Extract Email from String e.g. copied to clipboard Outlook addresses or Html source
-; Syntax: sEmailList := ExtractEmails(sInput)
-; Called by: ConNextEnhancer, MyScript
+; Syntax: sEmailList := People_GetEmailList(sInput)
 
-sPat = [0-9a-zA-Z\.\-]+@[0-9a-zA-Z\-]*\.[a-z]{2,3}
+sPat = [0-9a-zA-Z\.\-]+@[0-9a-zA-Z\-\.]*\.[a-z]{2,3}
 ; TODO bug if Connext mention
 Pos = 1 
 While Pos := RegExMatch(sInput,sPat,sMatch,Pos+StrLen(sMatch)){
@@ -60,9 +40,9 @@ return SubStr(sEmailList,2) ; remove starting ;
 ; ----------------------------------------------------------------------
 
 Email2Uid(sEmail,FieldName:="mailNickname"){
-    sUid := AD_GetUserField("mail=" . sEmail, FieldName) ; mailNickname - office uid 
-    ;sWinUid := AD_GetUserField("mail=" . sEmail, "sAMAccountName")  ;- login uid
-    ;sOfficeUid := AD_GetUserField("mail=" . sEmail, "mailNickname")  ;- Office uid
+    sUid := People_ADGetUserField("mail=" . sEmail, FieldName) ; mailNickname - office uid 
+    ;sWinUid := People_ADGetUserField("mail=" . sEmail, "sAMAccountName")  ;- login uid
+    ;sOfficeUid := People_ADGetUserField("mail=" . sEmail, "mailNickname")  ;- Office uid
     return sUid
 }
 ; ----------------------------------------------------------------------
@@ -79,7 +59,7 @@ return SubStr(sUidList,2) ; remove starting ;
 ; ----------------------------------------------------------------------
 
 winUid2Email(sUid){
-sEmail := AD_GetUserField("sAMAccountName=" . sUid, "mail")
+sEmail := People_ADGetUserField("sAMAccountName=" . sUid, "mail")
 return sEmail
 }
 ; ----------------------------------------------------------------------
@@ -94,10 +74,27 @@ return SubStr(sEmailList,2) ; remove starting ;
 }
 
 ; ----------------------------------------------------------------------
-AD_GetUserField(sFilter, sField){
+People_oUid2Email(sUid,sDomain :="") {
+; sUid = uid41890@contiwan.com
+If (sDomain="")
+    sDomain := RegExReplace(sUid,".*@","")
+mail := People_ADGetUserField("mailNickname=" . sUid, "mail",sDomain) ; mailNickname = office uid 
+return mail
+}
+
+; ----------------------------------------------------------------------
+People_ADGetUserField(sFilter, sField,sDomain :=""){
 ; dsquery * -gc dc=contiwan,dc=com -filter "(&(objectClass=user)(mail=benjamin*dosch*))" -attr name sAMAccountName mailNickname
+; https://docs.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2012-r2-and-2012/cc754232(v=ws.11)
 ; https://connext.conti.de/forums/html/topic?id=d84ff1e7-8d23-45bb-8ee6-0e3b46408288&permalinkReplyUuid=2fa26181-d2a3-48f2-b195-4f5fb0c49bd8
-    strADPath := "GC://dc=contiwan,dc=com" 
+    
+    If (sDomain ="") {
+        sDomain := People_GetDomain()
+        If (sDomain ="") 
+            return "ERROR: Domain not provided"           
+    }
+    ; strADPath := "GC://dc=contiwan,dc=com" 
+    strADPath := "GC://dc=" . StrReplace(sDomain,".",",dc=") 
 	; ADODB Connection to AD
 	objConnection := ComObjCreate("ADODB.Connection")
 	objConnection.Open("Provider=ADsDSOObject")
@@ -129,6 +126,25 @@ AD_GetUserField(sFilter, sField){
 	return strTxt
 }
 
+; ----------------------------------------------------------------------
+People_GetDomain(){
+RegRead, Domain, HKEY_CURRENT_USER\Software\PowerTools, Domain
+If (Domain=""){
+    Domain := People_SetDomain()
+}
+return Domain
+}
+; ----------------------------------------------------------------------
+People_SetDomain(){
+RegRead, Domain, HKEY_CURRENT_USER\Software\PowerTools, Domain
+InputBox, Domain, Domain, Enter your Domain, , 200, 125,,,,, %Domain%
+If ErrorLevel
+    return
+PowerTools_RegWrite("Domain",Domain)
+return Domain
+} ; eofun
+
+; ----------------------------------------------------------------------
 OL2XL(sSelection){
 
 if (SubStr(sSelection,0,1) != ";") 
@@ -175,3 +191,120 @@ oTable.Range.Columns.AutoFit
 oExcel.StatusBar := "READY"
 }
 
+; ----------------------------------------------------------------------
+People_GetName(sSelection) {
+; Get Name from selection e.g. Outlook Person or email adress
+; sName := GetName(sSelection)
+
+sEmailPat = [^\s@]+@[^\s\.]*\.[a-z]{2,3}
+;sPat = [0-9a-zA-Z\.\-]+@[0-9a-zA-Z\-\.]*\.[a-z]{2,3}
+
+; From Outlook field
+sPat = U)(.*,.*) \<(%sEmailPat%)\>
+If RegExMatch(sSelection,sPat,sMatch){
+    sName := SwitchName(sMatch1)
+; From email
+} Else If RegExMatch(sSelection,sEmailPat,sMatch){
+    
+    sName := Email2Name(sMatch)
+} Else {
+    sName := SwitchName(sSelection)
+}
+return sName
+}
+
+; ----------------------------------------------------------------------
+Email2Name(Email){
+Email := RegexReplace(Email,"@.*","")
+FirstName := RegexReplace(Email,"\..*","")
+StringUpper, FirstName, FirstName , T
+LastName := RegexReplace(Email,".*\.","")
+;LastName := StrReplace(Email,FirstName,"")
+StringUpper, LastName, LastName , T
+
+sName = %FirstName% %LastName%
+; Remove numbers
+sName := RegexReplace(sName,"\d*","")
+return sName
+}
+
+; ----------------------------------------------------------------------
+
+SwitchName(sName){
+; keep only first line
+If InStr(sName,"`r")
+    sName := SubStr(sName,1,InStr(sName,"`r")-1)
+
+
+If (InStr(sName,",")) {
+    LastName := RegexReplace(sName,",.*","")
+    FirstName := RegexReplace(sName,".*, ","")
+    FirstName := RegExReplace(FirstName," \(.*\)","") ; Remove (uid) in firstname
+    sName = %FirstName% %LastName%
+}
+return sName
+}
+
+; ----------------------------------------------------------------------
+
+People_ConNextOpenProfile(sSelection){
+sEmailList := People_GetEmailList(sSelection)
+If (sEmailList = "") {
+    sName := SwitchName(sSelection)
+    Run, https://connext.conti.de/profiles/html/simpleSearch.do?searchBy=name&searchFor=%sName%
+} Else {
+    Loop, parse, sEmailList, ";"
+    {
+         Run,  https://connext.conti.de/profiles/html/profileView.do?email=%A_LoopField%
+    }	; End Loop Parse Clipboard
+}
+} ; eofun
+
+; ----------------------------------------------------------------------
+People_PeopleView(sSelection){
+sEmailList := People_GetEmailList(sSelection)
+If (sEmailList = "") {
+    sName := SwitchName(sSelection)
+    Run, https://connext.conti.de/profiles/html/simpleSearch.do?searchBy=name&searchFor=%sName%
+} Else {
+    Loop, parse, sEmailList, ";"
+    {
+         Uid := People_ADGetUserField("mail=" . A_LoopField, "employeeNumber") 
+         Run,  https://performancemanager5.successfactors.eu/sf/orgchart?&company=ContiProd&selected_user=%Uid%
+    }	; End Loop Parse Clipboard
+}
+} ; eofun
+
+
+; ----------------------------------------------------------------------
+People_DownloadProfilePicture(sEmail,sFolder){
+
+If GetKeyState("Ctrl") {
+	Run, "https://connext.conti.de/blogs/tdalon/entry/emails2profilepic"
+	return
+}
+
+; Create .ps1 file
+PsFile = %A_Temp%\o365_GetProfilePic.ps1
+; Fill the file with commands
+If FileExist(PsFile)
+    FileDelete, %PsFile%
+
+Domain := People_GetDomain()
+If (Domain ="") {
+    MsgBox 0x10, Teams Shortcuts: Error, No Domain defined!
+    return
+}
+
+sUserName := People_ADGetUserField("mail=" . sEmail, "mailNickname",Domain)
+
+sText := "$photo=Get-Userphoto -identity %sUserName% -ErrorAction SilentlyContinue`n If($photo.PictureData -ne $null)`n{[io.file]::WriteAllBytes($path,$photo.PictureData)}"
+
+FileAppend, %sText%,%PsFile%
+
+; Run it
+RunWait, PowerShell.exe -NoExit -ExecutionPolicy Bypass -Command %PsFile% ;,, Hide
+;RunWait, PowerShell.exe -ExecutionPolicy Bypass -Command %PsFile% ,, Hide
+
+
+} ; eofun

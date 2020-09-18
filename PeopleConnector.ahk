@@ -3,7 +3,7 @@
 ; See help/homepage: https://connext.conti.de/blogs/tdalon/entry/people_connector
 
 ; Calls: ExtractEmails, TrayTipAutoHide, ToStartup
-LastCompiled = 20200304150629
+LastCompiled = 20200806155136
 
 #SingleInstance force ; for running from editor
 
@@ -15,11 +15,14 @@ LastCompiled = 20200304150629
 #Include <PowerTools>
 #Include <WinActiveBrowser>
 
-SubMenuSettings := PTMenuTray()
+PT_Config := PowerTools_GetConfig()
+RegRead, PT_TeamsOnly, HKEY_CURRENT_USER\Software\PowerTools, TeamsOnly
+
+SubMenuSettings := PowerTools_MenuTray()
 
 ; -------------------------------------------------------------------------------------------------------------------
 ; SETTINGS
-Menu, SubMenuSettings, Add,Set Password, PasswordSet
+Menu, SubMenuSettings, Add,Set Password, Login_SetPassword
 Menu, SubMenuSettings, Add, Notification at Startup, MenuCb_ToggleSettingNotificationAtStartup
 
 RegRead, SettingNotificationAtStartup, HKEY_CURRENT_USER\Software\PowerTools, NotificationAtStartup
@@ -56,28 +59,34 @@ If (SettingNotificationAtStartup)
 ;TrayTipAutoHide("People Connector is running!",sText)
 
 Menu, MainMenu, add, Teams &Chat, TeamsChat
+;Menu, MainMenu, add, Teams &Pop out Chat, Im
 Menu, MainMenu, add, &Teams Call, TeamsCall
 Menu, MainMenu, add, Add to Teams &Favorites, Emails2TeamsFavs
-Menu, MainMenu, add, Add Members to Team, Emails2TeamMembers
+Menu, MainMenu, add, Add Users to Team, Emails2TeamUsers
+Menu, MainMenu, add, Teams Chat - Copy Link, TeamsChatCopyLink
 Menu, MainMenu,Add ; Separator
-Menu, MainMenu, add, &Skype Chat, SkypeChat
-Menu, MainMenu, add, Soft &Phone Call, Tel
+If !(PT_TeamsOnly)
+    Menu, MainMenu, add, &Skype Chat, SkypeChat
+Menu, MainMenu, add, Soft Phone Call, Tel
 Menu, MainMenu,Add ; Separator
-Menu, MainMenu, add, &Create Email, MailTo
+Menu, MainMenu, add, Create &Email, MailTo
 Menu, MainMenu, add, Create Outlook &Meeting, MeetTo
+Menu, MainMenu, add, Create Teams Meeting, TeamsMeet
 Menu, MainMenu, add, Copy ConNext &at-Mentions, ConNextEmail2Mention
 Menu, MainMenu,Add ; Separator
-Menu, MainMenu, add, &Open ConNext Profile, ConNextProfile
-Menu, MainMenu, add, ConNext Profile Search By Name, ConNextProfileSearchByName
+Menu, MainMenu, add, &Open ConNext Profile, ConNextOpenProfile
 Menu, MainMenu,Add ; Separator
 Menu, MainMenu, add, Open o365/&Delve Profile, DelveProfile
+Menu, MainMenu, add, &Bing Search, BingSearch
 Menu, MainMenu, add, &LinkedIn Search By Name, LinkedInSearchByName
 Menu, MainMenu, add, Stream Profile, StreamProfile
+If !(PT_Config=Conti)
+    Menu, MainMenu, add, People&View OrgChart (MySuccess), PeopleView
 Menu, MainMenu,Add ; Separator
 Menu, MainMenu, add, Copy Office &Uids, Emails2Uids
 Menu, MainMenu, add, Copy Windows Uids, Emails2WinUids
 Menu, MainMenu, add, Uids to Emails, winUids2Emails
-Menu, MainMenu, add, Copy &Emails, CopyEmails
+Menu, MainMenu, add, Copy Emails, CopyEmails
 Menu, MainMenu,Add ; Separator
 Menu, SubMenuCNMentions, add, &Emails,ConNextMentions2Emails
 Menu, SubMenuCNMentions, add, &Teams Chat,ConNextMentions2TeamsChat
@@ -99,7 +108,6 @@ If (A_PriorHotKey = A_ThisHotKey and A_TimeSincePriorHotkey < 500) {
     } Else {
         sSelection:= GetSelection()
     }
-    
     If !(sSelection) { ; empty
         TrayTipAutoHide("People Connector warning!","You need first to select something!")   
         return
@@ -115,9 +123,7 @@ If (A_PriorHotKey = A_ThisHotKey and A_TimeSincePriorHotkey < 500) {
     Else
         Menu, MainMenu, Disable, (ConNext) Mentions to
     
-    
     Menu, MainMenu, Show
-
 }
 return
 
@@ -125,12 +131,14 @@ return
 ; ----------------------------  Menu Callbacks -------------------------------------
 TeamsChat: 
 sEmailList := GetEmailList(sSelection)
-If (sEmailList = "")
-    return ; empty
- Emails2TeamsChatDeepLink(sEmailList, askOpen:= true)
+If (sEmailList = "") { 
+    TrayTipAutoHide("People Connector warning!","No email could be found!")   
+    return
+}
+Teams_Emails2Chat(sEmailList)
 
 ;If InStr(sEmailList,";") ; multiple Emails
-;    Emails2TeamsChatDeepLink(sEmailList, askOpen:= true)
+;    Teams_Emails2ChatDeepLink(sEmailList, askOpen:= true)
 ;Else {    
  ;   EnvGet, userprofile , userprofile
 ;    Run,  %userprofile%\AppData\Local\Microsoft\Teams\current\Teams.exe sip:%sEmailList%
@@ -138,10 +146,33 @@ If (sEmailList = "")
 ;}
 return
 
+; ------------------------------------------------------------------
+TeamsMeet: 
+sEmailList := GetEmailList(sSelection)
+If (sEmailList = "") { 
+    TrayTipAutoHide("People Connector warning!","No email could be found!")   
+    return
+}
+Teams_Emails2Meeting(sEmailList)
+
+return
+
+; ------------------------------------------------------------------
+TeamsChatCopyLink:
+sEmailList := GetEmailList(sSelection)
+If (sEmailList = "") { 
+    TrayTipAutoHide("People Connector warning!","No email could be found!")   
+    return
+}
+Teams_Emails2ChatDeepLink(sEmailList)
+return
+
 TeamsCall:
 sEmailList := GetEmailList(sSelection)
-If (sEmailList = "")
-    return ; empty
+If (sEmailList = "") { 
+    TrayTipAutoHide("People Connector warning!","No email could be found!")   
+    return
+}
 If InStr(sEmailList,";") { ; multiple Emails
     TrayTipAutoHide("People Connector warning!","Feature does not work for multiple users!")   
     return
@@ -151,10 +182,13 @@ If InStr(sEmailList,";") { ; multiple Emails
 }
 return
 
+; ------------------------------------------------------------------
 SkypeChat:
 sEmailList := GetEmailList(sSelection)
-If (sEmailList = "")
-    return ; empty
+If (sEmailList = "") { 
+    TrayTipAutoHide("People Connector warning!","No email could be found!")   
+    return
+}
 If InStr(sEmailList,";") { ; multiple Emails
     TrayTipAutoHide("People Connector warning!","Feature does not work for multiple users!")   
     return
@@ -165,8 +199,9 @@ If InStr(sEmailList,";") { ; multiple Emails
 }
 return
 
+; ------------------------------------------------------------------
 Tel:
-sEmailList := ExtractEmails(sSelection)
+sEmailList := People_GetEmailList(sSelection)
 If !sEmailList { ; empty
     If !RegexMatch(sSelection,"[1-9\(\)-\s]*")  {
         TrayTipAutoHide("People Connector warning!","You shall have an email or phone number selected!")   
@@ -190,27 +225,23 @@ If InStr(sEmailList,";") { ; multiple Emails
 }
 return
 
-ConNextProfile:
-sEmailList := GetEmailList(sSelection)
-If (sEmailList = "")
-    return ; empty
+Im:
+sEmailList := People_GetEmailList(sSelection)
+If !sEmailList { ; empty    
+    return
+}
+sEmailList := StrReplace(sEmailList, ";",",")
+MsgBox %sEmailList%
+Run im:%sEmailList%
 
-Loop, parse, sEmailList, ";"
-{
-     Run,  https://connext.conti.de/profiles/html/profileView.do?email=%A_LoopField%
-}	; End Loop Parse Clipboard
 return
-
-ConNextProfileSearchByName:
-sSelection:= StrReplace(sSelection,",","")
-Run, https://connext.conti.de/profiles/html/simpleSearch.do?searchBy=name&searchFor=%sSelection%
-return
-
 
 ConNextEmail2Mention:
 sEmailList := GetEmailList(sSelection)
-If (sEmailList = "")
-    return ; empty
+If (sEmailList = "") { 
+    TrayTipAutoHide("People Connector warning!","No email could be found!")   
+    return
+}
 sHtmlMentions := CNEmails2Mentions(sEmailList)
 WinClip.SetHtml(sHtmlMentions)
 TrayTipAutoHide("People Connector","Mentions were copied to clipboard in RTF!")   
@@ -227,7 +258,7 @@ return
 ConNextMentions2TeamsChat:
 sHtml := GetSelection("html")
 sEmailList := CNMentions2Emails(sHtml)
-Emails2TeamsChatDeepLink(sEmailList)
+Teams_Emails2ChatDeepLink(sEmailList)
 return
 
 ConNextMentions2Emails:
@@ -240,35 +271,39 @@ return
 ; ------------------------------------------------------------------
 CopyEmails:
 sEmailList := GetEmailList(sSelection)
-If (sEmailList = "")
-    return ; empty
+If (sEmailList = "") { 
+    TrayTipAutoHide("People Connector warning!","No email could be found!")   
+    return
+}
 WinClip.SetText(sEmailList)
 TrayTipAutoHide("Copy Emails", "Emails were copied to the clipboard!")
 return
 
 Emails2Uids:
-GetKeyState, KeyState, Ctrl
-If (KeyState = "D"){
+If GetKeyState("Ctrl") {
 	Run, "https://connext.conti.de/blogs/tdalon/entry/people_connector_get_userid"
 	return
 }
 sEmailList := GetEmailList(sSelection)
-If (sEmailList = "")
-    return ; empty
+If (sEmailList = "") { 
+    TrayTipAutoHide("People Connector warning!","No email could be found!")   
+    return
+}
 sUidList := Emails2Uids(sEmailList)
 clipboard := sUidList
 TrayTipAutoHide("Copy Uid","Uids " . sUidList . " were copied to the clipboard!")   
 return
 
 Emails2WinUids:
-GetKeyState, KeyState, Ctrl
-If (KeyState = "D"){
+If GetKeyState("Ctrl") {
 	Run, "https://connext.conti.de/blogs/tdalon/entry/people_connector_get_userid"
 	return
 }
 sEmailList := GetEmailList(sSelection)
-If (sEmailList = "")
-    return ; empty
+If (sEmailList = "") { 
+    TrayTipAutoHide("People Connector warning!","No email could be found!")   
+    return
+}
 sUidList := Emails2Uids(sEmailList,"sAMAccountName")
 clipboard := sUidList
 TrayTipAutoHide("Copy Uid","Uids " . sUidList . " were copied to the clipboard!")   
@@ -283,49 +318,31 @@ return
 
 ; ------------------------------------------------------------------
 Emails2TeamsFavs:
-GetKeyState, KeyState, Ctrl
-If (KeyState = "D") {
+If GetKeyState("Ctrl") {
 	Run, "https://connext.conti.de/blogs/tdalon/entry/people_connector_teams_favorites"
 	return
 }
 sEmailList := GetEmailList(sSelection)
-If (sEmailList = "")
-    return ; empty
-Emails2TeamsFavs(sEmailList)
+If (sEmailList = "") { 
+    TrayTipAutoHide("People Connector warning!","No email could be found!")   
+    return
+}
+Teams_Emails2Favs(sEmailList)
 return
 
 ; ------------------------------------------------------------------
-Emails2TeamMembers:
-GetKeyState, KeyState, Ctrl
-If (KeyState = "D") {
-	Run, "https://connext.conti.de/blogs/tdalon/entry/emails2teammembers"
-	return
-}
-RegRead, TeamsPowerShell, HKEY_CURRENT_USER\Software\PowerTools, TeamsPowerShell
-If (TeamsPowerShell := !TeamsPowerShell) {
-    sUrl := "https://connext.conti.de/wikis/home/wiki/Wc4f94c47297c_42c8_878f_525fd907cb68/page/Teams%20PowerShell%20Setup"
-    Run, "%sUrl%" 
-    MsgBox 0x1024,People Connector, Have you setup Teams PowerShell on your PC?
-	IfMsgBox No
-		return
-    OfficeUid := AD_GetUserField("sAMAccountName=" . A_UserName, "mailNickname") ; mailNickname - office uid 
-    RegWrite, REG_SZ, HKEY_CURRENT_USER\Software\PowerTools, OfficeUid, %OfficeUid%
-    ;sWinUid := AD_GetUserField("mail=" . sEmail, "sAMAccountName")  ;- login uid
-
-    RegWrite, REG_SZ, HKEY_CURRENT_USER\Software\PowerTools, TeamsPowerShell, %TeamsPowerShell%
-    Menu,SubMenuSettings,Check, Teams PowerShell
-
-}
+Emails2TeamUsers:
 sEmailList := GetEmailList(sSelection)
-If (sEmailList = "")
-    return ; empty
-Emails2TeamMembers(sEmailList)
+If (sEmailList = "") { 
+    TrayTipAutoHide("People Connector warning!","No email could be found!")   
+    return
+}
+Teams_Emails2Users(sEmailList)
 
 return
 
 Outlook2Excel:
-GetKeyState, KeyState, Ctrl
-If (KeyState = "D") {
+If GetKeyState("Ctrl") {
 	Run, "https://connext.conti.de/blogs/tdalon/entry/people_connector_ol2xl"
 	return
 }
@@ -334,8 +351,10 @@ return
 
 MailTo:
 sEmailList := GetEmailList(sSelection)
-If (sEmailList = "")
-    return ; empty
+If (sEmailList = "") { 
+    TrayTipAutoHide("People Connector warning!","No email could be found!")   
+    return
+}
 
 Try
 	MailItem := ComObjActive("Outlook.Application").CreateItem(0)
@@ -349,8 +368,10 @@ return
 
 MeetTo:
 sEmailList := GetEmailList(sSelection)
-If (sEmailList = "")
-    return ; empty
+If (sEmailList = "") { 
+    TrayTipAutoHide("People Connector warning!","No email could be found!")   
+    return
+}
 Try
 	oItem := ComObjActive("Outlook.Application").CreateItem(1)
 Catch
@@ -361,45 +382,56 @@ Loop, parse, sEmailList, ";"
 {
     oItem.Recipients.Add(A_LoopField) 
 }	
-
 oItem.Display ;Make email visible
 return
 
 ; ------------------------------------------------------------------
 DelveProfile:
 sEmailList := GetEmailList(sSelection)
-If (sEmailList = "")
-    return ; empty
+If (sEmailList = "") { 
+    TrayTipAutoHide("People Connector warning!","No email could be found!")   
+    return
+}
 Loop, parse, sEmailList, ";"
 {
    Run,  https://continental-my.sharepoint.com/person.aspx?user=%A_LoopField%&v=profiledetails
 }	
 return
 
-StreamProfile:
-sEmailList := GetEmailList(sSelection)
-If (sEmailList = "") {
-    sName := Trim(sSelection)
-    If Not (InStr(sName, ",")) {
-        arr := StrSplit(sName, " ")
-        sName := arr[2] . ", " arr[1]
-    }
-    Run, https://web.microsoftstream.com/browse?q=%sName%&view=people
-    return ; empty
-}
-    
-Loop, parse, sEmailList, ";"
-{
-  Run, https://web.microsoftstream.com/browse?q=%A_LoopField%&view=people
-}	
+; ------------------------------------------------------------------
+ConNextOpenProfile:
+People_ConNextOpenProfile(sSelection)
 return
 
+; ------------------------------------------------------------------
+StreamProfile:
+sEmailList := GetEmailList(sSelection)
+If (sEmailList != "") {
+    Loop, parse, sEmailList, ";"
+    {
+    Run, https://web.microsoftstream.com/browse?q=%A_LoopField%&view=people
+    }	
+} Else {
+    sName := People_GetName(sSelection)
+    Run, https://web.microsoftstream.com/browse?q=%sName%&view=people
+}
+return
+
+; ------------------------------------------------------------------
 LinkedInSearchByName:
-sName := StrReplace(sSelection,",","")
-sName := RegExReplace(sName, "<.*>","") ; Strip email adress from Outlook
+sName := People_GetName(sSelection)
+sName := RegExReplace(sName,"\d*","") ; remove any numbers
 Run, https://www.linkedin.com/search/results/people/?keywords=%sName%
 return
 
+BingSearch:
+sSelection := People_GetName(sSelection)
+Run, http://www.bing.com/search?q=%sSelection%#,Person 
+return
+
+PeopleView:
+People_PeopleView(sSelection)
+return
 
 ; ----------------------------------------------------------------------
 ConNextAuth:
@@ -416,9 +448,7 @@ TrayTipAutoHide("AD Phonebook","Shortcut was copied to your profile desktop")
 return
 
 ; ----------------------------------------------------------------------
-PasswordSet:
-SetPassword()
-return
+
 ; ---------------------------------------------------------------------- STARTUP -------------------------------------------------
 MenuCb_ToggleSettingNotificationAtStartup:
 
@@ -428,7 +458,17 @@ If (SettingNotificationAtStartup := !SettingNotificationAtStartup) {
 Else {
   Menu, SubMenuSettings, UnCheck, Notification at Startup
 }
-
-RegWrite, REG_SZ, HKEY_CURRENT_USER\Software\PowerTools, NotificationAtStartup, %SettingNotificationAtStartup%
+PowerTools_RegWrite("NotificationAtStartup",SettingNotificationAtStartup)
 return
 ; ------------------------------- SUBFUNCTIONS ----------------------------------------------------------
+
+
+GetEmailList(sSelection){
+sEmailList := People_GetEmailList(sSelection)
+If (sEmailList = "")  { 
+    sInput := GetSelection("html")
+    sInput := StrReplace(sInput,"%40","@") ; for connext profile links
+    sEmailList := People_GetEmailList(sInput)
+}
+return sEmailList
+}
