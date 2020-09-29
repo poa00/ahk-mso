@@ -59,19 +59,19 @@ PTReleaseNotes(ScriptName){
 Switch ScriptName 
 {
 Case "ConnectionsEnhancer":
-    sUrl := "http://github.conti.de/ContiSource/ahk/wiki/ConNext-Enhancer-(Release-Notes)"
+    sUrl := "https://github.com/tdalon/ahk/wiki/Connections-Enhancer-(Changelog)"
 Case "TeamsShortcuts":
-    sUrl := "http://github.conti.de/ContiSource/ahk/wiki/Teams-Shortcuts-(Release-notes)"
+    sUrl := "https://github.com/tdalon/ahk/wiki/Teams-Shortcuts-(Changelog)"
 Case "MO":
     sUrl := "http://github.conti.de/ContiSource/ahk/wiki/MO-(Release-Notes)"
 Case "PeopleConnector":
-    sUrl := "http://github.conti.de/ContiSource/ahk/wiki/People-Connector-(Release-notes)"
+    sUrl := "https://github.com/tdalon/ahk/wiki/People-Connector-(Changelog)"
 Case "NWS":
-    sUrl := "http://github.conti.de/ContiSource/ahk/wiki/NWS-PowerTool-(Release-notes)"
+    sUrl := "https://github.com/tdalon/ahk/wiki/NWS-PowerTool-(Changelog)"
 Case "Bundler":
     sUrl :="https://connext.conti.de/wikis/home/wiki/Wc4f94c47297c_42c8_878f_525fd907cb68/page/PowerTools%20Bundler"
 Case "OutlookShortcuts":
-    sUrl :="https://github.conti.de/ContiSource/ahk/wiki/Outlook-Shortcuts-(Release-Notes)"
+    sUrl :="https://github.com/tdalon/ahk/wiki/Outlook-Shortcuts-(Changelog)"
 Case "all":
 Default:
     sUrl := "http://github.conti.de/ContiSource/ahk/wiki/PowerTools-Release-Notes"	
@@ -210,14 +210,11 @@ Switch Config
         PowerTools_RegWrite("ConnectionsRootUrl","connext.conti.de")
         PowerTools_RegWrite("TeamsOnly",1)
         PowerTools_RegWrite("DocRootUrl","https://connext.conti.de/blogs/tdalon/entry/")
-        PowerTools_RegWrite("GitHubUrl","http://github.conti.de/ContiSource/ahk")
-
     Case "Public":
-    PowerTools_RegWrite("Domain","")
-    PowerTools_RegWrite("ConnectionsRootUrl","")
-    PowerTools_RegWrite("TeamsOnly",0)
-    PowerTools_RegWrite("DocRootUrl","https://tdalon.blogspot.com/")
-    PowerTools_RegWrite("GitHubUrl","https://github.com/tdalon/ahk")
+        PowerTools_RegWrite("Domain","")
+        PowerTools_RegWrite("ConnectionsRootUrl","")
+        PowerTools_RegWrite("TeamsOnly",0)
+        PowerTools_RegWrite("DocRootUrl","https://tdalon.blogspot.com/")
     Case "Ini":
         If FileExist("PowerTools.ini") {
             IniRead, IniVal, PowerTools.ini, Main, Domain
@@ -226,8 +223,6 @@ Switch Config
             PowerTools_RegWrite("TeamsOnly",IniVal)
             IniRead, IniVal, PowerTools.ini, Main, DocRootUrl
             PowerTools_RegWrite("DocRootUrl",IniVal)
-            IniRead, IniVal, PowerTools.ini, Main, GitHubUrl
-            PowerTools_RegWrite("GitHubUrl",IniVal)
             IniRead, IniVal, PowerTools.ini, Connections, ConnectionsRootUrl
             PowerTools_RegWrite("ConnectionsRootUrl",IniVal)
         } Else {
@@ -235,7 +230,6 @@ Switch Config
             return
         }
 } ; end switch
-
 
 } ; eofun
 
@@ -268,7 +262,7 @@ Menu,Tray,NoStandard
 Menu,Tray,Add, &Help, MenuCb_PTHelp
 Menu,Tray,Add,Support (Teams Channel), MenuCb_PowerTools_Support
 Menu,Tray,Add,Check for update, MenuCb_PTCheckForUpdate
-Menu,Tray,Add,Change log, MenuCb_PTReleaseNotes
+Menu,Tray,Add,Changelog, MenuCb_PTReleaseNotes
 
 If !a_iscompiled {
 	IcoFile := RegExReplace(A_ScriptFullPath,"\..*",".ico")
