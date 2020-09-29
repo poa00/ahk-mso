@@ -7,7 +7,7 @@ SetWorkingDir %A_ScriptDir%
 
 #Include <WinClipAPI>
 #Include <WinClip>
-#Include <ConNext>
+#Include <Connections>
 #Include <Jira>
 #Include <Confluence>
 #Include <Login>
@@ -17,9 +17,8 @@ SetWorkingDir %A_ScriptDir%
 #Include <Teams>
 #Include <Explorer>
 
-LastCompiled = 20200807130642
+LastCompiled = 20200918135851
 
-;wc := new WinClip ; used by IntelliPaste
 global PowerTools_ConnectionsRootUrl
 If (PowerTools_ConnectionsRootUrl="") {
 	If FileExist("Connections.ini") {
@@ -142,7 +141,7 @@ Menu,SubMenuFavs,Add, Create Ticket (ESS), SysTrayCreateTicket
 Menu,SubMenuFavs,Add, KSSE, KSSE
 Menu, Tray, Add, Favorites, :SubMenuFavs
 
-
+Menu,Tray,Add, Toggle AlwaysOnTop (Ctrl+Shift+ Space), SysTrayToggleAlwaysOnTop
 Menu, SubMenuODB, Add, Open Permissions Settings,ODBOpenPermissions
 Menu, SubMenuODB, Add, Open Document Library in Classic View,ODBOpenDocLibClassic
 Menu, Tray, Add, OneDrive, :SubMenuODB
@@ -208,6 +207,8 @@ CapsLock:: ; <--- Must double tap CapsLock to toggle CapsLock mode on or off.
 return
 
 
+^+Space:: WinSet, AlwaysOnTop, Toggle, A
+return
 ;================================================================================================
 ; Hotkeys with CapsLock modifier.  See https://autohotkey.com/docs/Hotkeys.htm#combo
 ;================================================================================================
@@ -257,12 +258,6 @@ Return
 ; Ctrl+Alt+V
 ^!v:: ; <--- VPN Connect
 VPNConnect()
-return
-
-; Always on Top CTRL+SHIFT+SPACE on current window
-; http://www.labnol.org/software/tutorials/keep-window-always-on-top/5213/
-^+SPACE::  ; <--- Always on Top
-Winset, Alwaysontop, , A
 return
 
 ; -------------------------------------------------------------------------------------------------------------------
@@ -837,7 +832,7 @@ If !sUrl { ; empty
 	return
 }
 If Connections_IsConnectionsUrl(sUrl) 
-	ConNextSearch(sUrl)
+	ConnectionsSearch(sUrl)
 Else If IsConfluenceUrl(sUrl) {
 	ConfluenceSearch(sUrl)
 } Else If Jira_IsUrl(sUrl)
@@ -847,6 +842,11 @@ Else If IsConfluenceUrl(sUrl) {
 SysTrayCreateTicket:
 SendInput, !{Esc}
 CreateTicket()
+return
+
+SysTrayToggleAlwaysOnTop:
+SendInput, !{Esc}
+WinSet, AlwaysOnTop, Toggle, A
 return
 
 CreateTicket()

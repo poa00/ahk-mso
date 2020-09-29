@@ -10,7 +10,7 @@ LastCompiled = 20200806155136
 #Include <WinClipAPI>
 #Include <WinClip>
 #Include <People>
-#Include <ConNext>
+#Include <Connections>
 #Include <Teams>
 #Include <PowerTools>
 #Include <WinActiveBrowser>
@@ -59,7 +59,7 @@ If (SettingNotificationAtStartup)
 ;TrayTipAutoHide("People Connector is running!",sText)
 
 Menu, MainMenu, add, Teams &Chat, TeamsChat
-;Menu, MainMenu, add, Teams &Pop out Chat, Im
+Menu, MainMenu, add, Teams &Pop out Chat, TeamsPop
 Menu, MainMenu, add, &Teams Call, TeamsCall
 Menu, MainMenu, add, Add to Teams &Favorites, Emails2TeamsFavs
 Menu, MainMenu, add, Add Users to Team, Emails2TeamUsers
@@ -154,6 +154,17 @@ If (sEmailList = "") {
     return
 }
 Teams_Emails2Meeting(sEmailList)
+
+return
+
+; ------------------------------------------------------------------
+TeamsPop: 
+sEmailList := GetEmailList(sSelection)
+If (sEmailList = "") { 
+    TrayTipAutoHide("People Connector warning!","No email could be found!")   
+    return
+}
+Teams_Pop(sEmailList)
 
 return
 

@@ -24,8 +24,7 @@ InputBox, sPassword, Password, Enter Password for connection, Hide, 200, 125
 If ErrorLevel
     return
 ;sKey := Encrypt(sPassword,"thierry")
-RegWrite, REG_SZ, HKEY_CURRENT_USER\Software\PowerTools, Password, %sPassword%
-
+PowerTools_RegWrite("Password",sPassword)
 ; cmdkey /add:windows /user:%A_UserName% /pass:%sPassword%
 return sPassword
 }
@@ -51,9 +50,8 @@ If GetKeyState("Ctrl") {
 InputBox, sPersNum, Personal Number, Enter your Personal Number e.g. for KSSE,, 200, 125
 If ErrorLevel
     return
-;sKey := Encrypt(sPassword,"thierry")
-RegWrite, REG_SZ, HKEY_CURRENT_USER\Software\PowerTools, PersonalNumber, %sPersNum%
-return sPassword
+PowerTools_RegWrite("PersonalNumber",sPersNum)
+return sPersNum
 }
 ; ----------------------------------------------------------------------
 

@@ -2,7 +2,7 @@
 ; Used by PeopleConnector and ConNextEnhancer
 
 #Include <Teams>
-#Include <ConNext>
+#Include <Connections>
 
 ; ----------------------------------------------------------------------
 
@@ -10,7 +10,8 @@
 
 People_GetEmailList(sInput){
 ; Get EmailList from input string
-; Extract Email from String e.g. copied to clipboard Outlook addresses or Html source
+; Extract Emails from String e.g. copied to clipboard Outlook addresses or Html source
+; List is separated with a ;
 ; Syntax: sEmailList := People_GetEmailList(sInput)
 
 sPat = [0-9a-zA-Z\.\-]+@[0-9a-zA-Z\-\.]*\.[a-z]{2,3}

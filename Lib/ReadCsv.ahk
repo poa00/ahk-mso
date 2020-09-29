@@ -14,9 +14,10 @@ Loop, read, %CsvFile%
             If (A_LoopField == OutProp) 
                 OutCol := A_Index
                            
-            If Not(!OutCol OR !InCol) 
+            If (!OutCol OR !InCol) 
+                Continue
+            Else
                 break   
-        continue
         }
 
         If (A_Index = InCol) {

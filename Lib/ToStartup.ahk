@@ -13,11 +13,12 @@ Else If (Toggle = 1) {
         FileCreateShortcut, %sFile%, %sLnk% ,,,,%FileIcon%		; will overwrite existing shortcut
     Else
         FileCreateShortcut, %sFile%, %sLnk% 		; will overwrite existing shortcut
+    TrayTipAutoHide("Startup setting", "File ''" . RegExReplace(sLnk,".*\\","") . "'' was added to Startup!")
 } Else If (Toggle=0) {
     If FileExist(sLnk) {
         FileDelete, %sLnk%
         TrayTipAutoHide("Startup setting", "File ''" . RegExReplace(sLnk,".*\\","") . "'' was removed from Startup!")
     }       
 }
-Run  %A_Startup%
+Run, %A_Startup%
 }

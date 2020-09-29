@@ -1,5 +1,5 @@
-TrayTipAutoHide(Title,Text,Time:=2000){
-TrayTip %Title%, %Text%
+TrayTipAutoHide(Title,Text,Time:=2000,Options:=0){
+TrayTip %Title%, %Text%,,Options
 Sleep %Time%   ; Let it display for %time% in ms
 HideTrayTip()
 }

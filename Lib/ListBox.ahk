@@ -10,7 +10,7 @@ ListBox(Title := "", Prompt := "", List := "", Select := 0) {
     ; Title is the title for the GUI
     ; Prompt is the text to display
     ; List is a pipe delimited list of choices
-    ; Select (if present) is the index of the preselected item
+    ; Select (if present) is the index of the preselected item. Default 0 for no selection
 
     static LB ; used as a GUI control variable
 

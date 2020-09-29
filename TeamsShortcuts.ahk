@@ -36,6 +36,16 @@ Menu,Tray,Add
 Menu,Tray,Add,Export Team Members, Users2Excel
 Menu,Tray,Add,Refresh Teams List, Teams_ExportTeams
 Menu,Tray,Add
+
+Menu, SubMenuMeeting, Add, Open Teams Web Calendar, Teams_OpenWebCal
+
+Menu, SubMenuVLC, Add, Start VLC, VLCStart
+Menu, SubMenuVLC, Add, Set Play Mode, VLCPlayMode
+Menu, SubMenuVLC, Add, Reset, VLCReset
+
+Menu, SubMenuMeeting, Add, VLC, :SubMenuVLC
+Menu, Tray, Add, Meeting, :SubMenuMeeting
+Menu,Tray,Add
 Menu,Tray,Standard
 
 ; Tooltip
@@ -50,7 +60,7 @@ sTooltip = Teams Shortcuts %LastMod%`nUse 'Win+T' to open main Menu. Ctrl+Click 
 Menu, Tray, Tip, %sTooltip%
 
 ; -------------------------------------------------------------------------------------------------------------------
-Menu, TeamsShortcutMenu, add, Smart &Reply (Win+R), Teams_SmartReply
+Menu, TeamsShortcutMenu, add, Smart &Reply (Alt+R), Teams_SmartReply
 Menu, TeamsShortcutMenu, add, Reply with &Quote from Clipboard (Win+Q), ReplyWithQuote
 Menu, TeamsShortcutMenu, add, Create E&mail with link to current conversation (Win+M), ShareByMail
 Menu, TeamsShortcutMenu, add, &New Expanded Conversation (Win+N), NewConversation
@@ -280,3 +290,53 @@ Send ^v ; replace
 return
 
 ; ---------------------------------------------------------------------- SUBFUNCTIONS
+MeetingSetup(){
+; Open Teams Calendar in the Browser
+Teams_OpenWebCal()
+	
+}
+
+
+VLCStart() {
+If !WinActive("ahk_exe vlc.exe") {  
+    WinActivate, ahk_exe vlc.exe
+    If !WinActive("ahk_exe vlc.exe") { 
+        VLCExe := PowerTools_RegGet("VLCExe")
+		If (VLCExe = "") 
+			return
+        
+		Run, %VLCExe%
+    }
+    WinWaitActive, ahk_exe vlc.exe
+}
+
+Send ^c ; Configure Capture Device
+} ; eofun
+; ----------------------------------------------------------------------
+
+VLCPlayMode(){
+If !WinActive("ahk_exe vlc.exe") {  
+    WinActivate, ahk_exe vlc.exe
+    If !WinActive("ahk_exe vlc.exe") {
+	    VLCStart()
+		return
+	}
+}
+SendInput ^h ; Minimal Interface
+WinSet, AlwaysOnTop , On, ahk_exe vlc.exe
+WinSet, Style, -0xC00000, ahk_exe vlc.exe ; remove title bar
+} ; eofun
+; ----------------------------------------------------------------------
+
+VLCReset(){
+If !WinActive("ahk_exe vlc.exe") {  
+    WinActivate, ahk_exe vlc.exe
+    If !WinActive("ahk_exe vlc.exe") {
+	    VLCStart()
+		return
+	}
+}
+WinSet, Style, -0xC00000, ahk_exe vlc.exe ; toggle title bar
+SendInput ^h ; Minimal Interface
+WinSet, AlwaysOnTop , Off, ahk_exe vlc.exe
+} ; eofun

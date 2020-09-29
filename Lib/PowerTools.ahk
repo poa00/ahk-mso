@@ -58,7 +58,7 @@ Run, %sUrl%
 PTReleaseNotes(ScriptName){
 Switch ScriptName 
 {
-Case "ConNextEnhancer":
+Case "ConnectionsEnhancer":
     sUrl := "http://github.conti.de/ContiSource/ahk/wiki/ConNext-Enhancer-(Release-Notes)"
 Case "TeamsShortcuts":
     sUrl := "http://github.conti.de/ContiSource/ahk/wiki/Teams-Shortcuts-(Release-notes)"
@@ -98,7 +98,7 @@ If a_iscompiled {
 PowerTools_Support(ScriptName){
     Switch ScriptName 
 	{
-	Case "ConNextEnhancer":
+	Case "ConnectionsEnhancer":
         sTeamLink := "https://teams.microsoft.com/l/channel/19%3a6ab774239328402fbe0b6be8bd60b53a%40thread.skype/ConNext%2520Enhancer?groupId=640b2f00-7b35-41b2-9e32-5ce9f5fcbd01&tenantId=8d4b558f-7b2e-40ba-ad1f-e04d79e6265a"
     Case "TeamsShortcuts":
         sTeamLink := "https://teams.microsoft.com/l/channel/19%3a91b56b23eb864738a80a52663387c227%40thread.skype/Teams%2520AutoHotkey?groupId=640b2f00-7b35-41b2-9e32-5ce9f5fcbd01&tenantId=8d4b558f-7b2e-40ba-ad1f-e04d79e6265a"
@@ -174,8 +174,9 @@ return Config
 } ; eofun
 
 ; -------------------------------------------------------------------------------------------------------------------
-PowerTools_RegRead(Prop,ByRef VarName){
-RegRead, %VarName%, HKEY_CURRENT_USER\Software\PowerTools, %Prop%
+PowerTools_RegRead(Prop){
+RegRead, OutputVar, HKEY_CURRENT_USER\Software\PowerTools, %Prop%
+return OutputVar
 }
 
 ; -------------------------------------------------------------------------------------------------------------------

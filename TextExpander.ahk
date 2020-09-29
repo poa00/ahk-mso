@@ -18,7 +18,6 @@
 
 ::nwsac::{#}nws_adventcalendar2019
 
-
 ::mfg:: ; MfG
 (
 Mit freundlichen Gruessen
@@ -66,7 +65,8 @@ sText = ConNext Tagging Rules
 sLink := "https://connext.conti.de/wikis/home/wiki/W10f67125ddc8_42e1_a6da_0a8e6a1cd541/page/ConNext%20Basics?section=tagging"
 sHtml = <a href="%sLink%">%sText%</a>
 WinClip.SetHTML(sHtml)
-WinClip.Paste()
+WinClip.SetText(sLink)
+WinClip.Paste()	
 return
 
 
@@ -76,7 +76,7 @@ sLink = http://links.conti.de/nws_search
 sHtml = <a href="%sLink%">%sText%</a>
 WinClip.SetHTML(sHtml)
 WinClip.SetText(sLink)
-WinClip.Paste()
+WinClip.Paste()	
 return
 
 ::nws_ss:: ; NWS Social Support (RTF Link)
@@ -85,7 +85,7 @@ sLink = http://links.conti.de/nws_socialsupport
 sHtml = <a href="%sLink%">%sText%</a>
 WinClip.SetHTML(sHtml)
 WinClip.SetText(sLink)
-WinClip.Paste()
+WinClip.Paste()	
 return
 
 ::nws_sh:: ; NWS Search Help Link (rtf)
@@ -95,15 +95,14 @@ sLink := "https://connext.conti.de/wikis/home/wiki/W10f67125ddc8_42e1_a6da_0a8e6
 sHtml = <a href="%sLink%">%sText%</a>
 WinClip.SetHTML(sHtml)
 WinClip.SetText(sLink)
-WinClip.Paste()
+WinClip.Paste()	
 return
 
 ::mo_ty:: ; MO Thank you image
 sHtml := ConNext_Kudos2Html("thank_you")
 sHtml = <p style="text-align: center;">%sHtml%<p>
 WinClip.SetHTML(sHtml)
-WinClip.SetText("#thank_you")
-WinClip.Paste()
+WinClip.Paste()	
 return
 
 ; ##### Hotkeys ####
@@ -119,12 +118,14 @@ return
 
 ; Alt + u
 !u:: ; uid@contiwan.com
-EnvGet,sUsername, username 
-SendInput %sUsername%@contiwan.com
+RegRead, OfficeUid, HKEY_CURRENT_USER\Software\PowerTools, OfficeUid
+If !OfficeUid 
+    OfficeUid := A_UserName
+SendInput %OfficeUid%@contiwan.com
 return
 
 !p:: ; <--- Enter Password
-sPassword := GetPassword()
+sPassword := Login_GetPassword()
 SendInput %sPassword%
 return
 
