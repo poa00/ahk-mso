@@ -1,8 +1,8 @@
 ; Connections Enhancer
-; See user documentation here: http://connext.conti.de/blogs/tdalon/entry/connext_enhancer
+; See documentation here: https://github.com/tdalon/ahk/wiki/Connections-Enhancer
 ; Author: Thierry Dalon
 ; Code Project Documentation is available on GitHub here: https://github.com/tdalon/ahk
-;  Source http://github.conti.de/ContiSource/ahk/blob/master/ConNextEnhancer.ahk
+;  Source https://github.com/tdalon/ahk/blob/master/ConnectionsEnhancer.ahk
 ;
 ; Run in ConNext Editor in Edit Mode
 ; Hotkey: Win+C
@@ -1868,6 +1868,19 @@ While Pos := RegExMatch(sHtml,sPat,sEmail,Pos+StrLen(sEmail)){
 }
 return SubStr(sEmailList,2) ; remove first ;
 } ; eof
+
+; ----------------------------------------------------------------------
+CenterIframe(sHTMLCode){
+; Format Iframe with align-center 
+;   sHTMLCode := CenterIframe(sHTMLCode)
+; Called by: Menu CenterIframe
+sPat = <p([^->]*)><iframe ([^>]*)> ; exclude - in text-align
+sRep = <p style="text-align: center;" $1><iframe $2>
+
+sHTMLCode := RegExReplace(sHTMLCode,sPat,sRep)
+
+return sHTMLCode
+}
 
 ; ----------------------------------------------------------------------
 ProfileSearchHtml2Mentions(sHtml){

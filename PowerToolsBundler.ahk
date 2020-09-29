@@ -95,7 +95,7 @@ Loop {
 
 ; Update PowerTools.ini - only once
 guExe = %A_ScriptDir%\github_updater.exe
-sUrl = http://github.conti.de/raw/ContiSource/ahk/master/PowerTools.ini
+sUrl = https://raw.githubusercontent.com/tdalon/ahk/master/PowerTools.ini
 UrlDownloadToFile, %sUrl%, PowerTools.ini.github
 sCmd = %guExe% PowerTools.ini
 RunWait, %sCmd%,,Hide

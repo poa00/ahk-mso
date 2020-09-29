@@ -1,7 +1,7 @@
 ; ConNext Groups
 ; Author: Thierry Dalon
 ; See user documentation here: https://connext.conti.de/blogs/tdalon/entry/connext_quick_mentions
-; Code Project Documentation is available on ContiSource GitHub here: http://github.conti.de/ContiSource/ahk
+; Code Project Documentation is available on ContiSource GitHub here: https://github.com/tdalon/ahk
 ;  Source http://github.conti.de/ContiSource/ahk/blob/master/ConNextGroups.ahk
 ;
 

@@ -1,8 +1,8 @@
 ; MS Teams Keyboard Shortcuts
 ; Author: Thierry Dalon
 ; See user documentation here: https://connext.conti.de/blogs/tdalon/entry/teams_shortcuts_ahk
-; Code Project Documentation is available on ContiSource GitHub here: http://github.conti.de/ContiSource/ahk
-; Source : http://github.conti.de/ContiSource/ahk/blob/master/TeamsShortcuts.ahk
+; Code Project Documentation is available on GitHub here: https://github.com/tdalon/ahk
+; Source : https://github.com/tdalon/ahk/blob/master/TeamsShortcuts.ahk
 ;
 
 LastCompiled = 20200806155137

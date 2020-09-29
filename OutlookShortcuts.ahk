@@ -1,6 +1,6 @@
 ; Author: Thierry Dalon
-; Code Project Documentation is available on ContiSource GitHub here: http://github.conti.de/ContiSource/ahk
-;  Source: http://github.conti.de/ContiSource/ahk/blob/master/OutlookShortcuts.ahk
+; Code Project Documentation is available on ContiSource GitHub here: https://github.com/tdalon/ahk/blob/master/NWS.ahk
+;  Source: https://github.com/tdalon/ahk/blob/master/OutlookShortcuts.ahk
 
 LastCompiled = 20200806155135
 

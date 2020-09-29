@@ -5,7 +5,7 @@ AppList = ConNextEnhancer,MO,NWS,OutlookShortcuts,PeopleConnector,TeamsShortcuts
 
 PTCheckForUpdate(ToolName :="") {
 If !a_iscompiled {
-	Run, http://github.conti.de/ContiSource/ahk ; no direct link because of Lib dependencies
+	Run, https://github.com/tdalon/ahk ; no direct link because of Lib dependencies
     return
 } 
 
@@ -14,7 +14,7 @@ If !ToolName
 Else
     ScriptName = %ToolName%.exe
     ; Overwrites by default
-sUrl = http://github.conti.de/raw/ContiSource/ahk/master/PowerTools/%ScriptName%
+sUrl = https://raw.githubusercontent.com/tdalon/ahk/master/%ScriptName%
 
 ExeFile = %A_ScriptDir%\%ScriptName%
 If Not FileExist(ExeFile) {
@@ -25,7 +25,7 @@ If Not FileExist(ExeFile) {
 UrlDownloadToFile, %sUrl%, %ScriptName%.github
 guExe = %A_ScriptDir%\github_updater.exe
 If Not FileExist(guExe)
-    UrlDownloadToFile, http://github.conti.de/raw/ContiSource/ahk/master/github_updater.exe, %guExe%
+    UrlDownloadToFile, https://raw.githubusercontent.com/tdalon/ahk/master/github_updater.exe, %guExe%
 sCmd = %guExe% %ScriptName%
 RunWait, %sCmd%,,Hide
 } ; eof
@@ -85,7 +85,7 @@ PowerTools_RunBundler(){
 If a_iscompiled {
   ExeFile = %A_ScriptDir%\PowerToolsBundler.exe
   If Not FileExist(ExeFile) {
-    sUrl = http://github.conti.de/raw/ContiSource/ahk/master/PowerTools/PowerToolsBundler.exe
+    sUrl = https://raw.githubusercontent.com/tdalon/ahk/master/PowerTools/PowerToolsBundler.exe
 		UrlDownloadToFile, %sUrl%, PowerToolsBundler.exe
   }
   Run %ExeFile%

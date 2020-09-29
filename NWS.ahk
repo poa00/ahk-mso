@@ -1,7 +1,7 @@
 ; Author: Thierry Dalon
 ; Documentation: https://connext.conti.de/blogs/tdalon/entry/nws_ahk
-; Code Project Documentation is available on ContiSource GitHub here: http://github.conti.de/ContiSource/ahk
-;  Source: http://github.conti.de/ContiSource/ahk/blob/master/NWS.ahk
+; Code Project Documentation is available on ContiSource GitHub here: https://github.com/tdalon/ahk
+;  Source: https://github.com/tdalon/ahk/blob/master/NWS.ahk
 
 SetWorkingDir %A_ScriptDir%
 
