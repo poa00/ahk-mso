@@ -505,7 +505,7 @@ If useico {
 
 WinGet WinId, ID, A
 If useico {
-	MsgBox, 3,IntelliPaste: Question, Would you like to insert icons before links (if available)?	
+	MsgBox, 3,IntelliPaste: Question, Would you like to insert icons before links?	
 	IfMsgBox Yes
 		useico := True
 	IfMsgBox No

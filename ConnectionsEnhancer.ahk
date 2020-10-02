@@ -202,20 +202,19 @@ Menu, SubMenuEvent, add, &Teams Chat, MenuItemAttendees2Chat
 Menu, SubMenuEvent, add, E&mail, Event2Email
 Menu, SubMenuEvent, add, Emails, MenuItemAttendees2Emails
 
-Menu, ConNextEnhancerReadMenu, add, &Contact, :SubMenuContact
+Menu, ConnectionsEnhancerReadMenu, add, &Contact, :SubMenuContact
 Menu, ConnectionsEnhancerMenu,Add ; Separator
 Menu, ConnectionsEnhancerMenu, add, &Contact, :SubMenuContact
 Menu, ConnectionsEnhancerMenu, add, Personalize Mentions (Win+1), PersonalizeMentions
 
-Menu, ConNextEnhancerReadMenu, add, (&Blog) Likers to, :SubMenuContactLikers
-Menu, ConNextEnhancerReadMenu, add, &Event to, :SubMenuEvent
+Menu, ConnectionsEnhancerReadMenu, add, (&Blog) Likers to, :SubMenuContactLikers
+Menu, ConnectionsEnhancerReadMenu, add, &Event to, :SubMenuEvent
 
-Menu, ConNextEnhancerReadMenu, add, (Profile Search) Copy &Mentions, MenuItemProfileSearchToMentions
-Menu, ConNextEnhancerReadMenu, add, (Profile Search) Copy &Table of Mentions with Profile pictures, MenuItemCopyUserTable
-
-Menu, ConnectionsEnhancerMenu, Add ; Separator
-Menu, ConNextEnhancerReadMenu, add, Create New... (Win+N), CNCreateNew
-Menu, ConNextEnhancerReadMenu, add, Download Html, Connections_DownloadHtml
+Menu, ConnectionsEnhancerReadMenu, add, (Profile Search) Copy &Mentions, MenuItemProfileSearchToMentions
+Menu, ConnectionsEnhancerReadMenu, add, (Profile Search) Copy &Table of Mentions with Profile pictures, MenuItemCopyUserTable
+Menu, ConnectionsEnhancerReadMenu, Add ; Separator
+Menu, ConnectionsEnhancerReadMenu, add, Create New... (Win+N), CNCreateNew
+Menu, ConnectionsEnhancerReadMenu, add, Download Html, Connections_DownloadHtml
 return
 
 
@@ -301,25 +300,25 @@ If IsWinConNextEdit(sUrl)
 
 Else {
 	If Connections_IsConnectionsUrl(sUrl,"blog") 
-		Menu, ConNextEnhancerReadMenu, Enable, (&Blog) Likers to
+		Menu, ConnectionsEnhancerReadMenu, Enable, (&Blog) Likers to
 	Else
-		Menu, ConNextEnhancerReadMenu, Disable, (&Blog) Likers to
+		Menu, ConnectionsEnhancerReadMenu, Disable, (&Blog) Likers to
 
 	If InStr(sUrl,"&eventInstUuid=") 
-		Menu, ConNextEnhancerReadMenu, Enable, &Event to
+		Menu, ConnectionsEnhancerReadMenu, Enable, &Event to
 	Else
-		Menu, ConNextEnhancerReadMenu, Disable, &Event to
+		Menu, ConnectionsEnhancerReadMenu, Disable, &Event to
 
 	If InStr(sUrl, PowerTools_ConnectionsRootUrl . "/profiles/html/") {
-		Menu, ConNextEnhancerReadMenu, Enable, (Profile Search) Copy &Mentions 
-		Menu, ConNextEnhancerReadMenu, Enable, (Profile Search) Copy &Table of Mentions with Profile pictures 
+		Menu, ConnectionsEnhancerReadMenu, Enable, (Profile Search) Copy &Mentions 
+		Menu, ConnectionsEnhancerReadMenu, Enable, (Profile Search) Copy &Table of Mentions with Profile pictures 
 	}
 	Else {
-		Menu, ConNextEnhancerReadMenu, Disable, (Profile Search) Copy &Mentions 
-		Menu, ConNextEnhancerReadMenu, Disable, (Profile Search) Copy &Table of Mentions with Profile pictures
+		Menu, ConnectionsEnhancerReadMenu, Disable, (Profile Search) Copy &Mentions 
+		Menu, ConnectionsEnhancerReadMenu, Disable, (Profile Search) Copy &Table of Mentions with Profile pictures
 	}
 
-	Menu, ConNextEnhancerReadMenu, Show
+	Menu, ConnectionsEnhancerReadMenu, Show
 }
 return 	
 
@@ -817,7 +816,7 @@ sHtml := CNGetHtml()
 sEmailList := People_GetEmailList(sHtml)
 If (sEmailList = "")
     return ; empty
-sHtmlMentions := CNEmails2Mentions(sEmailList)
+sHtmlMentions := Connections_Emails2Mentions(sEmailList)
 WinClip.SetHtml(sHtmlMentions)
 TrayTipAutoHide("People Connector","Mentions were copied to clipboard in RTF!")   
 return
@@ -1913,6 +1912,8 @@ While Pos := RegExMatch(sHtml,sPat,sMatch,Pos+StrLen(sMatch)){
 	sEmail := sMatch3
 	sUid := sMatch2
 	sName := sMatch1
+	sName := RegExReplace(sName," \(.*\)","") ; Remove (uid) in firstname
+
 	;sMention := "<span contenteditable='false' class='vcard'><a href='http://connext.conti.de/profiles/html/profileView.do?email=" . sEmail . "' class='fn url'>@" . sName . "</a><span class='x-lconn-userid' style='display: none;'>" . sUid . "</span></span>"
   
 	sMention := "<a class='vcard' data-userid='" . sUid . "' href='https://" . PowerTools_ConnectionsRootUrl . "/profiles/html/profileView.do?userid=" . sUid . "'>@" . sName . "</a>"

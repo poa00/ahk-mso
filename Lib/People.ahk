@@ -3,6 +3,7 @@
 
 #Include <Teams>
 #Include <Connections>
+global PowerTools_ConnectionsRootUrl
 
 ; ----------------------------------------------------------------------
 
@@ -14,6 +15,7 @@ People_GetEmailList(sInput){
 ; List is separated with a ;
 ; Syntax: sEmailList := People_GetEmailList(sInput)
 
+global PowerTools_ConnectionsRootUrl
 sPat = [0-9a-zA-Z\.\-]+@[0-9a-zA-Z\-\.]*\.[a-z]{2,3}
 ; TODO bug if Connext mention
 Pos = 1 
@@ -23,7 +25,7 @@ While Pos := RegExMatch(sInput,sPat,sMatch,Pos+StrLen(sMatch)){
     sEmailList = %sEmailList%;%sMatch%
 }
 
-sPat = https?://connext.conti.de/profiles/html/profileView.do\?userid=([0-9A-Z]*)
+sPat = https?://%PowerTools_ConnectionsRootUrl%/profiles/html/profileView.do\?userid=([0-9A-Z]*)
 sPat := StrReplace(sPat,".","\.")
 Pos = 1 
 While Pos := RegExMatch(sInput,sPat,sMatch,Pos+StrLen(sMatch)){
@@ -248,15 +250,16 @@ return sName
 
 ; ----------------------------------------------------------------------
 
-People_ConNextOpenProfile(sSelection){
+People_ConnectionsOpenProfile(sSelection){
+global PowerTools_ConnectionsRootUrl
 sEmailList := People_GetEmailList(sSelection)
 If (sEmailList = "") {
     sName := SwitchName(sSelection)
-    Run, https://connext.conti.de/profiles/html/simpleSearch.do?searchBy=name&searchFor=%sName%
+    Run, https://%PowerTools_ConnectionsRootUrl%/profiles/html/simpleSearch.do?searchBy=name&searchFor=%sName%
 } Else {
     Loop, parse, sEmailList, ";"
     {
-         Run,  https://connext.conti.de/profiles/html/profileView.do?email=%A_LoopField%
+         Run,  https://%PowerTools_ConnectionsRootUrl%/profiles/html/profileView.do?email=%A_LoopField%
     }	; End Loop Parse Clipboard
 }
 } ; eofun
@@ -264,16 +267,11 @@ If (sEmailList = "") {
 ; ----------------------------------------------------------------------
 People_PeopleView(sSelection){
 sEmailList := People_GetEmailList(sSelection)
-If (sEmailList = "") {
-    sName := SwitchName(sSelection)
-    Run, https://connext.conti.de/profiles/html/simpleSearch.do?searchBy=name&searchFor=%sName%
-} Else {
-    Loop, parse, sEmailList, ";"
-    {
-         Uid := People_ADGetUserField("mail=" . A_LoopField, "employeeNumber") 
-         Run,  https://performancemanager5.successfactors.eu/sf/orgchart?&company=ContiProd&selected_user=%Uid%
-    }	; End Loop Parse Clipboard
-}
+Loop, parse, sEmailList, ";"
+{
+        Uid := People_ADGetUserField("mail=" . A_LoopField, "employeeNumber") 
+        Run,  https://performancemanager5.successfactors.eu/sf/orgchart?&company=ContiProd&selected_user=%Uid%
+}	; End Loop Parse Clipboard
 } ; eofun
 
 

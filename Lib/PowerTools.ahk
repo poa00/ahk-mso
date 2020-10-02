@@ -34,16 +34,18 @@ RunWait, %sCmd%,,Hide
 PTHelp(ScriptName){
 Switch ScriptName 
 {
-Case "ConNextEnhancer":
-    sUrl = https://connext.conti.de/blogs/tdalon/entry/connext_enhancer
+Case "ConnectionsEnhancer":
+    sUrl = https://github.com/tdalon/ahk/wiki/Connections-Enhancer
 Case "TeamsShortcuts":
     sUrl = https://connext.conti.de/blogs/tdalon/entry/teams_shortcuts_ahk
 Case "MO":
     sUrl := "https://connext.conti.de/wikis/home/wiki/Wc4f94c47297c_42c8_878f_525fd907cb68/page/MO%20PowerTool"
 Case "PeopleConnector":
-    sUrl = https://connext.conti.de/blogs/tdalon/entry/people_connector
+    sUrl = https://github.com/tdalon/ahk/wiki/People-Connector
 Case "OutlookShortcuts":
     sUrl = https://connext.conti.de/blogs/tdalon/entry/outlook_autohotkey_script
+Case "Teamsy":
+    sUrl = https://github.com/tdalon/ahk/wiki/Teamsy
 Case "NWS":
     sUrl := "https://connext.conti.de/wikis/home/wiki/Wc4f94c47297c_42c8_878f_525fd907cb68/page/NWS%20PowerTool"
 Case "Bundler":
@@ -72,6 +74,8 @@ Case "Bundler":
     sUrl :="https://connext.conti.de/wikis/home/wiki/Wc4f94c47297c_42c8_878f_525fd907cb68/page/PowerTools%20Bundler"
 Case "OutlookShortcuts":
     sUrl :="https://github.com/tdalon/ahk/wiki/Outlook-Shortcuts-(Changelog)"
+Case "Teamsy":
+    sUrl := "https://github.com/tdalon/ahk/wiki/Teamsy-(Changelog)"
 Case "all":
 Default:
     sUrl := "http://github.conti.de/ContiSource/ahk/wiki/PowerTools-Release-Notes"	
@@ -127,8 +131,6 @@ Run,  "%sUrl%"
 
 PowerTools_OpenDoc(key:=""){
 RegRead, PT_DocRootUrl, HKEY_CURRENT_USER\Software\PowerTools, DocRootUrl
-
-
 If (key ="") {
 Switch PowerTools_Config
 {
@@ -208,8 +210,11 @@ Switch Config
     Case "Conti":
         PowerTools_RegWrite("Domain","contiwan.com")
         PowerTools_RegWrite("ConnectionsRootUrl","connext.conti.de")
+        PowerTools_RegWrite("ConnectionsName","ConNext")
         PowerTools_RegWrite("TeamsOnly",1)
         PowerTools_RegWrite("DocRootUrl","https://connext.conti.de/blogs/tdalon/entry/")
+    Case "Vitesco":
+         PowerTools_RegWrite("ConnectionsName","InVite")
     Case "Public":
         PowerTools_RegWrite("Domain","")
         PowerTools_RegWrite("ConnectionsRootUrl","")
@@ -224,7 +229,8 @@ Switch Config
             IniRead, IniVal, PowerTools.ini, Main, DocRootUrl
             PowerTools_RegWrite("DocRootUrl",IniVal)
             IniRead, IniVal, PowerTools.ini, Connections, ConnectionsRootUrl
-            PowerTools_RegWrite("ConnectionsRootUrl",IniVal)
+            If (IniVal != "ERROR")
+                PowerTools_RegWrite("ConnectionsRootUrl",IniVal)
         } Else {
             MSgBox 0x10, PowerTools: Error, PowerTools.ini can not be found!
             return

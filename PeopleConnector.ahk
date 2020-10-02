@@ -17,7 +17,7 @@ LastCompiled = 20200806155136
 
 PT_Config := PowerTools_GetConfig()
 RegRead, PT_TeamsOnly, HKEY_CURRENT_USER\Software\PowerTools, TeamsOnly
-
+PowerTools_ConnectionsRootUrl := PowerTools_RegRead("ConnectionsRootUrl")
 SubMenuSettings := PowerTools_MenuTray()
 
 ; -------------------------------------------------------------------------------------------------------------------
@@ -61,6 +61,7 @@ If (SettingNotificationAtStartup)
 Menu, MainMenu, add, Teams &Chat, TeamsChat
 Menu, MainMenu, add, Teams &Pop out Chat, TeamsPop
 Menu, MainMenu, add, &Teams Call, TeamsCall
+Menu, MainMenu, add, Create Teams Meeting, TeamsMeet
 Menu, MainMenu, add, Add to Teams &Favorites, Emails2TeamsFavs
 Menu, MainMenu, add, Add Users to Team, Emails2TeamUsers
 Menu, MainMenu, add, Teams Chat - Copy Link, TeamsChatCopyLink
@@ -71,10 +72,12 @@ Menu, MainMenu, add, Soft Phone Call, Tel
 Menu, MainMenu,Add ; Separator
 Menu, MainMenu, add, Create &Email, MailTo
 Menu, MainMenu, add, Create Outlook &Meeting, MeetTo
-Menu, MainMenu, add, Create Teams Meeting, TeamsMeet
-Menu, MainMenu, add, Copy ConNext &at-Mentions, ConNextEmail2Mention
-Menu, MainMenu,Add ; Separator
-Menu, MainMenu, add, &Open ConNext Profile, ConNextOpenProfile
+If (PowerTools_ConnectionsRootUrl != "") {
+    Menu, MainMenu, add, Copy Connections &at-Mentions, CNEmail2Mention
+    Menu, MainMenu,Add ; Separator
+    Menu, MainMenu, add, &Open Connections Profile, CNOpenProfile
+}
+
 Menu, MainMenu,Add ; Separator
 Menu, MainMenu, add, Open o365/&Delve Profile, DelveProfile
 Menu, MainMenu, add, &Bing Search, BingSearch
@@ -88,40 +91,38 @@ Menu, MainMenu, add, Copy Windows Uids, Emails2WinUids
 Menu, MainMenu, add, Uids to Emails, winUids2Emails
 Menu, MainMenu, add, Copy Emails, CopyEmails
 Menu, MainMenu,Add ; Separator
-Menu, SubMenuCNMentions, add, &Emails,ConNextMentions2Emails
-Menu, SubMenuCNMentions, add, &Teams Chat,ConNextMentions2TeamsChat
-Menu, SubMenuCNMentions, add, &Mentions (extract),ConNextMentions2Emails
-Menu, MainMenu, add, (ConNext) Mentions to, :SubMenuCNMentions
+If (PowerTools_ConnectionsRootUrl != "") {
+    Menu, SubMenuCNMentions, add, &Emails, ConNextMentions2Emails
+    Menu, SubMenuCNMentions, add, &Teams Chat, ConNextMentions2TeamsChat
+    Menu, SubMenuCNMentions, add, &Mentions (extract), ConNextMentions2Emails
+    Menu, MainMenu, add, (Connections) Mentions to, :SubMenuCNMentions
+}
 Menu, MainMenu, add, (Outlook) Addressees to Excel, Outlook2Excel
 return
 
-;<^>!c:: ; <--- Open People Connector Menu
 Shift:: ; (Double Press) <--- Open People Connector Menu
 If (A_PriorHotKey = A_ThisHotKey and A_TimeSincePriorHotkey < 500) {
-    
-    If (WinActiveBrowser()) {
-        sUrl := GetActiveBrowserUrl()
-	     If InStr(sUrl,"://connext.conti.de/homepage/web/updates/") {
-            sSelection := GetSelection("html")
-         } Else    
-            sSelection:= GetSelection()
-    } Else {
-        sSelection:= GetSelection()
-    }
+    sSelection := GetSelection("html")
+    If !(sSelection) ; empty
+        sSelection := GetSelection()
     If !(sSelection) { ; empty
-        TrayTipAutoHide("People Connector warning!","You need first to select something!")   
-        return
+        sSelection := Clipboard
+        ;TrayTipAutoHide("People Connector warning!","You need first to select something!")   
+        ;return
     } 
+    ;MsgBox %sSelection% ; DBG
 
     If WinActive("ahk_exe OUTLOOK.exe")
         Menu, MainMenu, Enable, (Outlook) Addressees to Excel
     Else
         Menu, MainMenu, Disable, (Outlook) Addressees to Excel
     
-    If WinActiveBrowser()
-        Menu, MainMenu, Enable, (ConNext) Mentions to
-    Else
-        Menu, MainMenu, Disable, (ConNext) Mentions to
+    If (PowerTools_ConnectionsRootUrl != "") {
+        If WinActiveBrowser()
+            Menu, MainMenu, Enable, (Connections) Mentions to
+        Else
+            Menu, MainMenu, Disable, (Connections) Mentions to
+    }
     
     Menu, MainMenu, Show
 }
@@ -247,13 +248,13 @@ Run im:%sEmailList%
 
 return
 
-ConNextEmail2Mention:
+CNEmail2Mention:
 sEmailList := GetEmailList(sSelection)
 If (sEmailList = "") { 
     TrayTipAutoHide("People Connector warning!","No email could be found!")   
     return
 }
-sHtmlMentions := CNEmails2Mentions(sEmailList)
+sHtmlMentions := Connections_Emails2Mentions(sEmailList)
 WinClip.SetHtml(sHtmlMentions)
 TrayTipAutoHide("People Connector","Mentions were copied to clipboard in RTF!")   
 return
@@ -410,8 +411,8 @@ Loop, parse, sEmailList, ";"
 return
 
 ; ------------------------------------------------------------------
-ConNextOpenProfile:
-People_ConNextOpenProfile(sSelection)
+CNOpenProfile:
+People_ConnectionsOpenProfile(sSelection)
 return
 
 ; ------------------------------------------------------------------

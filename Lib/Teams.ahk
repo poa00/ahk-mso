@@ -329,6 +329,7 @@ return TeamName
 } ; end of function
 ; ----------------------------------------------------------------------
 TeamsLink2TeamName(TeamLink){
+    ; Not used. Replaced by Teams_GetTeamName
 ; TeamName := TeamsLink2TeamName(TeamLink)
 ; Called by Teams_Link2Text
 RegRead, TeamsPowerShell, HKEY_CURRENT_USER\Software\PowerTools, TeamsPowerShell
@@ -662,7 +663,7 @@ sLink := uriDecode(sLink)
 ; example: https://teams.microsoft.com/l/channel/19%3a16ff462071114e31bd696aa3a4e34500%40thread.skype/DOORS%2520Attributes%2520List?groupId=cd211b48-2e8b-4b60-b5b0-e584a0cf30c0&tenantId=8d4b558f-7b2e-40ba-ad1f-e04d79e6265a
 If (RegExMatch(sLink,"U)https://teams\.microsoft\.com/l/channel/[^/]*/([^/]*)\?groupId=(.*)&",sMatch)) {
     sChannelName := sMatch1
-    sTeamName := TeamsLink2TeamName(sLink)
+    sTeamName := Teams_GetTeamName(sMatch2)
     If (!sTeamsName)
         sDefText = %sTeamName% Team
     Else
@@ -673,7 +674,7 @@ If (RegExMatch(sLink,"U)https://teams\.microsoft\.com/l/channel/[^/]*/([^/]*)\?g
 ; example: https://teams.microsoft.com/l/team/19%3a12d90de31c6e44759ba622f50e3782fe%40thread.skype/conversations?groupId=640b2f00-7b35-41b2-9e32-5ce9f5fcbd01&tenantId=8d4b558f-7b2e-40ba-ad1f-e04d79e6265a
 } Else If (RegExMatch(sLink,"https://teams\.microsoft\.com/l/team/.*groupId=(.*)&",sMatch)) {
 ; https://teams.microsoft.com/l/team/19:c1471a18bae04cf692b8da7e9738df3e@thread.skype/conversations?groupId=56bc81d8-db27-487c-8e4f-8d5ea9058663&tenantId=8d4b558f-7b2e-40ba-ad1f-e04d79e6265a    
-    sTeamName := TeamsLink2TeamName(sLink)
+    sTeamName := Teams_GetTeamName(sMatch1)
     If (!sTeamsName)
         sDefText = %sTeamName% Team
     Else

@@ -103,7 +103,7 @@ CNEmail2Key(sEmail){
          return sKey
 }
 ; ----------------------------------------------------------------------
-CNEmails2Mentions(sEmailList){
+Connections_Emails2Mentions(sEmailList){
 OnMessage(0x44, "OnMentionMsgBox")
 MsgBox 0x24, Emails To Mentions, Select your Mention Display Name Format:
 OnMessage(0x44, "")
@@ -116,9 +116,9 @@ IfMsgBox, No
 Loop, parse, sEmailList, ";"
 {
     sMention := CNEmail2Mention(A_LoopField, sNameStyle)
-    sHtmlMentions = %sHtmlMentions% %sMention%
+    sHtmlMentions = %sHtmlMentions%, %sMention%
 }	
-return sHtmlMentions
+return SubStr(sHtmlMentions,3) ; remove trailing ;
 }
 ; ----------------------------------------------------------------------
 CNEmail2Mention(sEmail,sNameStyle := "first"){
@@ -131,6 +131,7 @@ If (sNameStyle = "first")
 Else {
     sName := RegExReplace(sEmail,"@.*" ,"")
     sName := StrReplace(sName,"." ," ")
+	sName := RegExReplace(sName," \(.*\)","") ; Remove (uid) in firstname
 }
 StringUpper, sName, sName , T
 sMention := "<a class='vcard' data-userid='" . sUid . "' href='https://" . PowerTools_ConnectionsRootUrl . "/profiles/html/profileView.do?userid=" . sUid . "'>@" . sName . "</a>"
@@ -149,7 +150,7 @@ While Pos := RegExMatch(sHtml,sPat,sMatch,Pos+StrLen(sMatch)) {
 	}
 	sMention := "<a class='vcard' data-userid='" . sMatch1 . "' href='https://" . PowerTools_ConnectionsRootUrl . "/profiles/html/profileView.do?userid=" . sMatch1 . "'>" . sMatch2 . "</a>"
     sHtmlMentions = %sHtmlMentions% %sMention%
-    sUidList = %sMatch1%;%sUidList%
+    sUidList := sMatch1 . ";" sUidList
 }
 return sHtmlMentions
 } ; eof
@@ -162,14 +163,14 @@ CNMentions2Emails(sHtml){
 sPat = \?userid=([0-9A-Z]*?)"
 Pos = 1 
 While Pos := RegExMatch(sHtml,sPat,sUid,Pos+StrLen(sUid)){
-    If InStr(sUidList,sUid1 . ";")
+    If InStr(sUidList,sUid1 . ";") ; skip duplicates
         continue
     
     sEmail := CNUid2Email(sUid1)
     If (sEmail = "") ; Inactive user
         continue
-    sEmailList = %sEmailList%;%sEmail%
-    sUidList = %sUid1%;%sUidList%
+    sEmailList := sEmailList . ";" . sEmail
+    sUidList := sUid1 . ";" . sUidList
 }
 return SubStr(sEmailList,2) ; remove trailing ;
 

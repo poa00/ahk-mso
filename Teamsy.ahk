@@ -46,6 +46,10 @@ Case "s","save":
     sKeyword = saved
 Case "d":
     sKeyword = dnd
+Case "cal":
+    WinId := Teams_GetMainWindow()
+    WinActivate, ahk_id %WinId%
+    SendInput ^4; open calendar
 Case "m","meet": ; create a meeting
     WinId := Teams_GetMainWindow()
     WinActivate, ahk_id %WinId%
@@ -77,7 +81,7 @@ Case "x","n","new":
     sleep, 300
     SendInput +{Tab} ; move cursor back to subject line via shift+tab
     return
-Case "v","vi": ; Activate video with background
+Case "v","vi": ; Toggle video with background
     WinId := Teams_GetMeetingWindow()
     WinActivate, ahk_id %WinId%
     SendInput ^+o ; toggle video Ctl+Shift+o
