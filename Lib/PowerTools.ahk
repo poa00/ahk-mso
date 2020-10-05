@@ -35,24 +35,24 @@ PTHelp(ScriptName){
 Switch ScriptName 
 {
 Case "ConnectionsEnhancer":
-    sUrl = https://github.com/tdalon/ahk/wiki/Connections-Enhancer
+    sUrl = https://tdalon.github.io/ahk/Connections-Enhancer
 Case "TeamsShortcuts":
-    sUrl = https://connext.conti.de/blogs/tdalon/entry/teams_shortcuts_ahk
+    sUrl = https://tdalon.github.io/ahk/Teams-Shortcuts
 Case "MO":
     sUrl := "https://connext.conti.de/wikis/home/wiki/Wc4f94c47297c_42c8_878f_525fd907cb68/page/MO%20PowerTool"
 Case "PeopleConnector":
-    sUrl = https://github.com/tdalon/ahk/wiki/People-Connector
+    sUrl = https://tdalon.github.io/ahk/People-Connector
 Case "OutlookShortcuts":
-    sUrl = https://connext.conti.de/blogs/tdalon/entry/outlook_autohotkey_script
+    sUrl = https://tdalon.github.io/ahk/Outlook-Shortcuts
 Case "Teamsy":
-    sUrl = https://github.com/tdalon/ahk/wiki/Teamsy
+    sUrl = https://tdalon.github.io/ahk/Teamsy
 Case "NWS":
-    sUrl := "https://connext.conti.de/wikis/home/wiki/Wc4f94c47297c_42c8_878f_525fd907cb68/page/NWS%20PowerTool"
+    sUrl := "https://tdalon.github.io/ahk/NWS%20PowerTool"
 Case "Bundler":
-    sUrl :="https://connext.conti.de/wikis/home/wiki/Wc4f94c47297c_42c8_878f_525fd907cb68/page/PowerTools%20Bundler"
+    sUrl :="https://tdalon.github.io/ahk/PowerTools%20Bundler"
 Case "all":
 Default:
-    sUrl := "https://connext.conti.de/wikis/home/wiki/Wc4f94c47297c_42c8_878f_525fd907cb68/page/GUIDEs%20Power%20Tools"	
+    sUrl := "https://tdalon.github.io/ahk/PowerTools"	
 }
 Run, %sUrl%
 }
@@ -61,21 +61,21 @@ PTReleaseNotes(ScriptName){
 Switch ScriptName 
 {
 Case "ConnectionsEnhancer":
-    sUrl := "https://github.com/tdalon/ahk/wiki/Connections-Enhancer-(Changelog)"
+    sUrl := "https://tdalon.github.io/ahk/Connections-Enhancer-(Changelog)"
 Case "TeamsShortcuts":
-    sUrl := "https://github.com/tdalon/ahk/wiki/Teams-Shortcuts-(Changelog)"
+    sUrl := "https://tdalon.github.io/ahk/Teams-Shortcuts-(Changelog)"
 Case "MO":
     sUrl := "http://github.conti.de/ContiSource/ahk/wiki/MO-(Release-Notes)"
 Case "PeopleConnector":
-    sUrl := "https://github.com/tdalon/ahk/wiki/People-Connector-(Changelog)"
+    sUrl := "https://tdalon.github.io/ahk/People-Connector-(Changelog)"
 Case "NWS":
-    sUrl := "https://github.com/tdalon/ahk/wiki/NWS-PowerTool-(Changelog)"
+    sUrl := "https://tdalon.github.io/ahk/NWS-PowerTool-(Changelog)"
 Case "Bundler":
     sUrl :="https://connext.conti.de/wikis/home/wiki/Wc4f94c47297c_42c8_878f_525fd907cb68/page/PowerTools%20Bundler"
 Case "OutlookShortcuts":
-    sUrl :="https://github.com/tdalon/ahk/wiki/Outlook-Shortcuts-(Changelog)"
+    sUrl :="https://tdalon.github.io/ahk/Outlook-Shortcuts-(Changelog)"
 Case "Teamsy":
-    sUrl := "https://github.com/tdalon/ahk/wiki/Teamsy-(Changelog)"
+    sUrl := "https://tdalon.github.io/ahk/Teamsy-(Changelog)"
 Case "all":
 Default:
     sUrl := "http://github.conti.de/ContiSource/ahk/wiki/PowerTools-Release-Notes"	
