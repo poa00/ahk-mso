@@ -16,13 +16,17 @@ People_GetEmailList(sInput){
 ; Syntax: sEmailList := People_GetEmailList(sInput)
 
 global PowerTools_ConnectionsRootUrl
+sInput := StrReplace(sInput,"%40","@") ; for connext profile links - decode @
+
 sPat = [0-9a-zA-Z\.\-]+@[0-9a-zA-Z\-\.]*\.[a-z]{2,3}
 ; TODO bug if Connext mention
 Pos = 1 
 While Pos := RegExMatch(sInput,sPat,sMatch,Pos+StrLen(sMatch)){
     If InStr(sEmailList,sMatch . ";")
         continue
-    sEmailList = %sEmailList%;%sMatch%
+    If InStr(sMatch, "@thread.sky") ; skip from Teams conversation
+        continue
+    sEmailList := sEmailList . sMatch . ";"
 }
 
 sPat = https?://%PowerTools_ConnectionsRootUrl%/profiles/html/profileView.do\?userid=([0-9A-Z]*)
@@ -35,10 +39,10 @@ While Pos := RegExMatch(sInput,sPat,sMatch,Pos+StrLen(sMatch)){
     sEmail := CNUid2Email(sUid)
     If InStr(sEmailList,sEmail . ";")
         continue
-    sEmailList = %sEmailList%;%sEmail%
-    sUidList = %sUidList%;%sUid%
+    sEmailList := sEmailList . sEmail . ";"
+    sUidList := sUidList . sUid . ";"
 }
-return SubStr(sEmailList,2) ; remove starting ;
+return SubStr(sEmailList,1,-1) ; remove ending ;
 } ; eof
 ; ----------------------------------------------------------------------
 
@@ -56,7 +60,7 @@ Loop, parse, sEmailList, ";"
     sUid := Email2Uid(A_LoopField,FieldName)
     sUidList = %sUidList%, %sUid%
 }	
-return SubStr(sUidList,2) ; remove starting ;
+return SubStr(sUidList,2) ; remove starting ,
 }
 
 ; ----------------------------------------------------------------------
@@ -71,7 +75,7 @@ winUids2Emails(sUidList){
 Loop, parse, sUidList, `;%A_Tab%`,
 {
     sEmail := winUid2Email(Trim(A_LoopField))
-    sEmailList = %sEmailList%;%sEmail%
+    sEmailList := sEmailList . ";" . sEmail
 }	
 return SubStr(sEmailList,2) ; remove starting ;
 }

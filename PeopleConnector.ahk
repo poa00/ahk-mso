@@ -131,7 +131,7 @@ return
 
 ; ----------------------------  Menu Callbacks -------------------------------------
 TeamsChat: 
-sEmailList := GetEmailList(sSelection)
+sEmailList := People_GetEmailList(sSelection)
 If (sEmailList = "") { 
     TrayTipAutoHide("People Connector warning!","No email could be found!")   
     return
@@ -149,7 +149,7 @@ return
 
 ; ------------------------------------------------------------------
 TeamsMeet: 
-sEmailList := GetEmailList(sSelection)
+sEmailList := People_GetEmailList(sSelection)
 If (sEmailList = "") { 
     TrayTipAutoHide("People Connector warning!","No email could be found!")   
     return
@@ -160,7 +160,7 @@ return
 
 ; ------------------------------------------------------------------
 TeamsPop: 
-sEmailList := GetEmailList(sSelection)
+sEmailList := People_GetEmailList(sSelection)
 If (sEmailList = "") { 
     TrayTipAutoHide("People Connector warning!","No email could be found!")   
     return
@@ -171,7 +171,7 @@ return
 
 ; ------------------------------------------------------------------
 TeamsChatCopyLink:
-sEmailList := GetEmailList(sSelection)
+sEmailList := People_GetEmailList(sSelection)
 If (sEmailList = "") { 
     TrayTipAutoHide("People Connector warning!","No email could be found!")   
     return
@@ -180,7 +180,7 @@ Teams_Emails2ChatDeepLink(sEmailList)
 return
 
 TeamsCall:
-sEmailList := GetEmailList(sSelection)
+sEmailList := People_GetEmailList(sSelection)
 If (sEmailList = "") { 
     TrayTipAutoHide("People Connector warning!","No email could be found!")   
     return
@@ -196,7 +196,7 @@ return
 
 ; ------------------------------------------------------------------
 SkypeChat:
-sEmailList := GetEmailList(sSelection)
+sEmailList := People_GetEmailList(sSelection)
 If (sEmailList = "") { 
     TrayTipAutoHide("People Connector warning!","No email could be found!")   
     return
@@ -249,7 +249,7 @@ Run im:%sEmailList%
 return
 
 CNEmail2Mention:
-sEmailList := GetEmailList(sSelection)
+sEmailList := People_GetEmailList(sSelection)
 If (sEmailList = "") { 
     TrayTipAutoHide("People Connector warning!","No email could be found!")   
     return
@@ -282,7 +282,7 @@ return
 
 ; ------------------------------------------------------------------
 CopyEmails:
-sEmailList := GetEmailList(sSelection)
+sEmailList := People_GetEmailList(sSelection)
 If (sEmailList = "") { 
     TrayTipAutoHide("People Connector warning!","No email could be found!")   
     return
@@ -296,7 +296,7 @@ If GetKeyState("Ctrl") {
 	Run, "https://connext.conti.de/blogs/tdalon/entry/people_connector_get_userid"
 	return
 }
-sEmailList := GetEmailList(sSelection)
+sEmailList := People_GetEmailList(sSelection)
 If (sEmailList = "") { 
     TrayTipAutoHide("People Connector warning!","No email could be found!")   
     return
@@ -311,7 +311,7 @@ If GetKeyState("Ctrl") {
 	Run, "https://connext.conti.de/blogs/tdalon/entry/people_connector_get_userid"
 	return
 }
-sEmailList := GetEmailList(sSelection)
+sEmailList := People_GetEmailList(sSelection)
 If (sEmailList = "") { 
     TrayTipAutoHide("People Connector warning!","No email could be found!")   
     return
@@ -334,7 +334,7 @@ If GetKeyState("Ctrl") {
 	Run, "https://connext.conti.de/blogs/tdalon/entry/people_connector_teams_favorites"
 	return
 }
-sEmailList := GetEmailList(sSelection)
+sEmailList := People_GetEmailList(sSelection)
 If (sEmailList = "") { 
     TrayTipAutoHide("People Connector warning!","No email could be found!")   
     return
@@ -344,7 +344,7 @@ return
 
 ; ------------------------------------------------------------------
 Emails2TeamUsers:
-sEmailList := GetEmailList(sSelection)
+sEmailList := People_GetEmailList(sSelection)
 If (sEmailList = "") { 
     TrayTipAutoHide("People Connector warning!","No email could be found!")   
     return
@@ -362,7 +362,7 @@ OL2XL(sSelection)
 return
 
 MailTo:
-sEmailList := GetEmailList(sSelection)
+sEmailList := People_GetEmailList(sSelection)
 If (sEmailList = "") { 
     TrayTipAutoHide("People Connector warning!","No email could be found!")   
     return
@@ -379,7 +379,7 @@ MailItem.Display ;Make email visible
 return
 
 MeetTo:
-sEmailList := GetEmailList(sSelection)
+sEmailList := People_GetEmailList(sSelection)
 If (sEmailList = "") { 
     TrayTipAutoHide("People Connector warning!","No email could be found!")   
     return
@@ -399,7 +399,7 @@ return
 
 ; ------------------------------------------------------------------
 DelveProfile:
-sEmailList := GetEmailList(sSelection)
+sEmailList := People_GetEmailList(sSelection)
 If (sEmailList = "") { 
     TrayTipAutoHide("People Connector warning!","No email could be found!")   
     return
@@ -417,7 +417,7 @@ return
 
 ; ------------------------------------------------------------------
 StreamProfile:
-sEmailList := GetEmailList(sSelection)
+sEmailList := People_GetEmailList(sSelection)
 If (sEmailList != "") {
     Loop, parse, sEmailList, ";"
     {
@@ -473,14 +473,3 @@ Else {
 PowerTools_RegWrite("NotificationAtStartup",SettingNotificationAtStartup)
 return
 ; ------------------------------- SUBFUNCTIONS ----------------------------------------------------------
-
-
-GetEmailList(sSelection){
-sEmailList := People_GetEmailList(sSelection)
-If (sEmailList = "")  { 
-    sInput := GetSelection("html")
-    sInput := StrReplace(sInput,"%40","@") ; for connext profile links
-    sEmailList := People_GetEmailList(sInput)
-}
-return sEmailList
-}
