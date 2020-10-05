@@ -3,11 +3,12 @@
 This repository provide several tools bundled together under the term "PowerTools".
 
 These are:
-- Teamsy
-- Teams Shortcuts
-- NWS PowerTool
-- People Connector
-- Outlook Shortcuts
+- [Teamsy](Teamsy.md)
+- [Teams Shortcuts](Teams-Shortcuts.md)
+- [NWS PowerTool](NWS-PowerTool.md)
+- [People Connector](People-Connector.md)
+- [Outlook Shortcuts](Outlook-Shortcuts.md)
+- [Connections Enhancer](Connections-Enhancer.md)
 
 These tools are implemented in this directory using AutoHotkey.
 

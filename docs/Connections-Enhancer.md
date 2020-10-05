@@ -13,3 +13,7 @@ You can run the AHK source (download or clone the whole repository) or run the s
 The compiled version is easier to run/ install.
 
 The source code allows you to tweak the tool.
+
+# Changelog
+
+Changelog is available here [Changelog](Connections-Enhancer-(Changelog).md)
