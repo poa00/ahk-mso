@@ -16,4 +16,4 @@ The source code allows you to tweak the tool.
 
 # Changelog
 
-Changelog is available here [Changelog](Connections-Enhancer-(Changelog).md)
+Changelog is available here [Changelog](Connections-Enhancer-(Changelog))

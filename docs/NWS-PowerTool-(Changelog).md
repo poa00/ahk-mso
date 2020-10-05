@@ -1,3 +1,5 @@
+# NWS PowerTool Changelog
+
 * 2020-09-18
     * Share to Teams integrated in Win+F1 Browser menu
 * 2020-09-14
@@ -19,7 +21,7 @@
 * 2020-08-03
     * ConNext Quick Search: wiki. replace %20 by space for Def Search from url query
 * 2020-07-23
-    * IntelliPaste: add setting to ask for icons for ConNext entries or not 
+    * IntelliPaste: add setting to ask for icons for ConNext entries or not
     * IntelliPaste: do not ask for icon if window title contains " | Microsoft Teams" (Teams open in browser)
 * 2020-07-22
     * Create Ticket from Social Support also works from the Systray icon menu.
@@ -75,7 +77,7 @@
 * 2020-02-21
     * Disable IntelliPaste Insert key for Freemind
     * Settings-> IntelliPaste Hotkey: hotkey can be configured by the user (default Insert key)
-* 2020-02-19 
+* 2020-02-19
     * FIX: Open from Synced location: in case mapping is not defined, dummy browser window was opened
     * Added CapsLock+Y: for YouTube search
 * 2020-02-18: added link to release notes/ change log

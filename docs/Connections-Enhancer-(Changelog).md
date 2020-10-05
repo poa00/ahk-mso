@@ -1,10 +1,12 @@
+# Connections Enhancer Changelog
+
 * 2020-09-29
     * Refactoring GetRootUrl. Add in Settings. Ask if not defined.
     * Move to public
 * 2020-09-11
     * Add Create New to Main menu
 * 2020-07-24
-    * Clean Table: removed: td formatted as align center. 
+    * Clean Table: removed: td formatted as align center.
     * Clean all: will also Clean Tables
 * 2020-07-22
     * Refresh Toc (Win+f5) will insert Wiki Toc on top of the page if no Toc is defined
@@ -17,7 +19,7 @@
         * also insert TOC macro for wiki page
         * Refresh TOC macro wiki page will also clean-up Headings ids
         * Add Delete Toc menu
-        * Insert Toc will ask for location: top|cursor|bottom
+        * Insert Toc will ask for location: top,cursor,bottom
     * Switch to Source Code with cursor location kept
 
 * 2020-03-31

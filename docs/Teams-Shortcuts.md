@@ -4,4 +4,4 @@ This tool extends the Microsoft Teams Windows Client with additional hotkeys and
 
 See related blog posts tagged with #teams-shortcuts
 
-Changelog is available here [Changelog](Teams-Shortcuts-(Changelog).md)
+Changelog is available here [Changelog](Teams-Shortcuts-(Changelog))

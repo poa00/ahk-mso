@@ -1,3 +1,5 @@
+# People Connector Changelog
+
 * 2020-09-11
     * Teams Chat will open directly in Teams App instead of going via the browser.
 * 2020-09-09

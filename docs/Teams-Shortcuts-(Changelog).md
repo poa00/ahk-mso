@@ -1,3 +1,5 @@
+# Teams Shorctuts Changelog
+
 * 2020-09-21
     * SmartReply: Update to new hotkey Alt+Shift+r instead of r for reply
 * 2020-09-14
