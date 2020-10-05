@@ -17,4 +17,4 @@ or as compiled standalone .exe version (no need for AutoHotkey installation in t
 
 You can set them up and check for updates using the PowerTool Bundler.
 
-Changelogs are available [here](PowerTools-Changelog).
+Changelogs are available [here](PowerTools-Changelogs).
