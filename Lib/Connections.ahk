@@ -639,7 +639,7 @@ Else If Connections_IsConnectionsUrl(sLink,"blog") {
 		; Example: https://connext.conti.de/blogs/5e459baf-5ca3-4490-848c-4a39ff5488d8/entry/Pop_out_chat?lang=en#threadid=9d904fd6-c550-4722-9f65-f2a40807aef1
 		If RegExMatch(sLink,"://" . PowerTools_ConnectionsRootUrl . "/blogs/.*#threadid=.*$") {
 			linktext = %linktext% (Comment)
-		} Else If RegExMatch(sLink,PowerTools_ConnectionsRootUrl + "/blogs/.*#(.*$)",sSection) {
+		} Else If RegExMatch(sLink,PowerTools_ConnectionsRootUrl . "/blogs/.*#(.*$)",sSection) {			
 			sSection1 := StrReplace(sSection1,"_"," ")
 			linktext = %linktext% : %sSection1%
 		} Else If RegExMatch(sLink,"/search\?.*&q=([^&]*)",sMatch) {
@@ -653,11 +653,13 @@ Else If Connections_IsConnectionsUrl(sLink,"blog") {
 		}
 		;linktext = %linktext% (Blog Post)
 		StringGetPos,pos,linktext,%A_space%-,R
+
 		if (pos >=0) {
 			shorttitle := SubStr(linktext,1,pos)
 			linktext := ListBox("Link text display", "Select your link text display", linktext . "|" . shorttitle, Select := 1)
 		}
 	}
+
 	
 } Else If Connections_IsConnectionsUrl(sLink,"forum") {
 	linktext := CNGetTitle(sLink)

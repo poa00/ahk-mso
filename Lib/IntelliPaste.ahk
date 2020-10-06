@@ -4,7 +4,7 @@
 #Include <Teams>
 #Include <uriDecode>
 #Include <IsSharePointUrl>
-; Calls: CNGetTitle, ConNext_Link2Text, CNFormatImg
+; Calls: CNGetTitle, Connections_Link2Text, CNFormatImg
 #Include <Connections>
 #Include <Confluence>
 
@@ -16,7 +16,7 @@ Link2Text(sLink) {
 ; Syntax:
 ; 	linktext := Link2Text(sLink)
 ; Called by: IntelliHtml
-; Calls: ConNext_Link2Text, Teams_Link2Text
+; Calls: Connections_Link2Text, Teams_Link2Text
 
 
 If InStr(sLink,"https://teams.microsoft.com/") {
