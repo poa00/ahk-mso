@@ -17,7 +17,7 @@ SetWorkingDir %A_ScriptDir%
 #Include <Teams>
 #Include <Explorer>
 
-LastCompiled = 20200918135851
+LastCompiled = 20201006200702
 
 global PowerTools_ConnectionsRootUrl
 If (PowerTools_ConnectionsRootUrl="") {
@@ -669,7 +669,7 @@ SendInput ^c
 ClipWait, 0.5
 file := Clipboard
 Clipboard := ClipSaved
-Run D:\Programs\Notepad++\notepad++.exe "%file%" 
+Run, notepad++.exe "%file%" 
 return
 
 ; -------------------------------------------------------------------------------------------------------------------

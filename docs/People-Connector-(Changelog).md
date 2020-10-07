@@ -1,5 +1,13 @@
 # People Connector Changelog
 
+* 2020-10-07
+    * If Excel application: do not getselection in Html format
+* 2020-10-01
+    * Remove (uid) from Connections mentions
+    * First take selection in html format: Allows to run PeopleConnector from an email in Outlook body e.g. notification meeting forward.
+* 2020-09-30
+    * If not selection, take input from the current clipboard. Allow to run from Teams Meeting people visit card, where on only can copy the email to the clipboard (selection will mailto)
+    * If no Connections used (ConnectionsRootUrl setting not set/ asked when running Connections Enhancer), Connections specific menus will not be displayed.
 * 2020-09-11
     * Teams Chat will open directly in Teams App instead of going via the browser.
 * 2020-09-09
@@ -14,7 +22,7 @@
 * 2020-07-06
     * Get Name will only consider first line in case multiple lines are selected e.g. Name selection on forum entry in ConNext
 * 2020-07-03
-    * Open ConNext Profile now checks if input is an email. If not, search by name. (Menu ConNext Search Profile by name removed). Works for example also from Teams on name selection.
+    * Open Connections Profile now checks if input is an email. If not, search by name. (Menu ConNext Search Profile by name removed). Works for example also from Teams on name selection.
     * Look-up from Name with Lastname, Firstname (e.g. Teams) will convert to Firstname Lastname
 * 2020-07-02
     * Open LinkedIn or Bing search from email selection e.g. in Teams (convert email to name)
@@ -31,7 +39,7 @@
 * 2020-02-20
     * NEW: Export List of people in Outlook to Excel Table ([link](https://connext.conti.de/blogs/tdalon/entry/people_connector_ol2xl))
 * 2020-02-19
-    * FIX copy from ConNext news feed
+    * FIX copy from Connections news feed
     * add link to Release Notes / Change log
 * 2020-02-13: Get userId Windows uid
 * 2020-02-12: Emails to Team Members

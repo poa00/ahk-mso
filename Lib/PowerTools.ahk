@@ -31,7 +31,7 @@ RunWait, %sCmd%,,Hide
 } ; eof
 
 ; ---------------------------------------------------------------------- 
-PTHelp(ScriptName){
+PowerTools_Help(ScriptName){
 Switch ScriptName 
 {
 Case "ConnectionsEnhancer":
@@ -57,31 +57,45 @@ Default:
 Run, %sUrl%
 }
 
-PTReleaseNotes(ScriptName){
+PowerTools_Changelog(ScriptName){
 Switch ScriptName 
 {
 Case "ConnectionsEnhancer":
-    sUrl := "https://tdalon.github.io/ahk/Connections-Enhancer-(Changelog)"
+    sFileName = Connections-Enhancer-(Changelog)
 Case "TeamsShortcuts":
-    sUrl := "https://tdalon.github.io/ahk/Teams-Shortcuts-(Changelog)"
+    sFileName = Teams-Shortcuts-(Changelog)
 Case "MO":
     sUrl := "http://github.conti.de/ContiSource/ahk/wiki/MO-(Release-Notes)"
+    Run, %sUrl%
+    return
 Case "PeopleConnector":
-    sUrl := "https://tdalon.github.io/ahk/People-Connector-(Changelog)"
+    sFileName = People-Connector-(Changelog)
 Case "NWS":
-    sUrl := "https://tdalon.github.io/ahk/NWS-PowerTool-(Changelog)"
+    sFileName = NWS-PowerTool-(Changelog)
 Case "Bundler":
-    sUrl :="https://connext.conti.de/wikis/home/wiki/Wc4f94c47297c_42c8_878f_525fd907cb68/page/PowerTools%20Bundler"
+    ; TODO
+    sFileName = PowerTools-Bundler-(Changelog)
 Case "OutlookShortcuts":
-    sUrl :="https://tdalon.github.io/ahk/Outlook-Shortcuts-(Changelog)"
+    sFileName = Outlook-Shortcuts-(Changelog)
 Case "Teamsy":
-    sUrl := "https://tdalon.github.io/ahk/Teamsy-(Changelog)"
+    sFileName = Teamsy-(Changelog)
 Case "all":
 Default:
-    sUrl := "http://github.conti.de/ContiSource/ahk/wiki/PowerTools-Release-Notes"	
+    sFileName =  PowerTools-Release-Notes
 }
-Run, %sUrl%
+
+If !A_IsCompiled {
+    sFile = %A_ScriptDir%\docs\%sFileName%.md
+    If FileExist(sFile) {
+        ;Run, Open %sFile% ; does not open Atom
+        Run notepad++.exe "%sFile%"
+        Return
+    }
+} Else {
+    sUrl = https://tdalon.github.io/ahk/%sFileName%
+    Run, %sUrl%
 }
+} ; eofun
 
 ; ---------------------------------------------------------------------- 
 
@@ -268,7 +282,7 @@ Menu,Tray,NoStandard
 Menu,Tray,Add, &Help, MenuCb_PTHelp
 Menu,Tray,Add,Support (Teams Channel), MenuCb_PowerTools_Support
 Menu,Tray,Add,Check for update, MenuCb_PTCheckForUpdate
-Menu,Tray,Add,Changelog, MenuCb_PTReleaseNotes
+Menu,Tray,Add,Changelog, MenuCb_PTChangelog
 
 If !a_iscompiled {
 	IcoFile := RegExReplace(A_ScriptFullPath,"\..*",".ico")
@@ -309,12 +323,12 @@ Else {
 
 MenuCb_PTHelp(ItemName, ItemPos, MenuName){
 ScriptName := RegExReplace(A_ScriptName,"\..*","")
-PTHelp(ScriptName)
+PowerTools_Help(ScriptName)
 }
 
-MenuCb_PTReleaseNotes(ItemName, ItemPos, MenuName){
+MenuCb_PTChangelog(ItemName, ItemPos, MenuName){
 ScriptName := RegExReplace(A_ScriptName,"\..*","") 
-PTReleaseNotes(ScriptName)   
+PowerTools_Changelog(ScriptName)   
 }
 
 MenuCb_PowerTools_Support(ItemName, ItemPos, MenuName){

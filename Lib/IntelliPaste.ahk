@@ -140,7 +140,7 @@ If InStr(sInput,"https://teams.microsoft.com/l/message/") {
 		sInput := StrReplace(sInput,"_percent","%")
 		linktext = %sId1%
 		;https://hpsm-web.cw01.contiwan.com/sm/ess.do?ctx=docEngine&file=incidents&query=incident.id%3D%22SD422825518%22
-} Else If RegExMatch(sInput,"\.png$") or RegExMatch(sInput,"\.gif$") or RegExMatch(sInput,"\.jpg$") or RegExMatch(sInput,"^https?://connext.conti.de/forums/ajax/download\?nodeId=") { ; Image files
+} Else If RegExMatch(sInput,"\.png$") or RegExMatch(sInput,"\.gif$") or RegExMatch(sInput,"\.jpg$") or RegExMatch(sInput,"^https?://connext.conti.de/forums/ajax/download\?nodeId=") { ; Image files TODO: change to ConnectionsRootUrl
 		sHtml = <img src="%sInput%"/></img>
 		sHtml := CNFormatImg(sHtml)
 } Else If InStr(sInput,".mp4") or InStr(sInput,".wmv") {
@@ -463,7 +463,7 @@ If InStr(sClipboard,"`n") { ; MultiLine
 	sStyle = single-line ; Default
 
 SetTitleMatchMode, 2 ; partial match
-If (WinActive("jira.conti.de")) ||  (WinActive("JIRA BS")) {
+If (WinActive("jira.conti.de")) ||  (WinActive("JIRA BS")) { ;TODO replace by IsJira
 	sFullText := JiraFormatLinks(sClipboard,sStyle)
 	PT_wc.SetText(sFullText)
 	PT_wc.Paste()
@@ -477,7 +477,7 @@ If (WinActive("Confluence")) {
 
 useico := True
 ; Do not ask for ico for specific applications where pasting icon doesn't work
-If WinActive("ahk_group MSOffice") or  WinActive("Confluence") or WinActive("Microsoft Teams")  or WinActive("Microsoft Stream")
+If WinActive("ahk_group MSOffice") or  WinActive("Confluence") or WinActive("Microsoft Teams")  or WinActive("Microsoft Stream") or WinActive("Microsoft Whiteboard")
 	useico := False
 Else If  WinActive("ahk_exe notepad.exe") or WinActive("ahk_exe notepad++.exe") or WinActive("ahk_exe WorkFlowy.exe") ; plain text editor
 	useico := False
@@ -487,6 +487,14 @@ Else If !InStr(sClipboard,"`n") { ; single entry
 		useico := True
 	Else If InStr(sClipboard,".mp4") or InStr(sClipboard,"_player.html") or RegExMatch(sClipboard,"\.png$") or RegExMatch(sClipboard,"\.gif$") or RegExMatch(sClipboard,"\.jpg$") or  RegExMatch(sClipboard,"(SD[\d]{1,})") or RegExMatch(sClipboard,"https://www.youtube.com/") or RegExMatch(sClipboard,"https://web.microsoftstream.com/")
 		useico := False
+
+	Else If InStr(sClipboard,"https://github.com/") {
+		sFile := StrReplace(sClipboard,"/blob/","/raw/")
+		sFullText = <script src="http://gist-it.appspot.com/%sFile%"></script>
+		PT_wc.SetText(sFullText)
+		PT_wc.Paste() 
+		return
+	}
 }
 
 ; Check if one ico is necessary (slower but less user annoying: do not ask if not needed)

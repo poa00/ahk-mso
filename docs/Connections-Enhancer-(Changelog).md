@@ -1,5 +1,7 @@
 # Connections Enhancer Changelog
 
+* 2020-10-01
+  * Create Table of mentions with pictures/ Extract mentions: remove (uid) in mentions name
 * 2020-09-29
     * Refactoring GetRootUrl. Add in Settings. Ask if not defined.
     * Move to public

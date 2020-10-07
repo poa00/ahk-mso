@@ -1,5 +1,10 @@
 # Teamsy Changelog
 
+* 2020-10-07
+  - Fix: cal keyword. missing return
+  - Changed f->find (previously set status to free)
+* 2020-10-06
+  - Fix: New expanded conversation hotkey [https://tdalon.blogspot.com/teamsy-new-conversation](broken)
 * 2020-09-30
     * Integrate to PowerTools Bundle. Add SysTray with link to help/ changelog. Add to Bundler.
 * 2020-09-29
