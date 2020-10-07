@@ -1,7 +1,7 @@
 theme: jekyll-theme-minimal
-title: tdalon/ahk 
+title: tdalon/ahk
 description: A collection of AutoHotkey-based tools and utilities - including the PowerTools suite.
-logo: assets\img\favicon.png
+logo: /assets/img/favicon.png
 show_downloads: True
 google_analytics: UA-179982805-1
 navigation:
@@ -10,4 +10,4 @@ navigation:
   - title: PowerTools
     url: PowerTools
   - title: Changelogs
-    url: PowerTools-(Changelogs)
+    url: PowerTools-Changelogs

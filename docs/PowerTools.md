@@ -3,12 +3,13 @@
 This repository provide several tools bundled together under the term "PowerTools".
 
 This includes:
-- [Teamsy](Teamsy.md)
-- [Teams Shortcuts](Teams-Shortcuts)
-- [NWS PowerTool](NWS-PowerTool)
-- [People Connector](People-Connector)
-- [Outlook Shortcuts](Outlook-Shortcuts)
 - [Connections Enhancer](Connections-Enhancer)
+- [NWS PowerTool](NWS-PowerTool)
+- [Outlook Shortcuts](Outlook-Shortcuts)
+- [People Connector](People-Connector)
+- [Teams Shortcuts](Teams-Shortcuts)
+- [Teamsy](Teamsy.md)
+
 
 These tools are implemented in [this repository](https://github.com/tdalon/ahk) using AutoHotkey.
 
