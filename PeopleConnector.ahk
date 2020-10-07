@@ -3,7 +3,7 @@
 ; See help/homepage: https://connext.conti.de/blogs/tdalon/entry/people_connector
 
 ; Calls: ExtractEmails, TrayTipAutoHide, ToStartup
-LastCompiled = 20200806155136
+LastCompiled = 20201006200708
 
 #SingleInstance force ; for running from editor
 
@@ -102,14 +102,21 @@ return
 
 Shift:: ; (Double Press) <--- Open People Connector Menu
 If (A_PriorHotKey = A_ThisHotKey and A_TimeSincePriorHotkey < 500) {
-    sSelection := GetSelection("html")
-    If !(sSelection) ; empty
+    
+    If WinActive("ahk_exe Excel.exe") {
         sSelection := GetSelection()
+    } Else {
+        sSelection := GetSelection("html")
+        If !(sSelection) ; empty
+            sSelection := GetSelection()
+    }
+
     If !(sSelection) { ; empty
         sSelection := Clipboard
         ;TrayTipAutoHide("People Connector warning!","You need first to select something!")   
         ;return
     } 
+  
     ;MsgBox %sSelection% ; DBG
 
     If WinActive("ahk_exe OUTLOOK.exe")

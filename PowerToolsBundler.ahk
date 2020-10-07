@@ -10,7 +10,7 @@ IcoFile := RegExReplace(A_ScriptFullPath,"\..*",".ico")
 If (FileExist(IcoFile)) 
 	Menu,Tray,Icon, %IcoFile%
 
-AppList = MO,ConnectionsEnhancer,NWS,OutlookShortcuts,PeopleConnector,TeamsShortcuts
+AppList = MO,ConnectionsEnhancer,NWS,OutlookShortcuts,PeopleConnector,TeamsShortcuts,Teamsy
 
 sGuiTitle = PowerTools Bundle
 Gui, New,,%sGuiTitle%
@@ -55,9 +55,11 @@ If !a_iscompiled {
 Menu, ActionsMenu, Add, Add to &Startup`tCtrl+S, AddToStartup
 Menu, ActionsMenu, Add, &Run`tCtrl+R, Run
 Menu, ActionsMenu, Add, E&xit`tCtrl+X, Exit
+Menu, ActionsMenu, Add, Open Help`tCtrl+H, OpenPTHelp
+Menu, ActionsMenu, Add, Open Change&log`tCtrl+L, OpenPTChangelog
 
 
-Menu, HelpMenu, Add, Open Help`tCtrl+H, OpenHelp
+Menu, HelpMenu, Add, Open Help, OpenHelp
 Menu, HelpMenu, Add, Check for Update, CheckForUpdateSelf
 
 Menu, MyMenuBar, Add, &Items, :ItemsMenu 
@@ -103,12 +105,11 @@ RunWait, %sCmd%,,Hide
 Run %A_ScriptDir%
 return
 ; -------------------------------------------------------------------------------------------------------------------
-
 OpenHelp:
-PTHelp("Bundler")
+PowerTools_Help("Bundler")
 return
 ; -------------------------------------------------------------------------------------------------------------------
-Exit: ; CFU
+Exit: 
 RowNumber = 0
 Loop {
     RowNumber := LV_GetNext(RowNumber, "Checked")
@@ -121,6 +122,28 @@ Loop {
 	    ScriptFullPath = %A_ScriptDir%\%ItemName%.ahk
 
     AHKExit(ScriptFullPath)
+}
+return
+; -------------------------------------------------------------------------------------------------------------------
+OpenPTChangelog: 
+RowNumber = 0
+Loop {
+    RowNumber := LV_GetNext(RowNumber, "Checked")
+    if not RowNumber 
+	    break
+	LV_GetText(ItemName, RowNumber, 1)
+	PowerTools_Changelog(ItemName)
+}
+return
+; -------------------------------------------------------------------------------------------------------------------
+OpenPTHelp: 
+RowNumber = 0
+Loop {
+    RowNumber := LV_GetNext(RowNumber, "Checked")
+    if not RowNumber 
+	    break
+	LV_GetText(ItemName, RowNumber, 1)
+	PowerTools_Help(ItemName)
 }
 return
 ; -------------------------------------------------------------------------------------------------------------------

@@ -17,8 +17,7 @@ FoundPos := InStr(sInput," ")
 If FoundPos {
     sKeyword := SubStr(sInput,1,FoundPos-1)
     sInput := SubStr(sInput,FoundPos+1)
-    ; MsgBox %sKeyword%`n%sInput% ; DBG
- } Else {
+} Else {
     sKeyword := sInput
     sInput =
 }
@@ -40,7 +39,9 @@ Case "p":
     sKeyword = pop
 Case "c":
     sKeyword = call
-Case "f","free","a":
+Case "f":
+    sKeyword = find
+Case "free","a":
     sKeyword = available
 Case "s","save":
     sKeyword = saved
@@ -50,6 +51,7 @@ Case "cal":
     WinId := Teams_GetMainWindow()
     WinActivate, ahk_id %WinId%
     SendInput ^4; open calendar
+    return
 Case "m","meet": ; create a meeting
     WinId := Teams_GetMainWindow()
     WinActivate, ahk_id %WinId%
@@ -77,7 +79,10 @@ Case "mu","mute":
 Case "x","n","new": 
     WinId := Teams_GetMainWindow()
     WinActivate, ahk_id %WinId%
-    SendInput ^+x ; expand compose box ctrl+shift+x
+    SendInput {Esc} ; in case expand box is already opened
+    SendInput !+c ; expand compose box alt+shift+c: necessary to get second hotkey working (regression with new conversation button)
+    sleep, 300
+    SendInput ^+x ; expand compose box ctrl+shift+x (does not work anymore immediately)
     sleep, 300
     SendInput +{Tab} ; move cursor back to subject line via shift+tab
     return
