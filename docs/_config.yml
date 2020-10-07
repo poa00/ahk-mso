@@ -1,9 +1,13 @@
 theme: jekyll-theme-minimal
-title: GitHub pages template
-description: A simple template based on minimal jekyll theme
+title: tdalon/ahk 
+description: A collection of AutoHotkey-based tools and utilities - including the PowerTools suite.
+logo: "assets\img\favicon.png"
 show_downloads: True
+google_analytics: UA-179982805-1
 navigation:
   - title: Home
     url: /
   - title: PowerTools
     url: PowerTools
+  - title: Changelogs
+    url: PowerTools-(Changelogs)
