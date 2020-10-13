@@ -61,11 +61,15 @@ Case "m","meet": ; create a meeting
     return
 Case "l","leave": ; leave meeting
     WinId := Teams_GetMeetingWindow()
+    If !WinId ; empty
+        return
     WinActivate, ahk_id %WinId%
     SendInput ^+b  
     return
 Case "sh","share":  
     WinId := Teams_GetMeetingWindow()
+    If !WinId ; empty
+        return
     WinActivate, ahk_id %WinId%
     SendInput ^+e ; expand compose box ctrl+shift+e ; does not work if no other has joined
     sleep, 1000
@@ -73,14 +77,25 @@ Case "sh","share":
     return
 Case "mu","mute":  
     WinId := Teams_GetMeetingWindow()
+    If !WinId ; empty
+        return
     WinActivate, ahk_id %WinId%
     SendInput ^+m ; expand compose box ctrl+shift+m ; does not work if no other has joined
     return
-Case "x","n","new": 
+Case "q": ; quit
+    sCmd = taskkill /f /im "Teams.exe"
+    Run %sCmd%,,Hide 
+    return
+Case "r": ; restart
+    sCmd = taskkill /f /im "Teams.exe"
+    Run %sCmd%,,Hide 
+    Teams_GetMainWindow()
+    return
+Case "n","new","x": ; new expanded conversation 
     WinId := Teams_GetMainWindow()
     WinActivate, ahk_id %WinId%
     SendInput {Esc} ; in case expand box is already opened
-    SendInput !+c ; expand compose box alt+shift+c: necessary to get second hotkey working (regression with new conversation button)
+    SendInput !+c ;  compose box alt+shift+c: necessary to get second hotkey working (regression with new conversation button)
     sleep, 300
     SendInput ^+x ; expand compose box ctrl+shift+x (does not work anymore immediately)
     sleep, 300
@@ -88,6 +103,8 @@ Case "x","n","new":
     return
 Case "v","vi": ; Toggle video with background
     WinId := Teams_GetMeetingWindow()
+    If !WinId ; empty
+        return
     WinActivate, ahk_id %WinId%
     SendInput ^+o ; toggle video Ctl+Shift+o
     ;SendInput ^+p ; toggle background blur

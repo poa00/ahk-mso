@@ -2,10 +2,10 @@
 ; AutoResize: https://www.autohotkey.com/boards/viewtopic.php?style=17&t=1403
 ; -------------------------------------------------------------------------------
 
-ListBox(Title := "", Prompt := "", List := "", Select := 0) {
+WinListBox(Title := "", Prompt := "", List := "", Select := 0) {
 ;-------------------------------------------------------------------------------
     ; show a custom input box with a ListBox control
-    ; return the text of the selected item
+    ; returns the text of the selected list item
     ;---------------------------------------------------------------------------
     ; Title is the title for the GUI
     ; Prompt is the text to display
@@ -15,19 +15,21 @@ ListBox(Title := "", Prompt := "", List := "", Select := 0) {
     static LB ; used as a GUI control variable
 
     ; create GUI
-    Gui, ListBox: New, ,%Title%
+    Gui, WinListBox: New, ,%Title%
+    Gui,+AlwaysOnTop
     Gui, -MinimizeBox
     Gui, Margin, 30, 18
     If Prompt ; not empty
         Gui, Add, Text,, %Prompt%
     Gui, Add, ListBox, vLB hwndHLB Choose%Select%, %List%
     
-    W := LB_EX_CalcWidth(HLB)
-    H := LB_EX_CalcHeight(HLB)
+    W := WinLB_EX_CalcWidth(HLB)
+    H := WinLB_EX_CalcHeight(HLB)
     GuiControl, Move, LB, w%W% h%H%
 
     Gui, Add, Button, w60 Default, &OK
     Gui, Add, Button, x+m wp, &Cancel
+    Gui, Add, Button, x+m wp, &Activate
 
     Gui, Show, AutoSize
     ; main wait loop
@@ -40,14 +42,23 @@ ListBox(Title := "", Prompt := "", List := "", Select := 0) {
     ;-----------------------------------
     ; event handlers
     ;-----------------------------------
-    ListBoxButtonOK: ; "OK" button, {Enter} pressed
+    WinListBoxButtonOK: ; "OK" button, {Enter} pressed
         Gui, Submit ; get Result from GUI
         Gui, Destroy
     return
 
-    ListBoxButtonCancel: ; "Cancel" button
-    ListBoxGuiClose:     ; {Alt+F4} pressed, [X] clicked
-    ListBoxGuiEscape:    ; {Esc} pressed
+    WinListBoxButtonActivate: ; "Activate" button pressed
+        Gui, Submit, NoHide
+        RegExMatch(LB,"\{([^}]*)\}$",WinId)
+        ; %WinId1% does not work?? -> workaround remove 
+        WinId := StrReplace(WinId,"{","")
+        WinId := StrReplace(WinId,"}","")
+        WinActivate, ahk_id %WinId%
+    return
+
+    WinListBoxButtonCancel: ; "Cancel" button
+    WinListBoxGuiClose:     ; {Alt+F4} pressed, [X] clicked
+    WinListBoxGuiEscape:    ; {Esc} pressed
         ;LB := "ListBoxCancel"
         LB =
         Gui, Destroy
@@ -56,7 +67,7 @@ ListBox(Title := "", Prompt := "", List := "", Select := 0) {
 
 
 
-LB_EX_CalcWidth(HLB) { ; calculates the width of the list box needed to show the whole content.
+WinLB_EX_CalcWidth(HLB) { ; calculates the width of the list box needed to show the whole content.
    ; HLB - Handle to the ListBox.
    MaxW := 0
    ControlGet, Items, List, , , % "ahk_id " . HLB
@@ -76,7 +87,7 @@ LB_EX_CalcWidth(HLB) { ; calculates the width of the list box needed to show the
    Return MaxW + 8 ; + 8 for the margins
 }
 ; ----------------------------------------------------------------------------------------------------------------------
-LB_EX_CalcHeight(HLB) { ; calculates the height of the list box needed to show the whole content.
+WinLB_EX_CalcHeight(HLB) { ; calculates the height of the list box needed to show the whole content.
    ; HLB - Handle to the ListBox.
    Static LB_GETITEMHEIGHT := 0x01A1
    Static LB_GETCOUNT := 0x018B

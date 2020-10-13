@@ -15,7 +15,7 @@
 
 ; AutoExecute Section must be on the top of the script
 ;#NoEnv
-LastCompiled = 20200806155132
+LastCompiled = 20201006200700
 SetWorkingDir %A_ScriptDir%
 
 #Include <WinClipAPI>

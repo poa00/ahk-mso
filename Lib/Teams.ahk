@@ -920,41 +920,61 @@ PowerTools_RegWrite("TeamsPowerShell",TeamsPowerShell)
 
 Teams_GetMeetingWindow(){
 
+WinGet, Win, List, ahk_exe Teams.exe
+TeamsMainWinId := Teams_GetMainWindow()
 TeamsMeetingWinId := PowerTools_RegRead("TeamsMeetingWinId")
-If WinExist("ahk_id " . TeamsMeetingWinId) {
+WinCount := 0
+Select := 0
+Loop %Win% {
+    WinId := Win%A_Index%
+    MsgBox %WinId% %TeamsMainWinId%
+    If (WinId = TeamsMainWinId) ; Exclude Main Teams Window
+        Continue
+    WinGetTitle, Title, % "ahk_id " WinId    
+
+    IfEqual, Title,, Continue
+    Title := StrReplace(Title," | Microsoft Teams","")
+    If InStr(Title,",")  ; Exclude windows with , in the title (Popped-out 1-1 chat)
+        Continue
+    WinList .= ( (WinList<>"") ? "|" : "" ) Title "  {" WinId "}"
+    WinCount++
+
+    If WinId = %TeamsMeetingWinId% 
+        Select := WinCount
+     MsgBox %WinList%   
+} ; End Loop
+
+If (WinCount = 0)
+    return
+If (WinCount = 1) { ; only one other window
+    RegExMatch(WinList,"\{([^}]*)\}$",WinId)
+    TeamsMeetingWinId := WinId1
+    PowerTools_RegWrite("TeamsMeetingWinId",TeamsMeetingWinId)
     return TeamsMeetingWinId
 }
 
-MsgBox, Ox31, Get Teams Meeting Window, Check that the Teams Meeting window is the last Active Teams Window.
-WinGet TeamsMeetingWinId, ID, ahk_exe Teams.exe
-
-
-WinGet, Win, List, ahk_exe Teams.exe
-TeamsMainWinId := Teams_GetMainWindow()
-Loop %Win% {
-    WinId := Win%A_Index%
-    If (WinId = TeamsMainWinId)
-        Continue
-    Else {
-        TeamsMeetingWinId := WinId
-        PowerTools_RegWrite("TeamsMeetingWinId",TeamsMeetingWinId)
-        return TeamsMeetingWinId
-    }
-        
-} ; End Loop
+LB := WinListBox("Teams Meeting Window", , WinList, Select)
+RegExMatch(LB,"\{([^}]*)\}$",WinId)
+TeamsMeetingWinId := WinId1
+PowerTools_RegWrite("TeamsMeetingWinId",TeamsMeetingWinId)
+return TeamsMeetingWinId
 
 } ; eofun
 ; -------------------------------------------------------------------------------------------------------------------
 
 
+; -------------------------------------------------------------------------------------------------------------------
+
 Teams_GetMainWindow(){
 
-TeamsMainWinId := PowerTools_RegRead("TeamsMainWinId")
-If WinExist("ahk_id " . TeamsMainWinId) {
-    return TeamsMainWinId
+WinGet, WinCount, Count, ahk_exe Teams.exe
+If (WinCount > 0) { ; fall-back if wrong exe found: close Teams
+    TeamsMainWinId := PowerTools_RegRead("TeamsMainWinId")
+    If WinExist("ahk_id " . TeamsMainWinId) {
+        return TeamsMainWinId
+    }
 }
 
-WinGet, WinCount, Count, ahk_exe Teams.exe
 If (WinCount = 1) {
     TeamsMainWinId := WinExist("ahk_exe Teams.exe")
     PowerTools_RegWrite("TeamsMainWinId",TeamsMainWinId)
