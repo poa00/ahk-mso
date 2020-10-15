@@ -927,7 +927,6 @@ WinCount := 0
 Select := 0
 Loop %Win% {
     WinId := Win%A_Index%
-    MsgBox %WinId% %TeamsMainWinId%
     If (WinId = TeamsMainWinId) ; Exclude Main Teams Window
         Continue
     WinGetTitle, Title, % "ahk_id " WinId    
@@ -940,8 +939,7 @@ Loop %Win% {
     WinCount++
 
     If WinId = %TeamsMeetingWinId% 
-        Select := WinCount
-     MsgBox %WinList%   
+        Select := WinCount  
 } ; End Loop
 
 If (WinCount = 0)
