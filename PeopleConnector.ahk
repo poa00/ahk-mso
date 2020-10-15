@@ -3,7 +3,7 @@
 ; See help/homepage: https://connext.conti.de/blogs/tdalon/entry/people_connector
 
 ; Calls: ExtractEmails, TrayTipAutoHide, ToStartup
-LastCompiled = 20201006200708
+LastCompiled = 20201015164214
 
 #SingleInstance force ; for running from editor
 

@@ -63,12 +63,13 @@ IsVPN(){
 VPNConnect(){
 VPNexePath := "C:\Program Files (x86)\Cisco\Cisco AnyConnect Secure Mobility Client\vpnui.exe"
 Run, %VPNexePath%
-If IsVPN()
+WinWaitActive,ahk_exe vpnui.exe
+SetTitleMatchMode, 3 ; exact match
+ControlClick, Connect
+If ErrorLevel ; Button not found - Disconnect
     return
 
-WinWaitActive,ahk_exe vpnui.exe
-Sleep 500 ; workaround some connect issues
-ControlClick, Connect
+SetTitleMatchMode, 1 ; start with
 WinWaitActive,Cisco AnyConnect |
 
 sPassword := Login_GetPassword()

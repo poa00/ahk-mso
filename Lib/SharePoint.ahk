@@ -1,6 +1,10 @@
-; GetSharepointUrl - Get clean sharepoint document library Url from browser url
+; Library for SharePoint Utilities
+
+; -------------------------------------------------------------------------------------------------------------------
+
+; Sharepoint_CleanUrl - Get clean sharepoint document library Url from browser url
 ; Syntax:
-;	newurl := GetSharepointUrl(url)
+;	newurl := Sharepoint_CleanUrl(url)
 ; Example:
 ; 	https://continental.sharepoint.com/teams/team_10000035/Guides%20-%20Documents/Forms/AllItems.aspx?cid=e18e743c%2D86a5%2D4eb2%2D9e66%2Dded0fa83986f&RootFolder=%2Fteams%2Fteam%5F10000035%2FGuides%20%2D%20Documents%2FGeneral&FolderCTID=0x012000A46ECE04B4C0CD4D963D7DF0C1F91CBA
 ; in IE https://continental.sharepoint.com/teams/team_10000035/Guides%20-%20Documents/Forms/AllItems.aspx?cid=e18e743c%2D86a5%2D4eb2%2D9e66%2Dded0fa83986f&id=%2Fteams%2Fteam%5F10000035%2FGuides%20%2D%20Documents%2FGeneral
@@ -9,13 +13,9 @@
 ; https://continental.sharepoint.com/teams/team_10000035/Guides%20-%20Documents/General
 ;
 #Include <UriDecode>
-
-; Syntax:
-; 	sUrl := GetSharepointUrl(sUrl)
 ; Calls: uriDecode
 ; Called by: CleanUrl
-;       MyScript Ctrl+E: open SharePoint Document Library from browser into File Explorer
-GetSharepointUrl(url){
+SharePoint_CleanUrl(url){
 	If InStr(url,"_vti_history") ; speciasl case hardlink for old sharepoints
 	{
 		url := uriDecode(url)
@@ -64,3 +64,50 @@ GetSharepointUrl(url){
 ; https://continental.sharepoint.com/teams/team_10000778/Shared%20Documents/Forms/AllItems.aspx?FolderCTID=0x012000761015BBA31DEE4AB964DB6D73C115C2&id=%2Fteams%2Fteam%5F10000778%2FShared%20Documents%2FTools
 ; TEST Teams with Copy Link
 ; https://continental.sharepoint.com/:f:/r/teams/team_10000035/Shared%20Documents/General/Pictures?csf=1&e=Um9ecD
+
+; -------------------------------------------------------------------------------------------------------------------
+
+; SharePoint_IsSPUrl(url)
+SharePoint_IsSPUrl(url){
+If RegExMatch(url,"https://[a-z\-]+\.sharepoint\.com/.*") or InStr(url,"https://mspe.conti.de/") or RegExMatch(url,"https://[a-z]+\d\.conti\.de/.*") 
+{
+	; workspace1.conti.de cws7.conti.de = url with a few letters followed by one number
+    ;  or InStr(url,"https://continental.sharepoint.com/") or InStr(url,"https://continental-my.sharepoint.com/") 
+	return true
+	}
+Else {
+	return false
+	}
+}
+
+; -------------------------------------------------------------------------------------------------------------------
+; Called by: IntelliPaste -> IntelliHtml
+SharePoint_IntelliHtml(sLink){
+
+If RegExMatch(sLink,"/teams/team_[^/]*/[^/]*/(.*)",sMatch) {
+	sMatch1 := uriDecode(sMatch1)
+	linktext := StrReplace(sMatch1,"/"," > ") ; Breadcrumb navigation for Teams link to folder
+	 
+	TeamName := Teams_GetTeamName(sLink)
+	If (TeamName != "") ; not empty
+		linktext := TeamName . " > " . linktext
+	
+}
+
+
+} ; eofun
+; -------------------------------------------------------------------------------------------------------------------
+
+GetRootUrl(sUrl){
+    RegExReplace(sUrl,"https?://[^/]",rootUrl)
+    return rootUrl
+}
+
+; -------------------------------------------------------------------------------------------------------------------
+
+SharePoint_GetSPSyncIniFile(){
+    EnvGet, sOneDriveDir , onedrive
+	sOneDriveDir := StrReplace(sOneDriveDir,"OneDrive - ","")
+	sIniFile = %sOneDriveDir%\SPsync.ini
+    return sIniFile
+}

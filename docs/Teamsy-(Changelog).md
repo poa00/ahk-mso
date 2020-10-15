@@ -1,5 +1,7 @@
 # Teamsy Changelog
 
+* 2020-10-15
+  - Mute hotkey does not require meeting window to be active. Main client window is enough.
 * 2020-10-13
   - If no meeting window founds, clean exit
   - Add q:quit and r: restart

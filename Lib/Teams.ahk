@@ -951,7 +951,7 @@ If (WinCount = 1) { ; only one other window
     return TeamsMeetingWinId
 }
 
-LB := WinListBox("Teams Meeting Window", , WinList, Select)
+LB := WinListBox("Teams: Meeting Window", "Select your current Teams Meeting Window:" , WinList, Select)
 RegExMatch(LB,"\{([^}]*)\}$",WinId)
 TeamsMeetingWinId := WinId1
 PowerTools_RegWrite("TeamsMeetingWinId",TeamsMeetingWinId)

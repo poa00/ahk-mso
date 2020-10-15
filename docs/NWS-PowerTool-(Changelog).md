@@ -1,6 +1,8 @@
 # NWS PowerTool Changelog
 
 * 2020-10-15
+  - Refactoring SharePoint Library. Improved IsSPUrl (not only for continental)
+  - Bug fix: Ctrl+E from File Explorer error on SPsync.ini file open
   - Fix VPNConnect: Connect issue
 * 2020-10-06
     * IntelliPaste: [embed github file](https://tdalon.blogspot.com/blogger-embed-github-file)

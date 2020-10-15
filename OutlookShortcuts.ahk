@@ -2,7 +2,7 @@
 ; Code Project Documentation is available on ContiSource GitHub here: https://github.com/tdalon/ahk/blob/master/NWS.ahk
 ;  Source: https://github.com/tdalon/ahk/blob/master/OutlookShortcuts.ahk
 
-LastCompiled = 20200806155135
+LastCompiled = 20201015164214
 
 #Include <PowerTools>
 #SingleInstance force ; for running from editor

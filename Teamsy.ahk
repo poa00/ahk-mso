@@ -71,16 +71,23 @@ Case "sh","share":
     If !WinId ; empty
         return
     WinActivate, ahk_id %WinId%
-    SendInput ^+e ; expand compose box ctrl+shift+e ; does not work if no other has joined
+    SendInput ^+e ; ctrl+shift+e 
     sleep, 1000
     SendInput {Tab}{Enter} 
     return
 Case "mu","mute":  
-    WinId := Teams_GetMeetingWindow()
+    WinId := Teams_GetMainWindow()
     If !WinId ; empty
         return
     WinActivate, ahk_id %WinId%
-    SendInput ^+m ; expand compose box ctrl+shift+m ; does not work if no other has joined
+    SendInput ^+m ; ctrl+shift+m 
+    return
+Case "de":  ; decline call
+    WinId := Teams_GetMainWindow()
+    If !WinId ; empty
+        return
+    WinActivate, ahk_id %WinId%
+    SendInput ^+d ; expand compose box ctrl+shift+d 
     return
 Case "q": ; quit
     sCmd = taskkill /f /im "Teams.exe"

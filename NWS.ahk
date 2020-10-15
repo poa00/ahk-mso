@@ -15,9 +15,10 @@ SetWorkingDir %A_ScriptDir%
 #Include <WinActiveBrowser>
 #Include <IntelliPaste>
 #Include <Teams>
+#Include <SharePoint>
 #Include <Explorer>
 
-LastCompiled = 20201006200702
+LastCompiled = 20201015164213
 
 global PowerTools_ConnectionsRootUrl
 If (PowerTools_ConnectionsRootUrl="") {
@@ -433,8 +434,8 @@ sURL := GetActiveBrowserUrl()
 If Connections_IsConnectionsUrl(sURL) { 
 	CNEdit(sURL)
 	return
-} Else If IsSharepointUrl(sURL) { ; SharePoint
-	newurl:= GetSharepointUrl(sURL) ; returns wihout ending /
+} Else If SharePoint_IsSPUrl(sURL) { ; SharePoint
+	newurl:= SharePoint_CleanUrl(sURL) ; returns wihout ending /
 	; For o365 SharePoint check if file is synced in SPsync.ini
 	If InStr(newurl,"continental.sharepoint.com") or InStr(newurl,"https://mspe.conti.de/") { ; mspe can also offers Sync
 		EnvGet, sOneDriveDir , onedrive
@@ -639,8 +640,8 @@ sURL := Clipboard
 If !sURL
 	Exit
 
-If IsSharepointUrl(sURL) {
-	newurl:=GetSharepointUrl(sURL)
+If SharePoint_IsSPUrl(sURL) {
+	newurl:=SharePoint_CleanUrl(sURL)
 	newurl:=StrReplace(newurl,"https:","")
 	newurl:=StrReplace(newurl,"+"," ") ; strange issue with blank converted to +
 	newurl:=StrReplace(newurl,"/","\")
@@ -708,6 +709,7 @@ If (!sFile) ; file empty
 	return
 If InStr(sFile,"#TBD")
 {
+	sIniFile := SharePoint_GetSPSyncIniFile()
 	TrayTip, NWS PowerTool, File %sIniFile% is not configured! Replace #TBD by the SharePoint root url.
 	Run https://connext.conti.de/blogs/tdalon/entry/onedrive_sync_ahk#Setup
 	sCmd = Edit "%sIniFile%"
@@ -768,7 +770,7 @@ return
 ;IsIELink(url)
 ; true if link shall be opened with Internet Explorer rather than another browser e.g. Chrome because of incompatibility
 IsIELink(sURL){
-	If IsSharepointUrl(sURL) || InStr(sURL,"file://") || InStr(sURL,"/pkit/") || InStr(sURL,"/BlobIT/") || InStr(sURL,"/openscapeuc/dial/") || InStr(sURL,"://tts.fr.ge.conti.de")
+	If SharePoint_IsSPUrl(sURL) || InStr(sURL,"file://") || InStr(sURL,"/pkit/") || InStr(sURL,"/BlobIT/") || InStr(sURL,"/openscapeuc/dial/") || InStr(sURL,"://tts.fr.ge.conti.de")
 		return true
 	Else 	
 		return false	

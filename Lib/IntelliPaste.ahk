@@ -3,7 +3,7 @@
 ; Calls Teams_Link2Text
 #Include <Teams>
 #Include <uriDecode>
-#Include <IsSharePointUrl>
+#Include <SharePoint>
 ; Calls: CNGetTitle, Connections_Link2Text, CNFormatImg
 #Include <Connections>
 #Include <Confluence>
@@ -266,7 +266,7 @@ If sFileExt {
 		return imgsrc
 }
 
-If (IsSharePointUrl(sLink))
+If (SharePoint_IsSPUrl(sLink))
 	IniRead, imgsrc, %IniFile%, ConnectionsIcons, SharepointIcon
 Else If InStr(sLink,"communityUuid=") {
 	sPat=.*?\?communityUuid=([^ ]*)
@@ -356,8 +356,8 @@ If Connections_IsConnectionsUrl(url)
 	
 	url := StrReplace(url,"'","%27")
 }
-Else If (IsSharepointUrl(url))
-	url := GetSharepointUrl(url)	
+Else If (SharePoint_IsSPUrl(url))
+	url := SharePoint_CleanUrl(url)	
 Else If (IsGoogleUrl(url))
 	url := GetGoogleUrl(url)
 Else If RegExMatch(url,"^https://teams.microsoft.com/l/file/") {
