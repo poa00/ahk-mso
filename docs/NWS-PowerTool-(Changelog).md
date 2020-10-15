@@ -1,7 +1,9 @@
 # NWS PowerTool Changelog
 
+* 2020-10-15
+  - Fix VPNConnect: Connect issue
 * 2020-10-06
-    * IntelliPaste: [embed github file](https://tdalon.blogspot.com/blogger-embed-github-file) 
+    * IntelliPaste: [embed github file](https://tdalon.blogspot.com/blogger-embed-github-file)
     * IntelliPaste: do not ask for icon for Microsoft Whiteboard
 * 2020-09-18
     * Share to Teams integrated in Win+F1 Browser menu

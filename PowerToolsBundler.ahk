@@ -155,14 +155,14 @@ Loop {
 	    break
 	LV_GetText(ItemName, RowNumber, 1)
 	ScriptFullPath = %A_ScriptDir%\%ItemName%.ahk
-    AHKCompile(ScriptFullPath,,"PowerTools")
+    AHK_Compile(ScriptFullPath,,"PowerTools")
 	}
 Run %A_ScriptDir%\PowerTools
 return
 ; -------------------------------------------------------------------------------------------------------------------
 
 CompileSelf:
-AHKCompile(A_ScriptFullPath,,"PowerTools")
+AHK_Compile(A_ScriptFullPath,,"PowerTools")
 return
 ; -------------------------------------------------------------------------------------------------------------------
 CompileAndPush:
@@ -174,7 +174,7 @@ Loop {
 	    break
 	LV_GetText(ItemName, RowNumber, 1)
 	ScriptFullPath = %A_ScriptDir%\%ItemName%.ahk
-    AHKCompile(ScriptFullPath,,"PowerTools")
+    AHK_Compile(ScriptFullPath,,"PowerTools")
     FileList =  %FileList% %ItemName%.exe
 } 
 RunWait, git add %FileList%, %A_ScriptDir%\PowerTools

@@ -15,7 +15,7 @@ return False
 
 ; ---------------------------------------------------------------------- 
 
-AHKCompile(ScriptFullPath,FileIcon:="",CompileDir:=""){
+AHK_Compile(ScriptFullPath,FileIcon:="",CompileDir:=""){
 ; See https://www.autohotkey.com/boards/viewtopic.php?t=60944
 
 SplitPath A_AhkPath,, AhkDir

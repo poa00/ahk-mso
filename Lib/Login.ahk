@@ -62,16 +62,13 @@ IsVPN(){
 
 VPNConnect(){
 VPNexePath := "C:\Program Files (x86)\Cisco\Cisco AnyConnect Secure Mobility Client\vpnui.exe"
-Run %VPNexePath%
-
+Run, %VPNexePath%
 If IsVPN()
     return
 
 WinWaitActive,ahk_exe vpnui.exe
-
-;MsgBox toto
+Sleep 500 ; workaround some connect issues
 ControlClick, Connect
-
 WinWaitActive,Cisco AnyConnect |
 
 sPassword := Login_GetPassword()
@@ -83,6 +80,7 @@ Send,{Enter}
 
 WinWaitClose, ahk_exe vpnui.exe
 }
+; ----------------------------------------------------------------------
 
 
 IsConnectedToInternet()
