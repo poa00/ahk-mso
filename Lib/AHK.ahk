@@ -53,7 +53,7 @@ RunWait %sCmd%
 
 ; ---------------------------------------------------------------------- 
 
-AHKExit(ScriptFullPath:=""){
+AHK_Exit(ScriptFullPath:=""){
 If !ScriptFullPath
     ScriptFullPath=A_ScriptFullPath
 

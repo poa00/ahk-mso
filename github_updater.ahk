@@ -1,6 +1,6 @@
 ; GitHub updater
 ; kill task, copy .github mirror file and rerun
-; called by PTCheckForUpdate
+; called by PowerTools_CheckForUptate
 github_updater(A_Args[1])
 SetWorkingDir %A_ScriptDir%
 github_updater(FileName){
