@@ -17,7 +17,7 @@ You can run them either from the AHK source files if you have AutoHotkey install
 
 The Exe versions are available in the [PowerTools subdirectory](https://github.com/tdalon/ahk/tree/master/PowerTools).
 
-You can set them up and check for updates using the [PowerTool Bundler](PowerTools-Bundler).
+See here [how to setup the PowerTools](PowerTools-Setup).
 
 Changelogs are available [here](PowerTools-Changelogs).
 
