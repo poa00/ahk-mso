@@ -1,5 +1,7 @@
 # People Connector Changelog
 
+* 2020-10-19
+  - Bug fix: open from Teams visit card will catch wrong email @unq.gbl.spa(ces)
 * 2020-10-07
     * If Excel application: do not getselection in Html format
 * 2020-10-01

@@ -1,5 +1,7 @@
 # NWS PowerTool Changelog
 
+* 2020-10-19
+  - Auto-start VPN at startup (Conti only)
 * 2020-10-15
   - Refactoring SharePoint Library. Improved IsSPUrl (not only for continental)
   - Bug fix: Ctrl+E from File Explorer error on SPsync.ini file open
