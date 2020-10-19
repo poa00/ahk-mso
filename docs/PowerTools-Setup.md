@@ -2,7 +2,7 @@
 
 ## One-by-one Setup
 
-You can download for each PowerTool the .exe file by going here: https://github.com/tdalon/ahk/tree/master/PowerTools and clicking on the file you want and then click the Download button.
+You can download for each PowerTool the .exe file by going here: [repo root->PowerTools](https://github.com/tdalon/ahk/tree/master/PowerTools) and clicking on the file you want and then click the Download button.
 
 It is recommended to install it in a separate fresh directory because some auxiliary files will be downloaded or created on the same level (e.g. PowerBundler, git_updater, ini file...).
 
