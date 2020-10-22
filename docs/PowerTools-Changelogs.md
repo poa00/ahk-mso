@@ -6,3 +6,6 @@
 * [People Connector](People-Connector-(Changelog))
 * [Teams Shortcuts](Teams-Shortcuts-(Changelog))
 * [Teamsy](Teamsy-(Changelog))
+
+
+* [Bundler](PowerTools-Bundler-(Changelog))

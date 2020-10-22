@@ -1,5 +1,7 @@
 # PowerTools Setup
 
+<p style="text-align: center;"><iframe width="560" height="315" src="https://www.youtube.com/embed/sN6NxN5cPmA" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe><br><a href="https://youtu.be/sN6NxN5cPmA">Direct Link to YouTube video</a></p>
+
 ## One-by-one Setup
 
 You can download for each PowerTool the .exe file by going here: [repo root->PowerTools](https://github.com/tdalon/ahk/tree/master/PowerTools) and clicking on the file you want and then click the Download button.

@@ -1,5 +1,12 @@
 # PowerTools Bundler Changelog
 
+* 2020-10-22
+  - Fix: wrong icon displayed if one tool/item in the list is missing
+* 2020-10-20
+  - Check for update: issue warning if connected via VPN
+* 2020-10-19
+  - Added Settings menu
+  - MO is only visible for Conti Config
 * 2020-07-10
     * Add in Actions open Changelog and Help
 * 2020-10-01

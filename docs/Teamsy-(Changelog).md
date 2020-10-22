@@ -1,5 +1,7 @@
 # Teamsy Changelog
 
+* 2020-10-22
+  - Improved new conversation: will work if content pane wasn't selected / from navigation list pane (drawback: flashing of search box if in conversation area)
 * 2020-10-15
   - Mute hotkey does not require meeting window to be active. Main client window is enough.
 * 2020-10-13
