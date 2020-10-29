@@ -17,6 +17,11 @@ See separate page here [PowerTools Setup](PowerTools-Setup).
 
 # [Related Blog posts](https://tdalon.blogspot.com/search/label/people-connector)
 
+# How to use
+
+Select with your mouse elements that contains email information. It can be a list of addressees in an Outlook email or meeting, the email in the visit card in Teams, an page in the Browser (e.g. HCL Connections) etc.
+Then double-tap the shift key to open the People Connector menu.
+
 # YouTube Channel
 
 <div align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/videoseries?list=PLUSZfg60tAwIebdiMlRjF_KFWdWTYnKur" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe><br><a href="https://www.youtube.com/playlist?list=PLUSZfg60tAwIebdiMlRjF_KFWdWTYnKur">Direct Link to YouTube playlist</a></div>

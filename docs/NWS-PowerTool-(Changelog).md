@@ -1,5 +1,14 @@
 # NWS PowerTool Changelog
 
+* 2020-10-29
+  - IntelliPaste: Fix: use internal clipboard. do not change clipboard value
+* 2020-10-28
+	- Added SysTray menu: Toggle Title bar
+* 2020-10-27
+	- Bug fix. IntelliPaste asks for icon for links ending with .html (e.g. Blogger)
+	- IntelliPaste: replace - in blogger links and remove ending .html
+* 2020-10-26
+	- Icon changed
 * 2020-10-19
   - Auto-start VPN at startup (Conti only)
 * 2020-10-15

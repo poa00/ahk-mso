@@ -1,5 +1,8 @@
 # People Connector Changelog
 
+* 2020-10-29
+  - fixed. LinkedIn and Bing search on name selection e.g. connections. Revert to default plain text selection as input
+  - fix switchname : selection trim
 * 2020-10-19
   - Bug fix: open from Teams visit card will catch wrong email @unq.gbl.spa(ces)
 * 2020-10-07

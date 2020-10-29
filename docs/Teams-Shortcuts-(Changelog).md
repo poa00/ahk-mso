@@ -1,5 +1,8 @@
 # Teams Shorctuts Changelog
 
+* 2020-10-28
+  - Remove hotkey (Win+M; bad choice) for create a meeting. Rather launch from Teamsy.
+  - Add SubMenu Meeting -> Cursor Highlighter
 * 2020-09-21
     * SmartReply: Update to new hotkey Alt+Shift+r instead of r for reply
 * 2020-09-14

@@ -1,5 +1,7 @@
 # Teamsy Changelog
 
+* 2020-10-28
+  - Fix: Teams restart
 * 2020-10-22
   - Improved new conversation: will work if content pane wasn't selected / from navigation list pane (drawback: flashing of search box if in conversation area)
 * 2020-10-15

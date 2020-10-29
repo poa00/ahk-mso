@@ -1,5 +1,7 @@
 # PowerTools Bundler Changelog
 
+* 2020-10-26
+  - Add Open Bundler Changelog Menu in Help Menu
 * 2020-10-22
   - Fix: wrong icon displayed if one tool/item in the list is missing
 * 2020-10-20

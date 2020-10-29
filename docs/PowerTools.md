@@ -8,7 +8,7 @@ This includes:
 - [Outlook Shortcuts](Outlook-Shortcuts)
 - [People Connector](People-Connector)
 - [Teams Shortcuts](Teams-Shortcuts)
-- [Teamsy](Teamsy.md)
+- [Teamsy](Teamsy)
 
 
 These tools are implemented in [this repository](https://github.com/tdalon/ahk) using AutoHotkey.
