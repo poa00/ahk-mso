@@ -55,8 +55,15 @@ Case "cal":
 Case "m","meet": ; create a meeting
     WinId := Teams_GetMainWindow()
     WinActivate, ahk_id %WinId%
-    SendInput ^4; open calendar
-    Sleep, 300
+    WinGetTitle Title, A
+    If ! (Title="Calendar | Microsoft Teams") {
+            SendInput ^4 ; open calendar
+            Sleep, 300
+            While ! (Title="Calendar | Microsoft Teams") { 
+                WinGetTitle Title, A
+                Sleep 500
+            }
+    }
     SendInput !+n ; schedule a meeting alt+shift+n
     return
 Case "l","leave": ; leave meeting
@@ -73,7 +80,7 @@ Case "sh","share":
     WinActivate, ahk_id %WinId%
     SendInput ^+e ; ctrl+shift+e 
     sleep, 1000
-    SendInput {Tab}{Enter} 
+    SendInput {Tab}{Enter} ; Select first screen
     return
 Case "mu","mute":  
     WinId := Teams_GetMainWindow()
@@ -89,23 +96,28 @@ Case "de":  ; decline call
     WinActivate, ahk_id %WinId%
     SendInput ^+d ; expand compose box ctrl+shift+d 
     return
-Case "q": ; quit
+Case "q","quit": ; quit
     sCmd = taskkill /f /im "Teams.exe"
     Run %sCmd%,,Hide 
     return
-Case "r": ; restart
+Case "r","restart": ; restart
+    WinId := Teams_GetMainWindow()
     sCmd = taskkill /f /im "Teams.exe"
     Run %sCmd%,,Hide 
+    While WinActive("ahk_id " . WinId)
+        Sleep 500
     Teams_GetMainWindow()
     return
 Case "n","new","x": ; new expanded conversation 
     WinId := Teams_GetMainWindow()
     WinActivate, ahk_id %WinId%
-    SendInput {Esc} ; in case expand box is already opened
+    SendInput ^{f6} ; Activate posts tab https://support.microsoft.com/en-us/office/use-a-screen-reader-to-explore-and-navigate-microsoft-teams-47614fb0-a583-49f6-84da-6872223e74a0#picktab=windows
+    ; workaround will flash the search bar if posts/content panel already selected but works now even if you have just selected the channel on the left navigation panel
+    ;SendInput {Esc} ; in case expand box is already opened
     SendInput !+c ;  compose box alt+shift+c: necessary to get second hotkey working (regression with new conversation button)
     sleep, 300
     SendInput ^+x ; expand compose box ctrl+shift+x (does not work anymore immediately)
-    sleep, 300
+    sleep, 800
     SendInput +{Tab} ; move cursor back to subject line via shift+tab
     return
 Case "v","vi": ; Toggle video with background
