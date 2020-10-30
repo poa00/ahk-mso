@@ -1,5 +1,5 @@
 ; Author: Thierry Dalon
-; Documentation: https://connext.conti.de/blogs/tdalon/entry/nws_ahk
+; Documentation: https://tdalon.github.io/ahk/NWS-PowerTool
 ; Code Project Documentation is available on ContiSource GitHub here: https://github.com/tdalon/ahk
 ;  Source: https://github.com/tdalon/ahk/blob/master/NWS.ahk
 
@@ -18,12 +18,14 @@ SetWorkingDir %A_ScriptDir%
 #Include <SharePoint>
 #Include <Explorer>
 
-LastCompiled = 20201015164213
+LastCompiled = 20201022223821
 
 global PowerTools_ConnectionsRootUrl
 If (PowerTools_ConnectionsRootUrl="") {
-	If FileExist("Connections.ini") {
-		IniRead, PowerTools_ConnectionsRootUrl, Connections.ini, Main, ConnectionsRootUrl
+	If FileExist("PowerTools.ini") {
+		IniRead, PowerTools_ConnectionsRootUrl, PowerTools.ini, Main, ConnectionsRootUrl
+		If (PowerTools_ConnectionsRootUrl="ERROR")
+			PowerTools_ConnectionsRootUrl = connext.conti.de
 	} Else
 		PowerTools_ConnectionsRootUrl = connext.conti.de
 }
@@ -71,6 +73,8 @@ GroupAdd, NoIntelliPasteIns, ahk_exe freemind.exe
 
 #SingleInstance force ; for running from editor - avoid warning another instance is running
 
+Config := PowerTools_GetConfig()
+
 SubMenuSettings := PowerTools_MenuTray()
 Menu,Tray,Insert,Settings,Power Tools Bundler, PowerTools_RunBundler
 
@@ -93,7 +97,6 @@ Menu, SubMenuSettingsIntelliPaste, Add, &Hotkey, IntelliPaste_HotkeySet
 Menu, SubMenuSettingsIntelliPaste, Add, &Refresh Teams List and SPSync.ini, IntelliPaste_Refresh
 Menu, SubMenuSettingsIntelliPaste, Add, Help, IntelliPaste_Help
 Menu, SubMenuSettings, Add, IntelliPaste, :SubMenuSettingsIntelliPaste
-
 
 Menu, SubMenuSettings, Add, Phone Number, SetTelNr
 Menu, SubMenuSettings, Add, Teams PowerShell, MenuCb_ToggleSettingTeamsPowerShell
@@ -137,12 +140,16 @@ If (SettingNotificationAtStartup)
 ; -------------------------------------------------------------------------------------------------------------------
 ; Add Custom Menus to MenuTray
 Menu,Tray,NoStandard
-Menu,SubMenuFavs,Add, Open NWS Search, PowerTools_NWSSearch
-Menu,SubMenuFavs,Add, Create Ticket (ESS), SysTrayCreateTicket
-Menu,SubMenuFavs,Add, KSSE, KSSE
-Menu, Tray, Add, Favorites, :SubMenuFavs
+If (Config = "Conti") {
+	Menu,SubMenuFavs,Add, Open NWS Search, PowerTools_NWSSearch
+	Menu,SubMenuFavs,Add, Create Ticket (ESS), SysTrayCreateTicket
+	Menu,SubMenuFavs,Add, KSSE, KSSE
+}
+Menu,SubMenuFavs,Add, Cursor Highlighter, PowerTools_CursorHighlighter
+Menu, Tray, Add, Tools/Favorites, :SubMenuFavs
 
-Menu,Tray,Add, Toggle AlwaysOnTop (Ctrl+Shift+ Space), SysTrayToggleAlwaysOnTop
+Menu,Tray,Add, Toggle AlwaysOnTop (Ctrl+Shift+Space), SysTrayToggleAlwaysOnTop
+Menu,Tray,Add, Toggle Title Bar, SysTrayToggleTitleBar
 Menu, SubMenuODB, Add, Open Permissions Settings,ODBOpenPermissions
 Menu, SubMenuODB, Add, Open Document Library in Classic View,ODBOpenDocLibClassic
 Menu, Tray, Add, OneDrive, :SubMenuODB
@@ -182,7 +189,7 @@ Menu, NWSMenu, add, (Browser) Share Url to Teams, TeamsShareActiveUrl
 ; -------------------------------------------------------------------------------------------------------------------
 
 ; EDIT : SCRIPT PARAMETERS
-DefExplorerExe := "explorer.exe"
+DefExplorerExe := "explorer.exe" ;*[NWS]
 ;DefExplorerExe := "D:\DSUsers\uid41890\PortableApps\FreeCommanderPortable\FreeCommanderPortable.exe"
 IfNotExist, %DefExplorerExe%
 	DefExplorerExe := "explorer.exe"
@@ -191,6 +198,12 @@ IfNotExist, %DefExplorerExe%
 If (A_UserName = "uid41890") { ; only for me
 	;SetCapsLockState , AlwaysOff
 	SetNumLockState , AlwaysOn
+}
+
+; Start VPN (only for Conti config)
+If (Config = "Conti") {
+	If ! (Login_IsContiNet())
+		VPNConnect()
 }
 
 ;================================================================================================
@@ -849,6 +862,11 @@ return
 SysTrayToggleAlwaysOnTop:
 SendInput, !{Esc}
 WinSet, AlwaysOnTop, Toggle, A
+return
+
+SysTrayToggleTitleBar:
+SendInput, !{Esc}
+WinSet, Style, ^0xC00000, A ; toggle title bar
 return
 
 CreateTicket()

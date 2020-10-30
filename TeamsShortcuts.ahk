@@ -5,7 +5,7 @@
 ; Source : https://github.com/tdalon/ahk/blob/master/TeamsShortcuts.ahk
 ;
 
-LastCompiled = 20201015164216
+LastCompiled = 20201022223824
 
 #Include <Teams>
 #Include <PowerTools>
@@ -38,6 +38,9 @@ Menu,Tray,Add,Refresh Teams List, Teams_ExportTeams
 Menu,Tray,Add
 
 Menu, SubMenuMeeting, Add, Open Teams Web Calendar, Teams_OpenWebCal
+
+; Add Cursor Highlighter
+Menu, SubMenuMeeting, Add, Cursor Highlighter, PowerTools_CursorHighlighter
 
 Menu, SubMenuVLC, Add, Start VLC, VLCStart
 Menu, SubMenuVLC, Add, Set Play Mode, VLCPlayMode
@@ -177,13 +180,6 @@ Teams_SmartReply()
 return
 
 ; -------------------------------------------------------------------------------------------------------------------
-; Alt+m - 
-!m:: ; <--- New meeting
-SendInput ^4; open calendar
-Sleep, 300
-SendInput !+n ; schedule a meeting alt+shift+n
-return
-
 #q:: ; <--- Reply with quote from clipboard
 ReplyWithQuote:
 If GetKeyState("Ctrl") {
@@ -195,7 +191,7 @@ Teams_SmartReply(sHtml,False)
 return
 ; -------------------------------------------------------------------------------------------------------------------
 
-#m:: ; <--- Create eMail with link to current conversation
+!m:: ; <--- Create eMail with link to current conversation
 ShareByMail:
 If GetKeyState("Ctrl") {
 	;Run, "https://connext.conti.de/blogs/tdalon/entry/teams_smart_reply"
@@ -268,6 +264,9 @@ Run, "https://continental.sharepoint.com/:f:/r/teams/team_10000035/Shared Docume
 return
 ; ----------------------------------------------------------------------
 
+CursorHighliter:
+Run %CHFile%
+return
 
 ; ######################################################################
 PersonalizeMentions:

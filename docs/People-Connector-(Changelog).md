@@ -1,8 +1,10 @@
 # People Connector Changelog
 
+* 2020-10-30
+  - Bug fix: if selection is a single email (e.g. copy email from Teams visit card)
 * 2020-10-29
   - fixed. LinkedIn and Bing search on name selection e.g. connections. Revert to default plain text selection as input
-  - fix switchname : selection trim
+  - fix: trim selection incl. new lines
 * 2020-10-19
   - Bug fix: open from Teams visit card will catch wrong email @unq.gbl.spa(ces)
 * 2020-10-07

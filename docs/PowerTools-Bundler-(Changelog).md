@@ -1,5 +1,7 @@
 # PowerTools Bundler Changelog
 
+* 2020-10-30
+  - Add Cursor Highlighter
 * 2020-10-26
   - Add Open Bundler Changelog Menu in Help Menu
 * 2020-10-22

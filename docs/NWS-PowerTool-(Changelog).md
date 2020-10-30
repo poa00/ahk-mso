@@ -1,7 +1,10 @@
 # NWS PowerTool Changelog
 
+* 2020-10-30
+  - Make Tools/Favorites display Conti Tools only for Conti configured
+  - Add under Tools Cursor Highlighter
 * 2020-10-29
-  - IntelliPaste: Fix: use internal clipboard. do not change clipboard value
+  - IntelliPaste: Fix: do not change clipboard value. use internal clipboard instead (bug with cleaned url e.g. Connections)
 * 2020-10-28
 	- Added SysTray menu: Toggle Title bar
 * 2020-10-27
