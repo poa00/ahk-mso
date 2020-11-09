@@ -134,11 +134,18 @@ WinId := Teams_GetMainWindow()
 WinActivate, ahk_id %WinId%
 
 Send ^e ; Select Search bar
-SendInput /
-sleep, 300
-SendInput %sKeyword%
-sleep, 500
-SendInput {enter}
+If (SubStr(sKeyword,1,1) = "@") {
+    SendInput @
+    sleep, 300
+    sInput := SubStr(sKeyword,2)
+} Else {
+    SendInput /
+    sleep, 300
+    SendInput %sKeyword%
+    sleep, 500
+    SendInput {enter}
+}
+
 If (!sInput) ; empty
     return
 sleep, 500
@@ -153,5 +160,4 @@ SendInput %sInput%
 sleep, 800
 If !doBreak
     SendInput {enter}
-   
 } ; End function     

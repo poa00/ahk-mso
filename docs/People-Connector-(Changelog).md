@@ -2,6 +2,7 @@
 
 * 2020-10-30
   - Bug fix: if selection is a single email (e.g. copy email from Teams visit card)
+  - Add Connections Open Network View
 * 2020-10-29
   - fixed. LinkedIn and Bing search on name selection e.g. connections. Revert to default plain text selection as input
   - fix: trim selection incl. new lines
