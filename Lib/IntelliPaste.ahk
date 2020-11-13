@@ -9,7 +9,7 @@
 #Include <Confluence>
 
 global PT_wc
-If !PT_wc
+If !PT_wc ;*[IntelliPaste]
     PT_wc := new WinClip
 
 Link2Text(sLink) {
@@ -106,6 +106,12 @@ Else If RegExMatch(sLink,"https://web.microsoftstream.com/browse\?q=(.*)",sQuery
 		;linktext := StrReplace(linktext,"-"," ")
 		linktext := StrReplace(linktext,"+"," ") ; for Confluence pages 
 	}
+	; Blogpost https://tdalon.blogspot.com/2020/08/executor-my-preferred-app-launcher.html
+	If InStr(sLink,".blogspot.") {
+		linktext := StrReplace(linktext,"-"," ")
+		linktext := StrReplace(linktext,".html","")
+		StringUpper, linktext, linktest , T ; upper case first letter
+	}
 	; Removing ending ? e.g. https://continental.sharepoint.com/:p:/r/teams/team_10000778/Shared%20Documents/Explore/New%20Work%20Style%20%E2%80%93%20O365%20-%20Why%20using%20Teams.pptx?d=we1a512b97ed844fc92dd5a1d028ef827&csf=1&e=crdehv 
 	linktext := RegExReplace(linktext, "\?.*$","")
 	
@@ -119,9 +125,6 @@ linktext := uriDecode(linktext)
 return linktext
 } ; eofun
 ; -------------------------------------------------------------------------------------------------------------------
-
-
-
 
 ; Intelli-Html feature
 ; Convert Input to nice formatted Html code to be pasted as rich-text/Html format
@@ -165,16 +168,22 @@ Else If RegExMatch(sInput,"/Lists/[^.]*.aspx") & Not InStr(sInput,"DispForm.aspx
 
 ; YouTube embed code - center	
 Else If RegExMatch(sInput,"<iframe [^>]* src=""https://www\.youtube\.com/embed/") {
-	sHtml = <p style="text-align: center;">%sInput%</p>
+	sHtml = <div align="center">%sInput%</div>
 }
 Else If RegExMatch(sInput,"https://www\.youtube\.com/watch\?.*v=([^\?&]*)",sVideoId) { ; bug fix links https://www.youtube.com/watch?time_continue=1&v=y6qT502Ao58 {
 	sHtml =	<iframe width="560" height="315" src="https://www.youtube.com/embed/%sVideoId1%" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-	sHtml = <p style="text-align: center;">%sHtml%<br><a href="%sInput%">Direct Link to YouTube video</a></p>
+	sHtml = <div align="center">%sHtml%<br><a href="%sInput%">Direct Link to YouTube video</a></div>
 }
 Else If RegExMatch(sInput,"https://youtu\.be/([^\?&]*)",sVideoId) ; https://youtu.be/ngLfEVU46x0?t=1007
 { 
 	sHtml =	<iframe width="560" height="315" src="https://www.youtube.com/embed/%sVideoId1%" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-	sHtml = <p style="text-align: center;">%sHtml%<br><a href="%sInput%">Direct Link to YouTube video</a></p>
+	sHtml = <div align="center">%sHtml%<br><a href="%sInput%">Direct Link to YouTube video</a></div>
+}
+
+Else If RegExMatch(sInput,"https://www.youtube.com/playlist\?list=([^\?&]*)",sVideoId) ; https://www.youtube.com/playlist?list=PLUSZfg60tAwLIIs8TpcOJIG9ghbQd5nHj
+{ 
+	sHtml =	<iframe width="560" height="315" src="https://www.youtube.com/embed/videoseries?list=%sVideoId1%" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+	sHtml = <div align="center">%sHtml%<br><a href="%sInput%">Direct Link to YouTube playlist</a></div>
 }
 
 ; Stream embed code - center+ add title with direct link	
@@ -217,6 +226,8 @@ If !sHtml {	; empty
 			sHtml = <a href="%sInput%"><img src="%imgsrc%" width="32"/></a>%sHtml%
 	}
 } ; End If sHtml empty
+
+
 return sHtml
 }
 
@@ -262,7 +273,7 @@ If sFileExt {
 	Else If (sFileExt = "pptx") || (sFileExt = "pptm") || (sFileExt = "ppt")
 		IniRead, imgsrc, %IniFile%, ConnectionsIcons, pptFileIcon		
 
-	If imgsrc ; not empty
+	If (imgsrc != "ERROR")
 		return imgsrc
 }
 
@@ -291,7 +302,7 @@ Else If InStr(sLink,"https://teams.microsoft.com/l/channel/") || InStr(sLink,"ht
 Else If InStr(sLink,"https://web.microsoftstream.com/browse?q=")
 	IniRead, imgsrc, %IniFile%, ConnectionsIcons, StreamIcon
 
-If (imgsrc == "ERROR")
+If (imgsrc = "ERROR")
 	return
 Else
 	return imgsrc
@@ -310,8 +321,7 @@ url := Trim(url)
 
 url := Teams_FileLinkBeautifier(url)
 
-If Connections_IsConnectionsUrl(url)
-{
+If Connections_IsConnectionsUrl(url) {
 	; Switch to https
 	url := StrReplace(url,"http://","https://")
 	
@@ -355,34 +365,33 @@ If Connections_IsConnectionsUrl(url)
 	;	url := StrReplace(url,"https://","http://")
 	
 	url := StrReplace(url,"'","%27")
-}
-Else If (SharePoint_IsSPUrl(url))
+
+} Else If (SharePoint_IsSPUrl(url)) 
 	url := SharePoint_CleanUrl(url)	
+Else If InStr(url,".blogspot.") {
+	url := RegExReplace(url,"/\d{4}/\d{2}","")
+	url := StrReplace(url,".html","")
+}
 Else If (IsGoogleUrl(url))
 	url := GetGoogleUrl(url)
-Else If RegExMatch(url,"^https://teams.microsoft.com/l/file/") {
+Else If (RegExMatch(url,"^https://teams.microsoft.com/l/file/")) {
 	If (RegExMatch(url,"&objectUrl=(.*?)&",newurl)) {
 		url := newurl1
 		url := uriDecode(url)
 	}
-}
-Else
+} Else
 	url := GetFileLink(url)
 			
-If decode 
-{
+If (decode) {
 	url := uriDecode(url)	
 
 	; fix beautified url for ConNext wikis
-	If InStr(url,"://connext.conti.de/wikis/")
-	{
+	If (Connections_IsConnectionsUrl(url,"wiki"))	{
 		;url := StrReplace(url,"(","%28")
 		;url := StrReplace(url,")","%29")
 		url := StrReplace(url,"/#","/%23") ; links to page starting with # won't open
 	}	
-}
-Else
-{
+} Else {
 	url := StrReplace(url,"(","%28")
 	url := StrReplace(url,")","%29")
 	url := StrReplace(url," ","%20")
@@ -439,7 +448,7 @@ OnIntelliPasteMultiStyleMsgBox() {
 
 ; -------------------------------------------------------------------------------------------------------------------
 IntelliPaste(){
-global PT_wc
+;global PT_wc - declared in NWS.ahk
 sClipboard := Clipboard  
 
 If InStr(sClipboard,"`n") { ; MultiLine 
@@ -465,8 +474,8 @@ If InStr(sClipboard,"`n") { ; MultiLine
 SetTitleMatchMode, 2 ; partial match
 If (WinActive("jira.conti.de")) ||  (WinActive("JIRA BS")) { ;TODO replace by IsJira
 	sFullText := JiraFormatLinks(sClipboard,sStyle)
-	PT_wc.SetText(sFullText)
-	PT_wc.Paste()
+	PT_wc.iSetText(sFullText)
+	PT_wc.iPaste()
 	return
 }
 
@@ -479,7 +488,7 @@ useico := True
 ; Do not ask for ico for specific applications where pasting icon doesn't work
 If WinActive("ahk_group MSOffice") or  WinActive("Confluence") or WinActive("Microsoft Teams")  or WinActive("Microsoft Stream") or WinActive("Microsoft Whiteboard")
 	useico := False
-Else If  WinActive("ahk_exe notepad.exe") or WinActive("ahk_exe notepad++.exe") or WinActive("ahk_exe WorkFlowy.exe") ; plain text editor
+Else If  WinActive("ahk_exe notepad.exe") or WinActive("ahk_exe notepad++.exe") or WinActive("ahk_exe WorkFlowy.exe") or WinActive("ahk_exe atom.exe") ; plain text editor
 	useico := False
 ; If only one link, set useico to False in case of: video/ image files...
 Else If !InStr(sClipboard,"`n") { ; single entry
@@ -491,8 +500,8 @@ Else If !InStr(sClipboard,"`n") { ; single entry
 	Else If InStr(sClipboard,"https://github.com/") {
 		sFile := StrReplace(sClipboard,"/blob/","/raw/")
 		sFullText = <script src="http://gist-it.appspot.com/%sFile%"></script>
-		PT_wc.SetText(sFullText)
-		PT_wc.Paste() 
+		PT_wc.iSetText(sFullText)
+		PT_wc.iPaste() 
 		return
 	}
 }
@@ -503,8 +512,9 @@ If useico {
 	Loop, parse, sClipboard, `n, `r
 	{
 		sLink := CleanUrl(A_LoopField)
-		imgsrc := Link2Ico(sLink)	
-		If imgsrc { ; not empty
+		imgsrc := Link2Ico(sLink)
+		;MsgBox %sLink% : %imgsrc% ; DBG
+		If not (imgsrc="") { ; icon not empty
 			useico := True
 			break ; return true
 		}
@@ -533,6 +543,25 @@ If  WinActive("ahk_exe notepad.exe") or WinActive("ahk_exe notepad++.exe") { ;->
 sFullHtml =
 sFullText =
 ; IntelliPaste Links
+
+;oldClipboard := Clipboard
+If !InStr(sClipboard,"`n") { ; single input
+	sLink := CleanUrl(sClipboard)
+	sHtml := IntelliHtml(sLink, useico)
+
+	PT_wc.SetHTML(sHtml) ; iSetHTML  does not work e.g. in Outlook Task
+
+	If (sLink = sClipboard) { ; no action on clean -> transform to html
+		PT_wc.SetText(sHtml)
+	} Else {
+		PT_wc.SetText(sLink)
+	}
+	PT_wc.Paste() 
+	;Sleep 500 ; required else clipboard is restored before paste
+	;Clipboard := oldClipboard ; restore clipboard
+	return
+}
+
 Loop, parse, sClipboard, `n, `r
 {
 	sLink_i := CleanUrl(A_LoopField)	; calls also GetSharepointUrl
@@ -565,12 +594,12 @@ If (Fmt = "Text") {
 } Else If (Fmt = "HTML") {
 	If (sStyle = "bullet-list")
 		sFullHtml :=  "<ul>" . sFullHtml . "</ul>"
-	PT_wc.SetHTML(sFullHtml)
+	PT_wc.SetHTML(sFullHtml) ; iSetHTML does not work sometimes e.g. Outlook Tasks
 	PT_wc.SetText(sFullText)
 }
-
 PT_wc.Paste() 
-
+Clipboard := oldClipboard ; restore clipboard
+return
 } ; eofun IntelliPaste()
 
 ; -------------------------------------------------------------------------------------------------------------------
@@ -626,73 +655,19 @@ GetFileLink(sFile) {
 		Return sFile
 	}
    	   
-	; Get File Link for Personal OneDrive
-	EnvGet, sOneDriveDir , onedrive
-	
-	If InStr(sFile,sOneDriveDir . "\") { 
-		rootUrl = https://continental-my.sharepoint.com/personal/%A_UserName%_contiwan_com/Documents
-		sFile := StrReplace(sFile, sOneDriveDir,rootUrl)
-		sFile := StrReplace(sFile, "\", "/")
-		return sFile
-	}
+	sUrl := SharePoint_Sync2Url(sFile)
+	If !(sUrl = "")
+		return sUrl
 
-	; Get File Link for SharePoint/OneDrive Synced location
-	sOneDriveDir := StrReplace(sOneDriveDir,"OneDrive - ","")
-	needle :=  StrReplace(sOneDriveDir,"\","\\") ; 
-	needle := needle "\\[^\\]*"
-	If (RegExMatch(sFile,needle,syncDir)) {
-		sIniFile = %sOneDriveDir%\SPsync.ini
-		If Not FileExist(sIniFile)
-		{
-			TrayTip, NWS PowerTool, File %sIniFile% does not exist! File was created in "%sOneDriveDir%". Fill it following user documentation.
-
-			FileAppend, REM See documentation https://connext.conti.de/blogs/tdalon/entry/onedrive_sync_ahk#Setup`n, %sIniFile%
-			FileAppend, REM Use a TAB to separate local root folder from SharePoint root url`n, %sIniFile%
-			FileAppend, REM Replace #TBD by the SharePoint root url. Url shall not end with /`n, %sIniFile%
-			FileAppend, %syncDir%%A_Tab%#TBD`n, %sIniFile%
-			Run https://connext.conti.de/blogs/tdalon/entry/onedrive_sync_ahk#Setup
-			sCmd = Edit "%sIniFile%"
-			Run %sCmd%
-    		return
-		}
-		
-		Loop, Read, %sIniFile%
-		{
-			Array := StrSplit(A_LoopReadLine, A_Tab," `t",2)
-			If !Array
-				continue
-			rootDir := StrReplace(Array[1],"??",".*")
-			rootDirRe := StrReplace(rootDir,"\","\\") ; escape filesep
-			If (RegExMatch(syncDir, rootDirRe)) {
-				rootUrl := Array[2]
-				If rootUrl = "#TBD"
-					break
-				sFile := StrReplace(sFile, syncDir,rootUrl)
-				sFile := StrReplace(sFile, "\", "/")
-				return sFile
-			}
-		}	; End Loop		
-		
-		If !rootUrl {
-			FileAppend, %syncDir%%A_Tab%#TBD`n, %sIniFile%			
-		}
-		TrayTip, NWS PowerTool, File SPsync.ini is not properly filled for %syncDir%! Fill it following user documentation.,,0x23
-		sCmd = Edit "%sIniFile%"
-		Run %sCmd%
-		;Run https://connext.conti.de/blogs/tdalon/entry/onedrive_sync_ahk
-		return
-	}
-
-
-	StringLeft Drive, sFile, 2
-	Share := DriveMap_Get(Drive)
-	If Share <> 
+	StringLeft sDrive, sFile, 2
+	sShare := DriveMap_Get(sDrive)
+	If sShare <> 
 	{
-		sFile := StrReplace(sFile, Drive ,Share)
+		sFile := StrReplace(sFile, sDrive ,sShare)
 	}
 
 	sFile2 := RegExReplace(sFile,"i)@SSL\\DavWWWRoot","") ; case-insensitive
-	If sFile2 <> %sFile%
+	If !(sFile2 = sFile)
 	{
 		sFile := StrReplace(sFile2,"\","/") 
 		sFile = https:%sFile%

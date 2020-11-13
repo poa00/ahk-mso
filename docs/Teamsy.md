@@ -11,3 +11,5 @@ The main ahk file is [Teamsy.ahk](https://github.com/tdalon/ahk/blob/master/Team
 It can be compiled/ is also provided as standalone [Teamsy.exe](https://github.com/tdalon/ahk/blob/master/Teamsy.exe).
 
 # [Changelog](Teamsy-(Changelog))
+
+# [News](https://twitter.com/search?q=%23Teamsy%20%23MicrosoftTeams)

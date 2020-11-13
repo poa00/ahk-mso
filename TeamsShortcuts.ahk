@@ -5,7 +5,7 @@
 ; Source : https://github.com/tdalon/ahk/blob/master/TeamsShortcuts.ahk
 ;
 
-LastCompiled = 20201022223824
+LastCompiled = 20201113145548
 
 #Include <Teams>
 #Include <PowerTools>
@@ -21,6 +21,15 @@ If (TeamsPowerShell)
   Menu,SubMenuSettings,Check, Teams PowerShell
 Else 
   Menu,SubMenuSettings,UnCheck, Teams PowerShell
+
+Menu, SubMenuSettings, Add, Teams Personalize Mentions, MenuCb_ToggleSettingTeamsMentionPersonalize
+TeamsMentionPersonalize := PowerTools_RegRead("TeamsMentionPersonalize")
+
+If (TeamsMentionPersonalize) 
+  Menu,SubMenuSettings,Check, Teams Personalize Mentions
+Else 
+  Menu,SubMenuSettings,UnCheck, Teams Personalize Mentions
+
 
 Menu,Tray,NoStandard
 Menu,Tray,Add,Add to Teams Favorites, Link2TeamsFavs
@@ -59,7 +68,7 @@ If !a_iscompiled {
 }
 FormatTime LastMod, %LastMod% D1 R
 
-sTooltip = Teams Shortcuts %LastMod%`nUse 'Win+T' to open main Menu. Ctrl+Click on menu item to open help.`nRight-Click on icon to access Help and other functionalities.
+sTooltip = Teams Shortcuts %LastMod%`nUse 'Win+T' to open main menu in Teams. Ctrl+Click on menu item to open help.`nRight-Click on icon to access Help and other functionalities.
 Menu, Tray, Tip, %sTooltip%
 
 ; -------------------------------------------------------------------------------------------------------------------
@@ -67,6 +76,7 @@ Menu, TeamsShortcutMenu, add, Smart &Reply (Alt+R), Teams_SmartReply
 Menu, TeamsShortcutMenu, add, Reply with &Quote from Clipboard (Win+Q), ReplyWithQuote
 Menu, TeamsShortcutMenu, add, Create E&mail with link to current conversation (Win+M), ShareByMail
 Menu, TeamsShortcutMenu, add, &New Expanded Conversation (Win+N), NewConversation
+Menu, TeamsShortcutMenu, add, Send Mentions (Alt+Q), SendMentions
 Menu, TeamsShortcutMenu, add, Personalize &Mention (Win+1), PersonalizeMention
 Menu, TeamsShortcutMenu, add, Personalize &Mention with uid (Win+2), PersonalizeMention2
 Menu, TeamsShortcutMenu, add, View &Unread (Win+U), ViewUnread
@@ -78,6 +88,7 @@ Menu, TeamsShortcutMenu, add, Add to &Favorites, Link2TeamsFavs
 
 #IfWinActive,ahk_exe Teams.exe
 
+
 #1:: ; <--- Personalize Mention
 PersonalizeMention:
 If GetKeyState("Ctrl") {
@@ -87,7 +98,7 @@ If GetKeyState("Ctrl") {
 SendInput ^{Left}{Backspace}
 return
 
-#2:: ; <--- Personalize Mention
+#2:: ; <--- Personalize Mention for name with (uid)
 PersonalizeMention2:
 If GetKeyState("Ctrl") {
 	Run, "https://connext.conti.de/blogs/tdalon/entry/personalize_mention_powertool"
@@ -100,9 +111,12 @@ return
 ; Win + N
 #n::  ; <--- New Expanded Conversation
 NewConversation:
-	SendInput ^+x ; Ctrl+Shift+x Expand
-	sleep, 300
-    SendInput +{Tab} ; move cursor to subject line
+	SendInput ^{f6}
+    SendInput !+c ;  compose box alt+shift+c: necessary to get second hotkey working (regression with new conversation button)
+    sleep, 300
+    SendInput ^+x ; expand compose box ctrl+shift+x (does not work anymore immediately)
+    sleep, 800
+    SendInput +{Tab} ; move cursor back to subject line via shift+tab
 return
 
 
@@ -224,6 +238,28 @@ Send {Enter}
 Send ^v
 return
 
+; ----------------------------------------------------------------------
+!q::
+SendMentions:
+If GetKeyState("Ctrl") {
+	Run, "https://tdalon.blogspot.com/teams-shortcuts-send-mentions"
+	return
+}
+sSelection := WinClip.GetHTML()
+If (sSelection="")
+    sSelection := Clipboard
+sSelection := Trim(sSelection,"`n`r`t`s")
+sEmailList := People_GetEmailList(sSelection)
+
+doPerso := PowerTools_RegRead("TeamsMentionPersonalize")
+
+Loop, parse, sEmailList, ";"
+{
+	Teams_SendMention(A_LoopField,doPerso)
+	SendInput {,}{Space} 
+}	; End Loop 
+SendInput {Backspace}{Backspace}{Space} ; remove final ,
+return
 
 ; ----------------------------------------------------------------------
 Link2TeamsFavs:

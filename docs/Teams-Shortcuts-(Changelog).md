@@ -1,5 +1,8 @@
 # Teams Shorctuts Changelog
 
+* 2020-10-30
+	- Fix new conversation with change of hotkey
+	- Added: Paste Mentions (Extract Emails from Clipboard and convert Email to Name to be typed as mention in Teams
 * 2020-10-28
   - Remove hotkey (Win+M; bad choice) for create a meeting. Rather launch from Teamsy.
   - Add SubMenu Meeting -> Cursor Highlighter

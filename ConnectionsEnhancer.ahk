@@ -15,7 +15,7 @@
 
 ; AutoExecute Section must be on the top of the script
 ;#NoEnv
-LastCompiled = 20201006200700
+LastCompiled = 20201022223820
 SetWorkingDir %A_ScriptDir%
 
 #Include <WinClipAPI>
@@ -871,7 +871,7 @@ If !RegExMatch(sUrl,"^https?://" . PowerTools_ConnectionsRootUrl  "/profiles/htm
 }
 sUrl := Clipboard
 If !RegExMatch(sUrl,"^https?://" . PowerTools_ConnectionsRootUrl  "/profiles/html/") {
-	;MsgBox 0x10,Connections Enhancer, Clipboard does not match url with 'connext.conti.de/profiles/html/'!
+	;MsgBox 0x10,Connections Enhancer, Clipboard does not match url with 'connectionsroot/profiles/html/'!
 	TrayTip, Update User Table, Clipboard does not match url with 'connext.conti.de/profiles/html/'!,,0x3
 	return
 }
@@ -1823,7 +1823,7 @@ If RegExMatch(sUrl,"/wikis/.*/wiki/(.*?)/page/([^/\?]*)",sMatch) { ; exclude als
 ; ----------------------------------------------------------------------
 WikiGetPageId(sWikiLabel,sPageLabel){
 ; Get Wiki Page Id
-	sApiUrl = https://connext.conti.de/wikis/basic/anonymous/api/wiki/%sWikiLabel%/navigation/%sPageLabel%/entry?includeSiblings=true&format=json
+	sApiUrl = https://%PowerTools_ConnectionsRootUrl%/wikis/basic/anonymous/api/wiki/%sWikiLabel%/navigation/%sPageLabel%/entry?includeSiblings=true&format=json
 	sResponse := CNGet(sApiUrl)
 
 	sPat = {"parent":(?:.*?),"previousSibling":(?:.*?),"id":"(.*?)","label":"(?:.*?)","nextSibling":(?:.*?),"mediaId":"(?:.*?)","title":"(?:.*?)"}

@@ -1,5 +1,7 @@
 # People Connector Changelog
 
+* 2020-11-11
+	- Refactoring Outlook2Excel -> Emails2Excel. Works for any email selection (not only outlook). Based on People_Email2Name
 * 2020-10-30
   - Bug fix: if selection is a single email (e.g. copy email from Teams visit card)
   - Add Connections Open Network View

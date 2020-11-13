@@ -1,4 +1,4 @@
-#Include <Login>
+﻿#Include <Login>
 #Include <DateConv>
 #Include <uriDecode>
 ; Calls ButtonBox
@@ -41,7 +41,7 @@ Else {
     WebRequest.Open("GET", sUrl, false) ; Async=false	
     WebRequest.SetCredentials(A_UserName, sPassword, 0)
     WebRequest.SetCredentials(A_UserName, sPassword, 1)
-    If (IsVPN()) {
+    If (Login_IsVPN()) {
         WebRequest.SetProxy(1) ; direct connection
     }
 
@@ -91,16 +91,16 @@ CNEmail2Uid(sEmail){
          return sUid1
 }
 ; ----------------------------------------------------------------------
-CNEmail2Key(sEmail){
+Connections_Email2Key(sEmail){
     ; Requires Password - DownloadToString(sUrl) ; does not work/ returns empty
     sUrl = https://%PowerTools_ConnectionsRootUrl%/profiles/atom/profile.do?email=%sEmail%
         
-     sSource := CNGet(sUrl)
+    sSource := CNGet(sUrl)
     If (sSource ~= "Error.*") 
         return
 	sPat= U)https?://%PowerTools_ConnectionsRootUrl%/profiles/atom/profileTags.do\?targetKey=(.*)&
     If RegExMatch(sSource,sPat,sKey) 
-         return sKey
+         return sKey1
 }
 ; ----------------------------------------------------------------------
 Connections_Emails2Mentions(sEmailList){
@@ -363,7 +363,7 @@ String2UTF8(sInput){
 vSize := StrPut(sInput, "UTF-8")
 VarSetCapacity(vUtf8, vSize)
 vSize := StrPut(sInput, &vUtf8, vSize, "UTF-8")
-sOutput .= StrGet(&vUtf8, "CP0") ;cafÃ©
+sOutput .= StrGet(&vUtf8, "CP0") ;cafÃƒÂ©
 }
 
 ; ----------------------------------------------------------------------
@@ -409,7 +409,7 @@ return sXml
 }
 ; ----------------------------------------------------------------------
 ; Called by NWS: Ctrl+E in browser
-CNEdit(sUrl){
+Connections_Edit(sUrl){
 If InStr(sUrl,"://" . PowerTools_ConnectionsRootUrl . "/blogs") { ; ConNext Blog
 	If InStr(sUrl,"method=edit") 
 		return
@@ -729,7 +729,7 @@ Else {
 
 If (showError) and (sResponse ~= "Error.*") {
     ; MsgBox 0x10, Error, %sResponse%
-    TrayTip ConNext Get Error!, %sResponse%
+    TrayTip Connections Get Error!, %sResponse%
 }
 return sResponse
 }

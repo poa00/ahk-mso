@@ -212,8 +212,7 @@ If (TeamsPowerShell := !TeamsPowerShell) {
     MsgBox 0x1024,People Connector, Have you setup Teams PowerShell on your PC?
 	IfMsgBox No
 		return
-    OfficeUid := People_ADGetUserField("sAMAccountName=" . A_UserName, "mailNickname") ; mailNickname - office uid 
-    PowerTools_RegWrite("OfficeUid",OfficeUid)
+    OfficeUid := People_GetMyOUid()
 
     ;sWinUid := People_ADGetUserField("mail=" . sEmail, "sAMAccountName")  ;- login uid
 
@@ -253,11 +252,7 @@ If (Domain ="") {
     MsgBox 0x10, Teams Shortcuts: Error, No Domain defined!
     return
 }
-RegRead, OfficeUid, HKEY_CURRENT_USER\Software\PowerTools, OfficeUid
-If !OfficeUid {
-    OfficeUid := People_ADGetUserField("sAMAccountName=" . A_UserName, "mailNickname") ; mailNickname - office uid 
-    PowerTools_RegWrite("OfficeUid",OfficeUid)
-}
+OfficeUid := People_GetMyOUid()
 
 sText = Connect-MicrosoftTeams -TenantId %sTenantId% -AccountId %OfficeUid%@%Domain%
 sText = %sText%`nImport-Csv -header email -Path "%CsvFile%" | foreach{Add-TeamUser -GroupId "%sGroupId%" -user $_.email}
@@ -290,11 +285,7 @@ If (Domain ="") {
     return
 }
 
-RegRead, OfficeUid, HKEY_CURRENT_USER\Software\PowerTools, OfficeUid
-If !OfficeUid {
-    OfficeUid := People_ADGetUserField("sAMAccountName=" . A_UserName, "mailNickname") ; mailNickname - office uid 
-    PowerTools_RegWrite("OfficeUid",OfficeUid)
-}
+OfficeUid := People_GetMyOUid()
 sText = Connect-MicrosoftTeams -AccountId %OfficeUid%@%Domain%
 sText = %sText%`nGet-Team -User %OfficeUid%@%Domain% | Select DisplayName, MailNickName, GroupId, Description | Export-Csv -Path %CsvFile% -NoTypeInformation
 FileAppend, %sText%,%PsFile%
@@ -366,7 +357,7 @@ If (Domain ="") {
     MsgBox 0x10, Teams Shortcuts: Error, No Domain defined!
     return
 }
-RegRead, OfficeUid, HKEY_CURRENT_USER\Software\PowerTools, OfficeUid
+OfficeUid := People_GetMyOUid()
 sText = Connect-MicrosoftTeams -TenantId %sTenantId% -AccountId %OfficeUid%@%Domain%
 sText = %sText%`nGet-Team -GroupId %sGroupId%
 FileAppend, %sText%,%PsFile%
@@ -417,7 +408,7 @@ If (Domain ="") {
     MsgBox 0x10, Teams Shortcuts: Error, No Domain defined!
     return
 }
-RegRead, OfficeUid, HKEY_CURRENT_USER\Software\PowerTools, OfficeUid
+OfficeUid := People_GetMyOUid()
 sText = Connect-MicrosoftTeams -AccountId %OfficeUid%@%Domain%
 sText = %sText%`nGet-Team -GroupId %sGroupId%
 FileAppend, %sText%,%PsFile%
@@ -457,7 +448,7 @@ sGroupId := sId1
 sTenantId := sId2
 
 ; Create .ps1 file
-PsFile = %A_Temp%\Teams_AddUsers.ps1
+PsFile = %A_Temp%\Teams_GetUser.ps1
 ; Fill the file with commands
 If FileExist(PsFile)
     FileDelete, %PsFile%
@@ -467,11 +458,7 @@ If (Domain ="") {
     MsgBox 0x10, Teams Shortcuts: Error, No Domain defined!
     return
 }
-RegRead, OfficeUid, HKEY_CURRENT_USER\Software\PowerTools, OfficeUid
-If !OfficeUid {
-    OfficeUid := People_ADGetUserField("sAMAccountName=" . A_UserName, "mailNickname") ; mailNickname - office uid 
-    PowerTools_RegWrite("OfficeUid",OfficeUid)
-}
+OfficeUid := People_GetMyOUid()
 sText = Connect-MicrosoftTeams -TenantId %sTenantId% -AccountId %OfficeUid%@%Domain%
 sText = %sText%`nGet-TeamUser -GroupId %sGroupId%
 FileAppend, %sText%,%PsFile%
@@ -488,41 +475,52 @@ RunWait, powershell.exe -ExecutionPolicy Bypass -Command %PsFile% > %tempFile%,,
 FileRead, sOutput, %tempFile%
 ;FileDelete, %tempFile%
 
-Run %tempFile% ; DBG
+Run %tempFile% 
 }
 
 ; -------------------------------------------------------------------------------------------------------------------
 
 Teams_SmartReply(sHtml := "",CopyLink:= True){
 If GetKeyState("Ctrl") {
-	Run, "https://connext.conti.de/blogs/tdalon/entry/teams_smart_reply"
+	Run, "https://connext.conti.de/blogs/tdalon/entry/teams_smart_reply" ;TODO
 	return
 }
-sQuoteHtml := GetSelection("Html") 
-If !sQuoteHtml { ; no selection -> default reply
+sSelectionHtml := GetSelection("Html") 
+
+If (!sSelectionHtml) { ; no selection -> default reply
     Send !+r ; Alt+Shift+r
     return
 }
 
-If InStr(sQuoteHtml,"data-tid=""messageBodyContent""") { ; Full thread selection e.g. Shift+Up
-    sHtmlThread := sQuoteHtml
+If InStr(sSelectionHtml,"data-tid=""messageBodyContent""") { ; Full thread selection e.g. Shift+Up
 
     ; Get Quoted Html
     sPat = Us)<dd><div>.*<div data-tid="messageBodyContainer">(.*)</div></div></dd>
     
-    RegExMatch(sQuoteHtml,sPat,sMatch)
+    RegExMatch(sSelectionHtml,sPat,sMatch)
     sQuoteBodyHtml := sMatch1
+    sHtmlThread := sSelectionHtml
     
 
 } Else { ; partial thread selection
-    
     sQuoteBodyHtml := GetSelection() ; removes formatting
-
+    If (!sQuoteBodyHtml) {
+        MsgBox Selection empty!
+        return
+    }
+    
+    ;MsgBox %sQuoteBodyHtml% ; DBG
     SendInput +{Up} ; Shift + Up Arrow: select all thread
     Sleep 200
     SendInput ^a
     sHtmlThread := GetSelection("html")
 }
+
+If (!sHtmlThread) {
+        MsgBox Thread empty!
+        return
+    }
+
 ; Extract Teams Link
 
 ; Full thread selection to get link and author
@@ -530,17 +528,18 @@ If InStr(sQuoteHtml,"data-tid=""messageBodyContent""") { ; Full thread selection
 
 ; Get thread author and conversation title from parent thread
 ; <span>Dalon, Thierry</span><div>Quick Share link to Teams</div><div data-tid="messageBodyContainer">
-sPat = U)<span>(.*)</span><div>(.*)</div><div data-tid="messageBodyContainer">
+sPat = U)<span>([^>]*)</span><div>(.*)</div><div data-tid="messageBodyContainer">
 If (RegExMatch(sHtmlThread,sPat,sMatch)) {
     sAuthor := sMatch1
 	sTitle := sMatch2
-}
-
-; Sub-thread
+    ;MsgBox %sHtmlThread% ; DBG
+    ;MsgBox %sAuthor% ; DBG
+} Else { ; Sub-thread
 ; <span>Schmidt, Thomas</span><div data-tid="messageBodyContainer">
-sPat = U)<span>([^/]*)</span><div data-tid="messageBodyContainer">
-If (RegExMatch(sHtmlThread,sPat,sMatch)) {
-    sAuthor := sMatch1
+    sPat = U)<span>([^/]*)</span><div data-tid="messageBodyContainer">
+    If (RegExMatch(sHtmlThread,sPat,sMatch)) {
+        sAuthor := sMatch1
+    }
 }
 
 
@@ -549,27 +548,42 @@ sPat := "U)<div>&lt;https://teams.microsoft.com/(.*;createdTime=.*)&gt;</div>.*<
 If (RegExMatch(sHtmlThread,sPat,sMatch)) {
     sMsgLink = https://teams.microsoft.com/%sMatch1%
     sMsgLink := StrReplace(sMsgLink,"&amp;amp;","&")
-	If !sTitle
+	If (!sTitle)
         sMsgHtmlLink = <a href="%sMsgLink%">Message link</a>
     Else
-        sMsgHtmlLink = <a href="%sMsgLink%">%sTitle% (Parent Conversation)</a>
+        ;sMsgHtmlLink = <a href="%sMsgLink%">%sTitle% (Parent Conversation)</a>
+        sMsgHtmlLink =
 }
 
 
 ;MsgBox %sHtmlThread%
 ;MsgBox %sMsgHtmlLink%
-;return
+;return ; DBG
 
-sHtml = <blockquote>%sQuoteBodyHtml%<div>%sMsgHtmlLink%<div></blockquote><div> 
+If (!sMsgHtmlLink) ; empty
+    sHtml = <blockquote>%sQuoteBodyHtml%</blockquote>
+Else
+    sHtml = <blockquote>%sQuoteBodyHtml%<div>%sMsgHtmlLink%</div></blockquote>
 
 WinClip.SetHTML(sHtml)
 
+;MsgBox %sHtml% ; DBG
+
 Send !+r ; Alt+Shift+r
-Sleep 500
+Sleep 1000
 
 WinClip.Paste()
-SendInput @%Author%{Tab}
-return
+; Escape Block quote
+SendInput +{Enter}
+SendInput +{Enter}
+; Mention Author
+If (!People_IsMe(sAuthor)) {
+    Teams_SendMention(sAuthor)
+    SendInput :{space}
+}
+
+
+return ; TODO
 
 If (sDiv) { ; whole thread was selected
 	
@@ -603,7 +617,7 @@ If (sDiv) { ; whole thread was selected
             sPat = Us)<body>(.*)</body>
             If RegExMatch(sHtmlTitle,sPat,sHtmlTitle)
                 sHtmlTitle := sHtmlTitle1
-        MsgBox %sHtmlTitle% ; DBG
+        ;MsgBox %sHtmlTitle% ; DBG
         }
     }
     Send !+r ; Alt+Shift+r
@@ -653,7 +667,28 @@ sTeamLink := StrReplace(sMatch1,"&amp;amp;","&")
 return sTeamLink
 } ; eofun
 
+; -------------------------------------------------------------------------------------------------------------------
+Teams_SendMention(sInput, doPerso := True){
+    
+    If InStr(sInput,"@") { ; Email
+        sName := People_ADGetUserField("mail=" . sInput, "DisplayName")
+        sInput := RegExReplace(sName, "\s\(.*\)") ; remove (uid) else mention completion does not work 
+    } 
+    
+    SendInput {@}
+    Sleep 300
+    SendInput %sInput%
+    Sleep 1000 ; time for autocompletion
+    SendInput {Tab}
 
+    ; Personalize mention -> Firstname
+    If (Not (sName="") and doPerso) {
+        If InStr(sName,"(") 
+            SendInput {Backspace}^{Left}{Backspace}
+        Else
+            SendInput ^{Left}{Backspace}
+    }
+} ; eofun
 ; -------------------------------------------------------------------------------------------------------------------
 Teams_Link2Text(sLink){
 sPat = https://teams.microsoft.com/[^>"]*
@@ -767,7 +802,7 @@ Run, https://teams.microsoft.com/_#/calendarv2
 Teams_Users2Excel(TeamLink:=""){
 ; Input can be sGroupId or Team link
 If GetKeyState("Ctrl") {
-	Run, "https://tdalon.blogspot.com/teams-users2excel"
+	Run, "https://tdalon.blogspot.com/2020/08/teams-users2excel.html"
 	return
 }
 
@@ -779,13 +814,12 @@ If (Domain ="") {
 
 RegRead, TeamsPowerShell, HKEY_CURRENT_USER\Software\PowerTools, TeamsPowerShell
 If (TeamsPowerShell := !TeamsPowerShell) {
-    sUrl := "https://tdalon.blogspot.com/teams-powershell-setup"
+    sUrl := "https://tdalon.blogspot.com/2020/08/teams-powershell-setup.html"
     Run, "%sUrl%" 
     MsgBox 0x1024,People Connector, Have you setup Teams PowerShell on your PC?
 	IfMsgBox No
 		return
-    OfficeUid := People_ADGetUserField("sAMAccountName=" . A_UserName, "mailNickname",Domain) ; mailNickname - office uid 
-    PowerTools_RegWrite("OfficeUid",OfficeUid)
+    OfficeUid := People_GetMyOUid()
 
     ;sWinUid := People_ADGetUserField("mail=" . sEmail, "sAMAccountName")  ;- login uid
 
@@ -820,11 +854,7 @@ PsFile = %A_Temp%\Teams_GetUsers.ps1
 If FileExist(PsFile)
     FileDelete, %PsFile%
 
-RegRead, OfficeUid, HKEY_CURRENT_USER\Software\PowerTools, OfficeUid
-If !OfficeUid {
-    OfficeUid := People_ADGetUserField("sAMAccountName=" . A_UserName, "mailNickname",Domain) ; mailNickname - office uid 
-    PowerTools_RegWrite("OfficeUid",OfficeUid)
-}
+OfficeUid := People_GetMyOUid()
 sText = Connect-MicrosoftTeams -AccountId %OfficeUid%@%Domain%
 sText = %sText%`nGet-TeamUser -GroupId %sGroupId% | Export-Csv -Path %CsvFile% -NoTypeInformation
 ; Columns: UserId, User, Name, Role
@@ -907,8 +937,7 @@ RegRead, TeamsPowerShell, HKEY_CURRENT_USER\Software\PowerTools, TeamsPowerShell
 TeamsPowerShell := !TeamsPowerShell 
 If (TeamsPowerShell) {
  	Menu,%MenuName%,Check, %ItemName%	 
-    OfficeUid := People_ADGetUserField("sAMAccountName=" . A_UserName, "mailNickname") ; mailNickname - office uid 
-    PowerTools_RegWrite("OfficeUid",OfficeUid)
+    OfficeUid := People_GetMyOUid()
     ;sWinUid := People_ADGetUserField("mail=" . sEmail, "sAMAccountName")  ;- login uid
 } Else
     Menu,%MenuName%,UnCheck, %ItemName%	 
@@ -917,6 +946,24 @@ PowerTools_RegWrite("TeamsPowerShell",TeamsPowerShell)
 }
 
 ; -------------------------------------------------------------------------------------------------------------------
+MenuCb_ToggleSettingTeamsMentionPersonalize(ItemName, ItemPos, MenuName){
+If GetKeyState("Ctrl") {
+    sUrl := "https://connext.conti.de/wikis/home/wiki/Wc4f94c47297c_42c8_878f_525fd907cb68/page/Teams%20PowerShell%20Setup"
+    Run, "%sUrl%"
+	return
+}
+TeamsMentionPersonalize := PowerTools_RegRead("TeamsMentionPersonalize")
+TeamsMentionPersonalize := !TeamsMentionPersonalize 
+If (TeamsMentionPersonalize) {
+ 	Menu,%MenuName%,Check, %ItemName%	 
+} Else
+    Menu,%MenuName%,UnCheck, %ItemName%	 
+
+PowerTools_RegWrite("TeamsMentionPersonalize",TeamsMentionPersonalize)
+}
+
+; -------------------------------------------------------------------------------------------------------------------MenuCb_ToggleSettingTeamsMentionPersonalize
+
 
 Teams_GetMeetingWindow(){
 
