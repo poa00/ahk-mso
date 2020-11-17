@@ -1,6 +1,6 @@
 ﻿; CustomBoxes https://www.autohotkey.com/boards/viewtopic.php?f=6&t=35382
 ;-------------------------------------------------------------------------------
-ButtonBox(Title := "", Prompt := "", List := "", Seconds := "",Def:=1) {
+ButtonBox(Title := "", Prompt := "", List := "", Seconds := "",Def:=1,AlwaysOnTop:=True) {
 ;-------------------------------------------------------------------------------
     ; show a custom MsgBox with arbitrarily named buttons
     ; return the text of the button pressed. 
@@ -10,12 +10,16 @@ ButtonBox(Title := "", Prompt := "", List := "", Seconds := "",Def:=1) {
     ; Prompt is the text to display
     ; List is a pipe delimited list of captions for the buttons
     ; Seconds is the time in seconds to wait before timing out. Leave blank to wait indefinitely
+    ; Def Number: default button selected. Default=1 for first button
+    ; AlwaysOnTop. Default True. Gui is set AlwaysOnTop
 
     ; create GUI
     Gui, ButtonBox: New,, %Title%
     Gui, -MinimizeBox
     Gui, Margin, 30, 18
     Gui, Add, Text,, %Prompt%
+    If (AlwaysOnTop=True)
+        Gui,+AlwaysOnTop
     Loop, Parse, List, | 
     {  
         If (A_Index = Def)

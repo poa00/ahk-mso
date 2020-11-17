@@ -1,5 +1,10 @@
-# Teams Shorctuts Changelog
+# Teams Shortcuts Changelog
 
+* 2020-11-17
+  - Smart Reply improved version with Mention.
+  - Teams_GetMainWindow: improved version using Acc (no need to minimize all windows)
+* 2020-11-16
+	- Personalize Mention improved: Unified hotkeys for mention personalization (detect if () used by selecting/copying to clipboard)
 * 2020-10-30
 	- Fix new conversation with change of hotkey
 	- Added: Paste Mentions (Extract Emails from Clipboard and convert Email to Name to be typed as mention in Teams
@@ -7,7 +12,7 @@
   - Remove hotkey (Win+M; bad choice) for create a meeting. Rather launch from Teamsy.
   - Add SubMenu Meeting -> Cursor Highlighter
 * 2020-09-21
-    * SmartReply: Update to new hotkey Alt+Shift+r instead of r for reply
+    * SmartReply: Update to change of hotkey by Microsoft: new hotkey Alt+Shift+r instead of r for reply
 * 2020-09-14
     * VLC Integration for Play
 * 2020-07-27

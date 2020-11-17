@@ -5,7 +5,7 @@
 ; Source : https://github.com/tdalon/ahk/blob/master/TeamsShortcuts.ahk
 ;
 
-LastCompiled = 20201113145548
+LastCompiled = 20201117205742
 
 #Include <Teams>
 #Include <PowerTools>
@@ -73,12 +73,11 @@ Menu, Tray, Tip, %sTooltip%
 
 ; -------------------------------------------------------------------------------------------------------------------
 Menu, TeamsShortcutMenu, add, Smart &Reply (Alt+R), Teams_SmartReply
-Menu, TeamsShortcutMenu, add, Reply with &Quote from Clipboard (Win+Q), ReplyWithQuote
+Menu, TeamsShortcutMenu, add, &Quote Conversation (Alt+Q), QuoteConversation
 Menu, TeamsShortcutMenu, add, Create E&mail with link to current conversation (Win+M), ShareByMail
 Menu, TeamsShortcutMenu, add, &New Expanded Conversation (Win+N), NewConversation
-Menu, TeamsShortcutMenu, add, Send Mentions (Alt+Q), SendMentions
+Menu, TeamsShortcutMenu, add, Send Mentions (Win+Q), SendMentions
 Menu, TeamsShortcutMenu, add, Personalize &Mention (Win+1), PersonalizeMention
-Menu, TeamsShortcutMenu, add, Personalize &Mention with uid (Win+2), PersonalizeMention2
 Menu, TeamsShortcutMenu, add, View &Unread (Win+U), ViewUnread
 Menu, TeamsShortcutMenu, add, View &Saved (Win+S), ViewSaved
 Menu, TeamsShortcutMenu, add, &Pop-out Chat (Win+P), Pop
@@ -91,20 +90,7 @@ Menu, TeamsShortcutMenu, add, Add to &Favorites, Link2TeamsFavs
 
 #1:: ; <--- Personalize Mention
 PersonalizeMention:
-If GetKeyState("Ctrl") {
-	Run, "https://connext.conti.de/blogs/tdalon/entry/personalize_mention_powertool"
-	return
-}
-SendInput ^{Left}{Backspace}
-return
-
-#2:: ; <--- Personalize Mention for name with (uid)
-PersonalizeMention2:
-If GetKeyState("Ctrl") {
-	Run, "https://connext.conti.de/blogs/tdalon/entry/personalize_mention_powertool"
-	return
-}
-SendInput {Backspace}^{Left}{Backspace}
+Teams_PersonalizeMention()
 return
 
 ;--- Compose in Expand mode
@@ -194,14 +180,10 @@ Teams_SmartReply()
 return
 
 ; -------------------------------------------------------------------------------------------------------------------
-#q:: ; <--- Reply with quote from clipboard
-ReplyWithQuote:
-If GetKeyState("Ctrl") {
-	Run, "https://connext.conti.de/blogs/tdalon/entry/teams_smart_reply#reply_with_quote"
-	return
-}
-sHtml := WinClip.getHTML()
-Teams_SmartReply(sHtml,False)
+; Alt+Q
+!q:: ; <--- Quote conversation
+QuoteConversation:
+Teams_SmartReply(False)
 return
 ; -------------------------------------------------------------------------------------------------------------------
 
@@ -239,7 +221,7 @@ Send ^v
 return
 
 ; ----------------------------------------------------------------------
-!q::
+#q::
 SendMentions:
 If GetKeyState("Ctrl") {
 	Run, "https://tdalon.blogspot.com/teams-shortcuts-send-mentions"
@@ -313,14 +295,13 @@ sPat = Us)<span .* itemtype="http://schema.skype.com/Mention".*>(.*)</span>
 sNewHtml := sHtml
 Pos = 1 
 While Pos := RegExMatch(sHtml,sPat,sFullName,Pos+StrLen(sFullName)){
-    FirstName := RegExReplace(sFullName1,".*, ","")
+    sFullName1 := RegExReplace(sFullName1," (.*)","")
+	FirstName := RegExReplace(sFullName1,".*, ","")
     sNewHtml := StrReplace(sNewHtml,sFullName1,FirstName)
 }
 ;sNewHtml := RegExReplace(sNewHtml,"s).*<html>","<html>")
 WinClip.SetHTML(sNewHtml)
-
-Sleep 500
-Send ^v ; replace
+WinClip.Paste()
 
 return
 

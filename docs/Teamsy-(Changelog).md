@@ -1,5 +1,7 @@
 # Teamsy Changelog
 
+* 2020-11-17
+	- Teams_GetMainWindow: improved version using Acc (no need to minimize all windows)
 * 2020-11-09
 	- allow quick message via @ (previously / was prepended)
 * 2020-10-28

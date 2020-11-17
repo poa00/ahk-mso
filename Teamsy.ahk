@@ -14,6 +14,7 @@ If (!sInput) { ; empty
 }
 
 FoundPos := InStr(sInput," ")  
+
 If FoundPos {
     sKeyword := SubStr(sInput,1,FoundPos-1)
     sInput := SubStr(sInput,FoundPos+1)

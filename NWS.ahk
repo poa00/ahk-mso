@@ -17,8 +17,9 @@ SetWorkingDir %A_ScriptDir%
 #Include <Teams>
 #Include <SharePoint>
 #Include <Explorer>
+#Include <People>
 
-LastCompiled = 20201022223821
+LastCompiled = 20201109213900
 
 global PowerTools_ConnectionsRootUrl
 If (PowerTools_ConnectionsRootUrl="") {
@@ -146,7 +147,7 @@ If (Config = "Conti") {
 	Menu,SubMenuFavs,Add, KSSE, KSSE
 }
 Menu,SubMenuFavs,Add, Cursor Highlighter, PowerTools_CursorHighlighter
-Menu, Tray, Add, Tools/Favorites, :SubMenuFavs
+Menu, Tray, Add, Tools, :SubMenuFavs
 
 Menu,Tray,Add, Toggle AlwaysOnTop (Ctrl+Shift+Space), SysTrayToggleAlwaysOnTop
 Menu,Tray,Add, Toggle Title Bar, SysTrayToggleTitleBar
@@ -445,7 +446,7 @@ return
 ;!e:: ; Alt+E because Ctrl+E is used and can not be overwritten with Windows 10 and IE/Edge Browser Universal App
 sURL := GetActiveBrowserUrl()
 If Connections_IsConnectionsUrl(sURL) { 
-	CNEdit(sURL)
+	Connections_Edit(sURL)
 	return
 } Else If SharePoint_IsSPUrl(sURL) { ; SharePoint
 	newurl:= SharePoint_CleanUrl(sURL) ; returns wihout ending /
@@ -722,7 +723,7 @@ If (!sFile) ; file empty
 	return
 If InStr(sFile,"#TBD")
 {
-	sIniFile := SharePoint_GetSPSyncIniFile()
+	sIniFile := SharePoint_GetSyncIniFile()
 	TrayTip, NWS PowerTool, File %sIniFile% is not configured! Replace #TBD by the SharePoint root url.
 	Run https://connext.conti.de/blogs/tdalon/entry/onedrive_sync_ahk#Setup
 	sCmd = Edit "%sIniFile%"
@@ -997,12 +998,7 @@ If GetKeyState("Ctrl") {
 	Run, "%sUrl%"
 	return
 }
-RegRead, OfficeUid, HKEY_CURRENT_USER\Software\PowerTools, OfficeUid
-
-If !OfficeUid {
-    OfficeUid := People_ADGetUserField("sAMAccountName=" . A_UserName, "mailNickname") ; mailNickname - office uid 
-	PowerTools_RegWrite("OfficeUid",OfficeUid)
-}
+OfficeUid := People_GetMyOUid()
 Run https://continental-my.sharepoint.com/personal/%OfficeUid%_contiwan_com/_layouts/15/user.aspx	
 }
 ; ----------------------------------------------------------------------
@@ -1012,11 +1008,7 @@ If GetKeyState("Ctrl") {
 	Run, "%sUrl%"
 	return
 }
-RegRead, OfficeUid, HKEY_CURRENT_USER\Software\PowerTools, OfficeUid
-If !OfficeUid {
-    OfficeUid := People_ADGetUserField("sAMAccountName=" . A_UserName, "mailNickname") ; mailNickname - office uid 
-    PowerTools_RegWrite("OfficeUid",OfficeUid)
-}
+OfficeUid := People_GetMyOUid()
 sUrl := "https://continental-my.sharepoint.com/personal/" . OfficeUid . "_contiwan_com/Documents/Forms/All.aspx?ShowRibbon=true&InitialTabId=Ribbon%2ELibrary&VisibilityContext=WSSTabPersistence"
 Run, "%sUrl%"	
 }

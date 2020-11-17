@@ -1,4 +1,7 @@
 ; Login Lib
+#Include <PowerTools> 
+; for password from registry
+
 ; #Include <Encrypt> 
 ; For speed reason encryption is not used. Password is saved in HCU registry key - only accessible by current user
 
@@ -55,8 +58,8 @@ return sPersNum
 }
 ; ----------------------------------------------------------------------
 
-IsVPN(){
-    return Not (A_IPAddress2 = "0.0.0.0") ; HttpGet UnAuthorized via VPN
+Login_IsVPN(){
+    return Not (A_IPAddress2 = "0.0.0.0") 
 }
 ; ----------------------------------------------------------------------
 
@@ -80,17 +83,26 @@ ControlSetText,Edit2,%sPassword%
 Send,{Enter}
 
 WinWaitClose, ahk_exe vpnui.exe
-}
+} ; eofun
 ; ----------------------------------------------------------------------
-
-
 IsConnectedToInternet()
 ; source: https://jacksautohotkeyblog.wordpress.com/2018/04/26/checking-your-internet-connection-plus-a-twist-on-a-secret-windows-feature-autohotkey-quick-tips/
 {
   IsConnected := DllCall("Wininet.dll\InternetGetConnectedState", "Str", "0x40","Int",0)
   return (IsConnected = 0)
 }
-
+; ----------------------------------------------------------------------
+Login_IsContiNet(){
+sTmpFile = %A_Temp%\ipconfig.txt
+If FileExist(sTmpFile)
+    FileDelete, %sTmpFile%
+RunWait, %ComSpec% /c "ipconfig >"%sTmpFile%"",,Hide
+FileRead, Output, %sTmpFile%
+If InStr(Output,"conti.de") or InStr(Output,"contiwan.com") ; with VPN shows conti.de / direct connection shows contiwan.com'
+    return True
+Else
+    return False
+}
 
 ; ########################################################################################################################################
 ; Obsolete

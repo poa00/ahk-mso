@@ -18,15 +18,14 @@ People_GetEmailList(sInput){
 global PowerTools_ConnectionsRootUrl
 sInput := StrReplace(sInput,"%40","@") ; for connext profile links - decode @
 
-sPat = [0-9a-zA-Z\.\-]+@[0-9a-zA-Z\-\.]*\.[a-z]{2,3}
+; Teams visit card in html ends with @unq.gbl.spaces @thread.skype
+sPat = ([0-9a-zA-Z\.\-]+@[0-9a-zA-Z\-\.]*\.[a-z]{2,3})[^a-z\.]{0,1}
 ; TODO bug if Connext mention
 Pos = 1 
 While Pos := RegExMatch(sInput,sPat,sMatch,Pos+StrLen(sMatch)){
-    If InStr(sEmailList,sMatch . ";")
+    If InStr(sEmailList,sMatch1 . ";")
         continue
-    If InStr(sMatch, "@thread.sky") ; skip from Teams conversation
-        continue
-    sEmailList := sEmailList . sMatch . ";"
+    sEmailList := sEmailList . sMatch1 . ";"
 }
 
 sPat = https?://%PowerTools_ConnectionsRootUrl%/profiles/html/profileView.do\?userid=([0-9A-Z]*)
@@ -82,9 +81,16 @@ return SubStr(sEmailList,2) ; remove starting ;
 
 ; ----------------------------------------------------------------------
 People_oUid2Email(sUid,sDomain :="") {
-; sUid = uid41890@contiwan.com
-If (sDomain="")
-    sDomain := RegExReplace(sUid,".*@","")
+; sUid = uid41890@contiwan.com or uid41890 and domain is taken from settings
+If (sDomain="") {
+    If Instr(sUid,"@") ; no domain in sUid)
+        sDomain := RegExReplace(sUid,".*@","")
+    Else
+        sDomain := People_GetDomain()
+}
+If Instr(sUid,"@") ; no domain in sUid)
+    sUid := RegExReplace(sUid,"@.*","")
+
 mail := People_ADGetUserField("mailNickname=" . sUid, "mail",sDomain) ; mailNickname = office uid 
 return mail
 }
@@ -152,42 +158,47 @@ return Domain
 } ; eofun
 
 ; ----------------------------------------------------------------------
-OL2XL(sSelection){
+People_Emails2Excel(sSelection){
+; Calls: People_GetEmailList, People_Email2Name
 
-if (SubStr(sSelection,0,1) != ";") 
-    sSelection := sSelection . ";"
+If GetKeyState("Ctrl") {
+	Run, "https://connext.conti.de/blogs/tdalon/entry/people_connector_emails2excel"
+	return
+}
+
+sEmailList := People_GetEmailList(sSelection)
+If (sEmailList = "") { 
+    TrayTipAutoHide("People Connector warning!","No email could be found!")   
+    return
+}
 
 oExcel := ComObjCreate("Excel.Application") ;handle
 oExcel.Workbooks.Add ;add a new workbook
 oSheet := oExcel.ActiveSheet
 ; First Row Header
-oSheet.Range("A1").Value := "LastName"
-oSheet.Range("B1").Value := "FirstName"
-oSheet.Range("C1").Value := "email"
+oSheet.Range("A1").Value := "Name"
+oSheet.Range("B1").Value := "LastName"
+oSheet.Range("C1").Value := "FirstName"
+oSheet.Range("D1").Value := "email"
 
 oExcel.Visible := True ;by default excel sheets are invisible
 oExcel.StatusBar := "Copy to Excel..."
-sPat = U)(.*) <(.*)>;
+
 Pos = 1 
 RowCount = 2
-While Pos := RegExMatch(sSelection,sPat,sMatch,Pos+StrLen(sMatch)){
-    
-    Email := sMatch2
-    If (InStr(sMatch1,",")) {
-        LastName := RegexReplace(sMatch1,",.*","")
-        FirstName := RegexReplace(sMatch1,".*,","")
-    FirstName := RegExReplace(FirstName," \(.*\)","") ; Remove (uid) in firstname
 
-    } Else {
-        FirstName := RegexReplace(Email,"\..*","")
-        StringUpper, FirstName, FirstName , T
-        LastName := StrReplace(sMatch1,FirstName,"")
-    }
-    oSheet.Range("A" . RowCount).Value := LastName
-    oSheet.Range("B" . RowCount).Value := FirstName
-    oSheet.Range("C" . RowCount).Value := Email
+Loop, parse, sEmailList, ";"
+{
+    Email := A_LoopField
+    Name := People_Email2Name(Email)
+    LastName := RegexReplace(Name,",.*","")
+    FirstName := RegexReplace(Name,".*,","")
+    oSheet.Range("A" . RowCount).Value := Name
+    oSheet.Range("B" . RowCount).Value := LastName
+    oSheet.Range("C" . RowCount).Value := FirstName
+    oSheet.Range("D" . RowCount).Value := Email
     RowCount +=1
-}
+}	
 
 ; expression.Add (SourceType, Source, LinkSource, XlListObjectHasHeaders, Destination, TableStyleName)
 oTable := oSheet.ListObjects.Add(1, oSheet.UsedRange,,1)
@@ -204,16 +215,19 @@ People_GetName(sSelection) {
 ; sName := GetName(sSelection)
 
 sEmailPat = [^\s@]+@[^\s\.]*\.[a-z]{2,3}
+
 ;sPat = [0-9a-zA-Z\.\-]+@[0-9a-zA-Z\-\.]*\.[a-z]{2,3}
 
 ; From Outlook field
 sPat = U)(.*,.*) \<(%sEmailPat%)\>
 If RegExMatch(sSelection,sPat,sMatch){
     sName := SwitchName(sMatch1)
+    return sName
+} 
 ; From email
-} Else If RegExMatch(sSelection,sEmailPat,sMatch){
-    
-    sName := Email2Name(sMatch)
+sEmailPat = ([0-9a-zA-Z\.\-]+@[0-9a-zA-Z\-\.]*\.[a-z]{2,3})[^a-z\.]
+If RegExMatch(sSelection,sEmailPat,sMatch){
+    sName := Email2Name(sMatch1)
 } Else {
     sName := SwitchName(sSelection)
 }
@@ -236,12 +250,50 @@ return sName
 }
 
 ; ----------------------------------------------------------------------
+People_Email2Name(Email){
+
+    ; graciela.pacheco.zepeda@continental-corporation.com -> Pacheco Zepeda,Graciela
+    ; Julia.2.Flug@continental-corporation.com -> Flug, Julia02
+; Office Name Lastname, Firstname
+Email := RegexReplace(Email,"@.*","")
+
+If RegExMatch(Email,"([a-z]*)\.(\d*)\.([a-z]*)",sMatch) {
+    MsgBox %sMatch1% %sMatch2% %sMatch3%
+    StringUpper, sMatch1, sMatch1 , T
+    StringUpper, sMatch3, sMatch3 , T
+    If (StrLen(sMatch2) = 1)
+        FirstName := sMatch1 . "0" . sMatch2
+    Else
+        FirstName := sMatch1 . sMatch2
+    LastName := sMatch3
+} Else If RegExMatch(Email,"([a-z]*)\.([a-z]*)\.([a-z]*)",sMatch) {
+    StringUpper, sMatch1, sMatch1 , T
+    StringUpper, sMatch2, sMatch2 , T
+    StringUpper, sMatch3, sMatch3 , T
+    FirstName := sMatch1 
+    LastName := sMatch2 . " " . sMatch3
+} Else {
+    LastName := RegexReplace(Email,".*\.","")
+    FirstName := StrReplace(Email,LastName,"")
+    FirstName := SubStr(FirstName,1,-1) ; remove ending .
+    StringUpper, FirstName, FirstName , T
+    FirstName := RegExReplace(FirstName,"\.(\d)","0$1") ; replace .2 by 02
+    ;LastName := StrReplace(Email,FirstName,"")
+    StringUpper, LastName, LastName , T
+}
+
+sName = %LastName%, %FirstName%
+
+return sName
+}
+
+; ----------------------------------------------------------------------
 
 SwitchName(sName){
 ; keep only first line
-If InStr(sName,"`r")
+If InStr(sName,"`n") {
     sName := SubStr(sName,1,InStr(sName,"`r")-1)
-
+}
 
 If (InStr(sName,",")) {
     LastName := RegexReplace(sName,",.*","")
@@ -249,11 +301,52 @@ If (InStr(sName,",")) {
     FirstName := RegExReplace(FirstName," \(.*\)","") ; Remove (uid) in firstname
     sName = %FirstName% %LastName%
 }
+
 return sName
 }
 
-; ----------------------------------------------------------------------
 
+; ----------------------------------------------------------------------
+People_IsMe(sInput){
+; returns true if input is my email, my uid, my displayName or my office Uid
+; based on People_ADGetUserField
+ 
+
+If InStr(sInput,"@") {
+    MyEmail := People_ADGetUserField("sAMAccountName=" . A_UserName, "mail")
+    return (MyEmail = sInput)
+}
+If (sInput = A_UserName)
+    return True
+
+MyName := People_ADGetUserField("sAMAccountName=" . A_UserName, "DisplayName")
+If (sInput = MyName)
+    return True
+
+MyOUid:=People_GetMyOUid()
+If (sInput = MyOUid)
+    return True
+
+return False
+} ; end of fun   
+; ----------------------------------------------------------------------
+People_GetMyEmail(){
+; MyEmail := People_GetMyEmail()
+MyEmail := People_ADGetUserField("sAMAccountName=" . A_UserName, "mail") 
+return MyEmail
+}
+; ----------------------------------------------------------------------
+People_GetMyOUid(){
+; OfficeUid := People_GetMyOUid()
+RegRead, OfficeUid, HKEY_CURRENT_USER\Software\PowerTools, OfficeUid
+If (OfficeUid="") {
+    OfficeUid := People_ADGetUserField("sAMAccountName=" . A_UserName, "mailNickname") ; mailNickname - office uid 
+    PowerTools_RegWrite("OfficeUid",OfficeUid)
+}
+return OfficeUid
+}
+
+; ----------------------------------------------------------------------
 People_ConnectionsOpenProfile(sSelection){
 global PowerTools_ConnectionsRootUrl
 sEmailList := People_GetEmailList(sSelection)
@@ -264,12 +357,32 @@ If (sEmailList = "") {
     Loop, parse, sEmailList, ";"
     {
          Run,  https://%PowerTools_ConnectionsRootUrl%/profiles/html/profileView.do?email=%A_LoopField%
-    }	; End Loop Parse Clipboard
+    }	; End Loop 
+}
+} ; eofun
+
+; ----------------------------------------------------------------------
+
+People_ConnectionsOpenNetwork(sSelection){
+global PowerTools_ConnectionsRootUrl
+sEmailList := People_GetEmailList(sSelection)
+If (sEmailList = "") {
+    ;TODO Warning
+} Else {
+    Loop, parse, sEmailList, ";"
+    {
+         sKey:= Connections_Email2Key(A_LoopField)
+         Run,  https://%PowerTools_ConnectionsRootUrl%/profiles/html/networkView.do?widgetId=friends&key=%sKey%
+    }	; End Loop 
 }
 } ; eofun
 
 ; ----------------------------------------------------------------------
 People_PeopleView(sSelection){
+If GetKeyState("Ctrl") {
+	Run, "https://connext.conti.de/blogs/tdalon/entry/people_connector_peopleview"
+	return
+}
 sEmailList := People_GetEmailList(sSelection)
 Loop, parse, sEmailList, ";"
 {

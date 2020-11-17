@@ -2,6 +2,8 @@ GetSelection(type:="text"){
 ; Syntax:
 ; 	sSelection := GetSelection("text"*|"html")
 ; Default "text"
+; Output is trimmed
+
 ; Calls: WinClip.GetHTML
 
 OldClipboard:= ClipboardAll                         ;Save existing clipboard.
@@ -23,6 +25,8 @@ If (type = "text") {
 } Else If (type ="html") {
   sSelection := WinClip.GetHTML()
 }
+
+sSelection := Trim(sSelection,"`n`r`t`s")
 
 ; Restore Clipboard
 Clipboard := OldClipboard 
