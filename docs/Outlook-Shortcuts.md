@@ -1,6 +1,6 @@
 # Short Description
 
-This short utility enables you to customize Hotkeys for Microsoft Outlook.
+This short utility enables you to customize Hotkeys for Microsoft Outlook as well as provide some extended features.
 
 # Main code
 

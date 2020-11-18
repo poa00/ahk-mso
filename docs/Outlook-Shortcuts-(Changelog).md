@@ -1,5 +1,7 @@
 # Outlook Shortcuts Changelog
 
+* 2020-11-18
+  - Unified Personalize Mentions + remove numers from firstname. 
 * 2020-07-10
     * Fix wrong link to Help and Teams Support
 * 2020-07-07

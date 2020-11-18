@@ -2,7 +2,7 @@
 ; Code Project Documentation is available on ContiSource GitHub here: https://github.com/tdalon/ahk/blob/master/NWS.ahk
 ;  Source: https://github.com/tdalon/ahk/blob/master/OutlookShortcuts.ahk
 
-LastCompiled = 20201015164214
+LastCompiled = 20201118084837
 
 #Include <PowerTools>
 #SingleInstance force ; for running from editor
@@ -107,11 +107,7 @@ return
 return
 ; ----------------------------------------------------------------------
 #1:: ; <--- Personalize mentions
-SendInput ^{Left}^{Backspace}^{Backspace}^{Right}{space}
-return
-
-#2:: ; <--- Personalize mentions with (uid) 2
-SendInput +{Backspace}+{Backspace}+{Backspace}^{Left}^{Backspace}^{Backspace}^{Right}{space}
+Outlook_PersonalizeMentions()
 return
 ; ----------------------------------------------------------------------
 
