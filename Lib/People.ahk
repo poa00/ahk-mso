@@ -4,6 +4,9 @@
 #Include <Teams>
 #Include <Connections>
 global PowerTools_ConnectionsRootUrl
+global PowerTools_ADCommand
+global PowerTools_ADConnection
+global PowerTools_ADPath
 
 ; ----------------------------------------------------------------------
 
@@ -80,63 +83,72 @@ return SubStr(sEmailList,2) ; remove starting ;
 }
 
 ; ----------------------------------------------------------------------
-People_oUid2Email(sUid,sDomain :="") {
+People_oUid2Email(sUid) {
 ; sUid = uid41890@contiwan.com or uid41890 and domain is taken from settings
-If (sDomain="") {
-    If Instr(sUid,"@") ; no domain in sUid)
-        sDomain := RegExReplace(sUid,".*@","")
-    Else
-        sDomain := People_GetDomain()
-}
 If Instr(sUid,"@") ; no domain in sUid)
     sUid := RegExReplace(sUid,"@.*","")
 
-mail := People_ADGetUserField("mailNickname=" . sUid, "mail",sDomain) ; mailNickname = office uid 
+mail := People_ADGetUserField("mailNickname=" . sUid, "mail") ; mailNickname = office uid 
 return mail
 }
 
 ; ----------------------------------------------------------------------
-People_ADGetUserField(sFilter, sField,sDomain :=""){
+AD_Init(force:= False){
+
+If (!force And Not (PowerTools_ADPath =""))
+    return
+
+sDomain := People_GetDomain()
+If (sDomain ="") 
+    return "ERROR: Domain not provided"           
+    
+; PowerTools_ADPath := "GC://dc=contiwan,dc=com" 
+PowerTools_ADPath := "GC://dc=" . StrReplace(sDomain,".",",dc=") 
+; ADODB Connection to AD
+PowerTools_ADConnection := ComObjCreate("ADODB.Connection")
+PowerTools_ADConnection.Open("Provider=ADsDSOObject")
+
+; Connection
+PowerTools_ADCommand := ComObjCreate("ADODB.Command")
+PowerTools_ADCommand.ActiveConnection := PowerTools_ADConnection    
+} ; eofun
+; ----------------------------------------------------------------------
+
+AD_Close(){
+If (PowerTools_ADPath ="")
+    return  
+; Close connection
+PowerTools_ADConnection.Close()
+ObjRelease(PowerTools_ADCommand)
+ObjRelease(PowerTools_ADConnection)
+}
+
+; ----------------------------------------------------------------------
+People_ADGetUserField(sFilter, sField){
 ; dsquery * -gc dc=contiwan,dc=com -filter "(&(objectClass=user)(mail=benjamin*dosch*))" -attr name sAMAccountName mailNickname
 ; https://docs.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2012-r2-and-2012/cc754232(v=ws.11)
 ; https://connext.conti.de/forums/html/topic?id=d84ff1e7-8d23-45bb-8ee6-0e3b46408288&permalinkReplyUuid=2fa26181-d2a3-48f2-b195-4f5fb0c49bd8
     
-    If (sDomain ="") {
-        sDomain := People_GetDomain()
-        If (sDomain ="") 
-            return "ERROR: Domain not provided"           
-    }
-    ; strADPath := "GC://dc=contiwan,dc=com" 
-    strADPath := "GC://dc=" . StrReplace(sDomain,".",",dc=") 
-	; ADODB Connection to AD
-	objConnection := ComObjCreate("ADODB.Connection")
-	objConnection.Open("Provider=ADsDSOObject")
-	
-	; Connection
-	objCommand := ComObjCreate("ADODB.Command")
-	objCommand.ActiveConnection := objConnection
-	
-	; Search the AD recursively, starting at root of the domain
-	objCommand.CommandText := "<" . strADPath . ">" . ";(&(objectCategory=User)(" . sFilter . "));" . sField . ";subtree"
+AD_Init()
 
-    objRecordSet := objCommand.Execute
-	; Get the record set to be returned later
-	if (objRecordSet.RecordCount == 0){
-        strTxt :=  "No Data"  ; no records returned
-    }else{
-        strTxt := objRecordSet.Fields(sField).Value  ; return value
-    }
-	
-	; Close connection
-	objConnection.Close()
-	
-	; Cleanup
-	ObjRelease(objRecordSet)
-	ObjRelease(objCommand)
-	ObjRelease(objConnection)
-	
-	; And return the record set
-	return strTxt
+; Search the AD recursively, starting at root of the domain
+PowerTools_ADCommand.CommandText := "<" . PowerTools_ADPath . ">" . ";(&(objectCategory=User)(" . sFilter . "));" . sField . ";subtree"
+
+objRecordSet := PowerTools_ADCommand.Execute
+; Get the record set to be returned later
+If (objRecordSet.RecordCount == 0){
+    strTxt :=  "No Data"  ; no records returned
+} Else {
+    strTxt := objRecordSet.Fields(sField).Value  ; return value
+}
+
+; Cleanup
+ObjRelease(objRecordSet)
+;ObjRelease(objCommand)
+;ObjRelease(objConnection)
+
+; And return the record set
+return strTxt
 }
 
 ; ----------------------------------------------------------------------
@@ -190,9 +202,9 @@ RowCount = 2
 Loop, parse, sEmailList, ";"
 {
     Email := A_LoopField
-    Name := People_Email2Name(Email)
-    LastName := RegexReplace(Name,",.*","")
-    FirstName := RegexReplace(Name,".*,","")
+    Name := People_ADGetUserField("mail=" . Email, "DisplayName")
+    LastName := People_ADGetUserField("mail=" . Email, "sn")
+    FirstName := People_ADGetUserField("mail=" . Email, "GivenName")
     oSheet.Range("A" . RowCount).Value := Name
     oSheet.Range("B" . RowCount).Value := LastName
     oSheet.Range("C" . RowCount).Value := FirstName
@@ -227,30 +239,22 @@ If RegExMatch(sSelection,sPat,sMatch){
 ; From email
 sEmailPat = ([0-9a-zA-Z\.\-]+@[0-9a-zA-Z\-\.]*\.[a-z]{2,3})[^a-z\.]
 If RegExMatch(sSelection,sEmailPat,sMatch){
-    sName := Email2Name(sMatch1)
+    sName := People_Email2Name(sMatch1)
 } Else {
     sName := SwitchName(sSelection)
 }
 return sName
 }
 
-; ----------------------------------------------------------------------
-Email2Name(Email){
-Email := RegexReplace(Email,"@.*","")
-FirstName := RegexReplace(Email,"\..*","")
-StringUpper, FirstName, FirstName , T
-LastName := RegexReplace(Email,".*\.","")
-;LastName := StrReplace(Email,FirstName,"")
-StringUpper, LastName, LastName , T
-
-sName = %FirstName% %LastName%
-; Remove numbers
-sName := RegexReplace(sName,"\d*","")
-return sName
-}
 
 ; ----------------------------------------------------------------------
 People_Email2Name(Email){
+
+If InStr(Email,"@conti") { ; internal Email
+    sName := People_ADGetUserField("mail=" . Email, "DisplayName")
+    sName := SwitchName(sName)
+    return sName
+}
 
     ; graciela.pacheco.zepeda@continental-corporation.com -> Pacheco Zepeda,Graciela
     ; Julia.2.Flug@continental-corporation.com -> Flug, Julia02
@@ -258,7 +262,7 @@ People_Email2Name(Email){
 Email := RegexReplace(Email,"@.*","")
 
 If RegExMatch(Email,"([a-z]*)\.(\d*)\.([a-z]*)",sMatch) {
-    MsgBox %sMatch1% %sMatch2% %sMatch3%
+    ; MsgBox %sMatch1% %sMatch2% %sMatch3% ; DBG
     StringUpper, sMatch1, sMatch1 , T
     StringUpper, sMatch3, sMatch3 , T
     If (StrLen(sMatch2) = 1)
@@ -406,13 +410,7 @@ PsFile = %A_Temp%\o365_GetProfilePic.ps1
 If FileExist(PsFile)
     FileDelete, %PsFile%
 
-Domain := People_GetDomain()
-If (Domain ="") {
-    MsgBox 0x10, Teams Shortcuts: Error, No Domain defined!
-    return
-}
-
-sUserName := People_ADGetUserField("mail=" . sEmail, "mailNickname",Domain)
+sUserName := People_ADGetUserField("mail=" . sEmail, "mailNickname")
 
 sText := "$photo=Get-Userphoto -identity %sUserName% -ErrorAction SilentlyContinue`n If($photo.PictureData -ne $null)`n{[io.file]::WriteAllBytes($path,$photo.PictureData)}"
 

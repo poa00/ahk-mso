@@ -485,39 +485,46 @@ If GetKeyState("Ctrl") {
 	return
 }
 
-
-sSelectionHtml := GetSelection("Html")
+savedClipboard := ClipboardAll
+sSelectionHtml := GetSelection("Html",False)
 
 If (sSelectionHtml="") { ; no selection -> default reply
     Send !+r ; Alt+Shift+r
+    Clipboard := savedClipboard
     return
 }
 
 If InStr(sSelectionHtml,"data-tid=""messageBodyContent""") { ; Full thread selection e.g. Shift+Up
     ; Remove Edited block
-    sSelectionHtml := StrReplace(sSelectionHtml,"<div>Edited</div>","")
-    ; Get Quoted Html
-    sPat = Us)<dd><div>.*<div data-tid="messageBodyContainer">(.*)</div></div></dd>
-    
-    RegExMatch(sSelectionHtml,sPat,sMatch)
-    sQuoteBodyHtml := sMatch1   
-    sHtmlThread := sSelectionHtml
 
+    sSelectionHtml := StrReplace(sSelectionHtml,"<div>Edited</div>","")
+    ;MsgBox % sSelectionHtml ; DBG
+    ; Get Quoted Html
+    ;sPat = Us)<dd><div>.*<div data-tid="messageBodyContainer">(.*)</div></div></dd>
+    sPat = sU)<div data-tid="messageBodyContent"><div>\n?<div>\n?<div>(.*)</div>\n?</div>\n?</div> ; with line breaks
+    If RegExMatch(sSelectionHtml,sPat,sMatch)
+        sQuoteBodyHtml := sMatch1 
+    Else { ; fallback
+        sQuoteBodyHtml := GetSelection("text",False) ; removes formatting
+    }
+    
+    sHtmlThread := sSelectionHtml
+    ;MsgBox %sQuoteBodyHtml% ; DBG
 } Else { ; partial thread selection
 
-    sQuoteBodyHtml := GetSelection() ; removes formatting
+    sQuoteBodyHtml := GetSelection("text",False) ; removes formatting
     If (!sQuoteBodyHtml) {
         MsgBox Selection empty!
+        Clipboard := savedClipboard
         return
     }
 
     SendInput +{Up} ; Shift + Up Arrow: select all thread
     Sleep 200
     SendInput ^a
-    sHtmlThread := GetSelection("html")
+    sHtmlThread := GetSelection("html",False)
 }
-
-
+;MsgBox %sQuoteBodyHtml%
 ; Extract Teams Link
 
 ; Full thread selection to get link and author
@@ -537,94 +544,78 @@ If (RegExMatch(sHtmlThread,sPat,sMatch)) {
     }
 }
 
+If (sAuthor = "") { ; something went wrong
+; TODO error handling
+    MsgBox Something went wrong! Please retry.
+    Clipboard := savedClipboard
+    return
+}
+
 ; Get thread link
-sPat := "U)<div>&lt;https://teams.microsoft.com/(.*;createdTime=.*)&gt;</div>.*</div><!--EndFragment-->"
+sPat := "U)<div>&lt;https://teams\.microsoft\.com/(.*;createdTime=.*)&gt;</div>.*</div><!--EndFragment-->"
 If (RegExMatch(sHtmlThread,sPat,sMatch)) {
     sMsgLink = https://teams.microsoft.com/%sMatch1%
     sMsgLink := StrReplace(sMsgLink,"&amp;amp;","&")
 }
 
 If (doReply = True) { ; hotkey is buggy - will reply to original/ quoted thread-> need to click on reply manually in case of quote from another thread
-    Send !+r ; Alt+Shift+r
-    Sleep 1000
+    If (sMsgLink = "") ; group chat
+        Send !+c ; Alt+Shift+c
+    Else
+        Send !+r ; Alt+Shift+r
+    Sleep 800
 } Else { ; ask for continue
     Answ := ButtonBox("Paste conversation quote","Activate the place where to paste the quoted conversation and hit Continue`nor select Create New...","Continue|Create New...")
     If (Answ="Button_Cancel") {
+        ; Restore Clipboard
+        Clipboard := savedClipboard
         Return
-        ; TODO restore clipboard
     }
 }
+
+If (People_IsMe(sAuthor)) 
+    sAuthor = I 
 
 TeamsReplyWithMention := False
 If WinActive("ahk_exe Teams.exe") { ; SendMention
-    SendInput > ; markdown for quote block
-    Sleep 100
-
     ; Mention Author
-    If (!People_IsMe(sAuthor)) {
+    If (sAuthor <> "I") {
         TeamsReplyWithMention := True
-        If (sMsgLink = "") ; group chat
-            sHtml = Quote from&nbsp;
-        Else
-            sHtml = <a href="%sMsgLink%">Quote</a> from&nbsp; 
-        WinClip.SetHTML(sHtml)
-        WinClip.Paste()
-        Sleep 500
+        SendInput > ; markdown for quote block
+        Sleep 200  
         Teams_SendMention(sAuthor)
-        SendInput :+{Enter}
+        sAuthor =
     }
 }
 
-If (TeamsReplyWithMention = True) {
-    sQuoteHtml := sQuoteBodyHtml
-} Else {
-    If (People_IsMe(sAuthor)) {
-        If (sMsgLink = "") ; group chat
-            sQuoteTitleHtml = I wrote:
-        Else
-            sQuoteTitleHtml = <a href="%sMsgLink%">I wrote</a>:
-    } Else {
-        If (sMsgLink = "") ; group chat
-            sQuoteTitleHtml = %sAuthor% wrote:
-        Else
-            sQuoteTitleHtml = <a href="%sMsgLink%">%sAuthor% wrote</a>:
-    }
-    If WinActive("ahk_exe Teams.exe")
-        sQuoteHtml = %sQuoteTitleHtml%<br>%sQuoteBodyHtml%
-    Else
-        sQuoteHtml = <blockquote>%sQuoteTitleHtml%<br>%sQuoteBodyHtml%</blockquote>
-}
+
+If (sMsgLink = "") ; group chat
+    sQuoteTitleHtml = %sAuthor% wrote:
+Else
+    sQuoteTitleHtml = <a href="%sMsgLink%">%sAuthor%&nbsp;wrote</a>:    
+
+If (TeamsReplyWithMention = True)
+    sQuoteHtml = %sQuoteTitleHtml%<br>%sQuoteBodyHtml%
+Else
+    sQuoteHtml = <blockquote>%sQuoteTitleHtml%<br>%sQuoteBodyHtml%</blockquote>
+
+
+WinClip.SetHTML(sQuoteHtml)
+WinClip.Paste() ; seems asynchronuous
+Sleep 500
 
 ;MsgBox %sQuoteHtml% ; DBG
-WinClip.SetHTML(sQuoteHtml)
-WinClip.Paste()
-Sleep 500
+
 ; Escape Block quote in Teams: twice Shift+Enter
 If WinActive("ahk_exe Teams.exe") {
+    ;SendInput {Delete} ; remove empty div to avoid breaking quote block in two
     SendInput +{Enter} 
     SendInput +{Enter}
 }
 
+; Restore Clipboard
+Clipboard := savedClipboard
 
-} ; eofun
-
-; -------------------------------------------------------------------------------------------------------------------
-Teams_PersonalizeMention(sName:="") {
-If GetKeyState("Ctrl") {
-	Run, "https://tdalon.blogspot.com/2020/11/teams-shortcuts-personalize-mentions.html"
-	return
-}
-If (sName="") {
-    SendInput +{Left}
-    sLastLetter := GetSelection()
-    SendInput {Right}
-} Else
-    sLastLetter := SubStr(sName,0)
-If (sLastLetter = ")") {
-    SendInput {Backspace}^{Left}{Backspace}
-} Else {
-    SendInput ^{Left}{Backspace}
-}
 } ; eofun
 
 
@@ -657,6 +648,7 @@ return sTeamLink
 
 ; -------------------------------------------------------------------------------------------------------------------
 Teams_SendMention(sInput, doPerso := ""){
+; See notes https://tdalon.blogspot.com/teams-shortcuts-send-mention
 If (doPerso = "")
     doPerso := PowerTools_RegRead("TeamsMentionPersonalize")
 
@@ -667,17 +659,44 @@ If InStr(sInput,"@") { ; Email
     sName := sInput
     sInput := RegExReplace(sName, "\s\(.*\)") 
 } 
-
 SendInput {@}
 Sleep 300
 SendInput %sInput%
 Sleep 1000 ; time for autocompletion
-SendInput {Tab}
+SendInput +{Tab} ; use Shift+Tab because Tab will switch focus to next UI element in case no mention autocompletion can be done (e.g. name not member of Team)
 
 ; Personalize mention -> Firstname
 If  (doPerso=True) {
     Teams_PersonalizeMention()
 }
+} ; eofun
+; -------------------------------------------------------------------------------------------------------------------
+Teams_PersonalizeMention() {
+If GetKeyState("Ctrl") {
+	Run, "https://tdalon.blogspot.com/2020/11/teams-shortcuts-personalize-mentions.html"
+	return
+}
+SendInput +{Left}
+sLastLetter := GetSelection("html")
+IsRealMention := InStr(sLastLetter,"http://schema.skype.com/Mention") 
+sLastLetter := GetSelection()    
+SendInput {Right}
+
+If (IsRealMention) {
+    If (sLastLetter = ")")
+        SendInput {Backspace}^{Left}{Backspace}
+    Else 
+        SendInput ^{Left}{Backspace}
+} Else {
+    ; do not personalize if no match to avoid ambiguity which name was mentioned if shorten to firstname and reprompt for matching
+    return
+    If (sLastLetter = ")") 
+        SendInput {Backspace}^{Backspace}{Backspace} ; remove ()
+
+    SendInput ^{Left}^{Backspace}^{Backspace}^{Right}
+}
+
+
 } ; eofun
 ; -------------------------------------------------------------------------------------------------------------------
 Teams_Link2Text(sLink){
@@ -952,10 +971,9 @@ If (TeamsMentionPersonalize) {
 PowerTools_RegWrite("TeamsMentionPersonalize",TeamsMentionPersonalize)
 }
 
-; -------------------------------------------------------------------------------------------------------------------MenuCb_ToggleSettingTeamsMentionPersonalize
-
-
+; -------------------------------------------------------------------------------------------------------------------
 Teams_GetMeetingWindow(){
+; See implementation explanations here: https://tdalon.blogspot.com/get-teams-window-ahk
 
 WinGet, Win, List, ahk_exe Teams.exe
 TeamsMainWinId := Teams_GetMainWindow()
@@ -1001,6 +1019,7 @@ return TeamsMeetingWinId
 ; -------------------------------------------------------------------------------------------------------------------
 
 Teams_GetMainWindow(){
+; See implementation explanations here: https://tdalon.blogspot.com/get-teams-window-ahk
 
 WinGet, WinCount, Count, ahk_exe Teams.exe
 If (WinCount > 0) { ; fall-back if wrong exe found: close Teams

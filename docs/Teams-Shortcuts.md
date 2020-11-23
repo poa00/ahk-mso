@@ -16,6 +16,18 @@ See separate page here [PowerTools Setup](PowerTools-Setup).
 
 ## [News](https://twitter.com/search?q=%23TeamsShortcuts%20%23MicrosoftTeams)
 
+<a href="https://twitter.com/intent/tweet?button_hashtag=TeamsShortcuts&ref_src=twsrc%5Etfw" class="twitter-hashtag-button" data-show-count="false">Tweet #TeamsShortcuts</a><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+## How to use
+
+You can start the Teams Shortcuts menu by pressing the **Windows+T** Hotkey when a Teams window is active.
+
+![Teams Shortcuts Menu](/img/teams_shortcuts_menu.png)
+
+In the menu you can also see which hotkeys directly run the features e.g. Alt+R for Smart Reply.
+
+You can access some settings via the Teams Shortcuts System Tray Icon Context Menu. Right-Mouse-Click on the icon to open it.
+
 ## Source code
 
 Main code is contained in [TeamsShortcuts.ahk](https://github.com/tdalon/ahk/blob/master/TeamsShortcuts.ahk)

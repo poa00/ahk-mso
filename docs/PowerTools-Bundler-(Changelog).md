@@ -1,7 +1,9 @@
-# PowerTools Bundler Changelog
+# [PowerTools Bundler](PowerTools-Bundler) Changelog
 
+* 2020-11-23
+  - Added Tweet Feature (dev mode)
 * 2020-10-30
-  - Add Cursor Highlighter
+  - Added Cursor Highlighter
 * 2020-10-26
   - Add Open Bundler Changelog Menu in Help Menu
 * 2020-10-22
@@ -14,4 +16,4 @@
 * 2020-07-10
     * Add in Actions open Changelog and Help
 * 2020-10-01
-  - Add Teamsy
+  - Added Teamsy

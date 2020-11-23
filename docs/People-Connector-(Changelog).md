@@ -1,5 +1,9 @@
-# People Connector Changelog
+# [People Connector](People-Connector) Changelog
 
+* 2020-11-19
+	- LinkedInSearch: extract name from email instead of by name
+* 2020-11-18
+	- Optimized one-time connection to ActiveDirectory (global variables/ AD_Init)
 * 2020-11-11
 	- Refactoring Outlook2Excel -> Emails2Excel. Works for any email selection (not only outlook). Based on People_Email2Name
 * 2020-10-30

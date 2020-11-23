@@ -1,7 +1,10 @@
-# Teams Shortcuts Changelog
+# [Teams Shortcuts](Teams-Shortcuts) Changelog
 
+* 2020-11-23
+	- Smart Reply improved version with Mention.
+* 2020-11-20
+	- Send/Personalize Mentions: handling of case mentioned named can not be autocompleted (e.g. user not a member)
 * 2020-11-17
-  - Smart Reply improved version with Mention.
   - Teams_GetMainWindow: improved version using Acc (no need to minimize all windows)
 * 2020-11-16
 	- Personalize Mention improved: Unified hotkeys for mention personalization (detect if () used by selecting/copying to clipboard)

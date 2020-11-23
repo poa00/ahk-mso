@@ -1,4 +1,4 @@
-# Teamsy Changelog
+# [Teamsy](Teamsy) Changelog
 
 * 2020-11-17
 	- Teams_GetMainWindow: improved version using Acc (no need to minimize all windows)

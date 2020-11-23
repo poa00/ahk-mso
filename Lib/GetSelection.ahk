@@ -1,4 +1,4 @@
-GetSelection(type:="text"){
+GetSelection(type:="text",doRestoreClip:=True){
 ; Syntax:
 ; 	sSelection := GetSelection("text"*|"html")
 ; Default "text"
@@ -6,7 +6,8 @@ GetSelection(type:="text"){
 
 ; Calls: WinClip.GetHTML
 
-OldClipboard:= ClipboardAll                         ;Save existing clipboard.
+If (doRestoreClip = True)
+  OldClipboard:= ClipboardAll                         ;Save existing clipboard.
 
 Clipboard:=""
 while(Clipboard){
@@ -28,7 +29,9 @@ If (type = "text") {
 
 sSelection := Trim(sSelection,"`n`r`t`s")
 
-; Restore Clipboard
-Clipboard := OldClipboard 
+If (doRestoreClip = True) ; Restore Clipboard
+  Clipboard := OldClipboard 
+
+
 return sSelection
 } 

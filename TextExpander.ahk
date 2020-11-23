@@ -16,7 +16,7 @@
 
 #Hotstring c1 ; Do not conform to typed case
 
-::nwsac::{#}nws_adventcalendar2019
+::nwsac::{#}nws_adventcalendar2020
 
 ::mfg:: ; MfG
 (
@@ -118,10 +118,8 @@ return
 
 ; Alt + u
 !u:: ; uid@contiwan.com
-RegRead, OfficeUid, HKEY_CURRENT_USER\Software\PowerTools, OfficeUid
-If !OfficeUid 
-    OfficeUid := A_UserName
-SendInput %OfficeUid%@contiwan.com
+;OfficeUid := People_GetMyOUid()
+SendInput %A_UserName%@contiwan.com
 return
 
 !p:: ; <--- Enter Password

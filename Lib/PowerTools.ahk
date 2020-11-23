@@ -3,18 +3,25 @@
 #Include <AHK>
 AppList = ConNextEnhancer,MO,NWS,OutlookShortcuts,PeopleConnector,TeamsShortcuts
 
-PTCheckForUpdate(ToolName :="") {
+PowerTools_CheckForUptate(ToolName :="") {
 If !a_iscompiled {
 	Run, https://github.com/tdalon/ahk ; no direct link because of Lib dependencies
     return
 } 
+
+; warning if connected via VPN
+If (Login_IsVPN()) {
+    MsgBox, 0x1011, CheckForUpdate with VPN?,It seems you are connected with VPN.`nCheck for update might not work. Consider disconnecting VPN.`nContinue now?
+    IfMsgBox Cancel
+        return
+}
 
 If !ToolName    
     ScriptName := A_ScriptName
 Else
     ScriptName = %ToolName%.exe
     ; Overwrites by default
-sUrl = https://raw.githubusercontent.com/tdalon/ahk/master/%ScriptName%
+sUrl = https://github.com/tdalon/ahk/raw/master/PowerTools/%ScriptName%
 
 ExeFile = %A_ScriptDir%\%ScriptName%
 If Not FileExist(ExeFile) {
@@ -25,13 +32,14 @@ If Not FileExist(ExeFile) {
 UrlDownloadToFile, %sUrl%, %ScriptName%.github
 guExe = %A_ScriptDir%\github_updater.exe
 If Not FileExist(guExe)
-    UrlDownloadToFile, https://raw.githubusercontent.com/tdalon/ahk/master/github_updater.exe, %guExe%
+    UrlDownloadToFile, https://github.com/tdalon/ahk/raw/master/PowerTools/github_updater.exe, %guExe%
+    
 sCmd = %guExe% %ScriptName%
 RunWait, %sCmd%,,Hide
 } ; eof
 
 ; ---------------------------------------------------------------------- 
-PowerTools_Help(ScriptName){
+PowerTools_Help(ScriptName,doOpen := True){
 Switch ScriptName 
 {
 Case "ConnectionsEnhancer":
@@ -47,17 +55,22 @@ Case "OutlookShortcuts":
 Case "Teamsy":
     sUrl = https://tdalon.github.io/ahk/Teamsy
 Case "NWS":
-    sUrl := "https://tdalon.github.io/ahk/NWS%20PowerTool"
+    sUrl := "https://tdalon.github.io/ahk/NWS-PowerTool"
 Case "Bundler":
-    sUrl :="https://tdalon.github.io/ahk/PowerTools%20Bundler"
+    sUrl :="https://tdalon.github.io/ahk/PowerTools-Bundler"
+Case "Cursor Highlighter":
+    sUrl = https://tdalon.github.io/ahk/Cursor-Highlighter
 Case "all":
 Default:
     sUrl := "https://tdalon.github.io/ahk/PowerTools"	
 }
-Run, %sUrl%
+
+If doOpen
+    Run, %sUrl%
+return sUrl
 }
 
-PowerTools_Changelog(ScriptName){
+PowerTools_Changelog(ScriptName,doOpen := True){
 Switch ScriptName 
 {
 Case "ConnectionsEnhancer":
@@ -73,16 +86,24 @@ Case "PeopleConnector":
 Case "NWS":
     sFileName = NWS-PowerTool-(Changelog)
 Case "Bundler":
-    ; TODO
     sFileName = PowerTools-Bundler-(Changelog)
 Case "OutlookShortcuts":
     sFileName = Outlook-Shortcuts-(Changelog)
 Case "Teamsy":
     sFileName = Teamsy-(Changelog)
+Case "Cursor Highlighter":
+    Run, https://sites.google.com/site/boisvertlab/computer-stuff/online-teaching/cursor-highlighter-changelog
+    return
 Case "all":
 Default:
-    sFileName =  PowerTools-Release-Notes
+    sFileName =  PowerTools-Changelogs
 }
+
+If Not doOpen {
+    sUrl = https://tdalon.github.io/ahk/%sFileName%
+    return sUrl
+}
+    
 
 If !A_IsCompiled {
     sFile = %A_ScriptDir%\docs\%sFileName%.md
@@ -228,7 +249,8 @@ Switch Config
         PowerTools_RegWrite("TeamsOnly",1)
         PowerTools_RegWrite("DocRootUrl","https://connext.conti.de/blogs/tdalon/entry/")
     Case "Vitesco":
-         PowerTools_RegWrite("ConnectionsName","InVite")
+         PowerTools_RegWrite("ConnectionsName","inVite")
+         PowerTools_RegWrite("ConnectionsRootUrl","invite.vitesco-technologies.net/")
     Case "Public":
         PowerTools_RegWrite("Domain","")
         PowerTools_RegWrite("ConnectionsRootUrl","")
@@ -274,6 +296,19 @@ If (!sSelection) {
 Run, %sUrl%
 }
 
+; ----------------------------------------------------------------------
+PowerTools_CursorHighlighter(){
+CHFile= %A_ScriptDir%\Cursor Highlighter
+If a_iscompiled
+	CHFile = %CHFile%.exe
+Else
+	CHFile = %CHFile%.ahk
+
+If !FileExist(CHFile) { ; download if it doesn't exist
+    return
+}
+Run, %CHFile%
+}
 ; -------------------------------------------------------------------------------------------------------------------
 
 PowerTools_MenuTray(){
@@ -337,5 +372,27 @@ PowerTools_Support(ScriptName)
 }
 
 MenuCb_PTCheckForUpdate(ItemName, ItemPos, MenuName){
-PTCheckForUpdate()    
+PowerTools_CheckForUptate()    
 }
+
+; -------------------------------------------------------------------------------------------------------------------
+
+PowerTools_TweetPush(ScriptName){
+
+sLogUrl := PowerTools_Changelog(ScriptName,False)
+;sToolUrl := PowerTools_Help(ScriptName,False)
+
+If (ScriptName ="NWS")
+    ScriptName = NWSPowerTool
+
+sText = New version of #%ScriptName%. See changelog %sLogUrl%
+
+sUrl:= uriEncode(sUrl)
+sText := uriEncode(sText)
+sTweetUrl = https://twitter.com/intent/tweet?text=%sText%  ;&hashtags=%ScriptName%&url=%sToolUrl%
+Run, %sTweetUrl%
+
+
+}
+
+; -------------------------------------------------------------------------------------------------------------------

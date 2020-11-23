@@ -5,7 +5,7 @@
 ; Source : https://github.com/tdalon/ahk/blob/master/TeamsShortcuts.ahk
 ;
 
-LastCompiled = 20201117205742
+LastCompiled = 20201123230512
 
 #Include <Teams>
 #Include <PowerTools>
@@ -39,12 +39,12 @@ Menu, SubMenuCustomBackgrounds, Add, Open GUIDEs Shared Backgrounds, OpenGUIDEsC
 
 Menu, Tray, Add, Custom Backgrounds, :SubMenuCustomBackgrounds
 
-Menu,Tray,Add,Start Second Instance, Teams_OpenSecondInstance
-Menu,Tray,Add,Open Web App, Teams_OpenWebApp
-Menu,Tray,Add
-Menu,Tray,Add,Export Team Members, Users2Excel
-Menu,Tray,Add,Refresh Teams List, Teams_ExportTeams
-Menu,Tray,Add
+Menu, Tray,Add,Start Second Instance, Teams_OpenSecondInstance
+Menu, Tray,Add,Open Web App, Teams_OpenWebApp
+Menu, Tray,Add
+Menu, Tray,Add,Export Team Members, Users2Excel
+Menu, Tray,Add,Refresh Teams List, Teams_ExportTeams
+Menu, Tray,Add
 
 Menu, SubMenuMeeting, Add, Open Teams Web Calendar, Teams_OpenWebCal
 
@@ -57,8 +57,8 @@ Menu, SubMenuVLC, Add, Reset, VLCReset
 
 Menu, SubMenuMeeting, Add, VLC, :SubMenuVLC
 Menu, Tray, Add, Meeting, :SubMenuMeeting
-Menu,Tray,Add
-Menu,Tray,Standard
+Menu, Tray,Add
+Menu, Tray,Standard
 
 ; Tooltip
 If !a_iscompiled {
@@ -68,7 +68,7 @@ If !a_iscompiled {
 }
 FormatTime LastMod, %LastMod% D1 R
 
-sTooltip = Teams Shortcuts %LastMod%`nUse 'Win+T' to open main menu in Teams. Ctrl+Click on menu item to open help.`nRight-Click on icon to access Help and other functionalities.
+sTooltip = Teams Shortcuts %LastMod%`nUse 'Win+T' to open main menu in Teams.`nRight-Click on icon to access other functionalities.
 Menu, Tray, Tip, %sTooltip%
 
 ; -------------------------------------------------------------------------------------------------------------------
