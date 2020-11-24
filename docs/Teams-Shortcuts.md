@@ -16,7 +16,14 @@ See separate page here [PowerTools Setup](PowerTools-Setup).
 
 ## [News](https://twitter.com/search?q=%23TeamsShortcuts%20%23MicrosoftTeams)
 
-<a href="https://twitter.com/intent/tweet?button_hashtag=TeamsShortcuts&ref_src=twsrc%5Etfw" class="twitter-hashtag-button" data-show-count="false">Tweet #TeamsShortcuts</a><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+## Contact
+
+<a class="twitter-share-button"
+  href="https://twitter.com/intent/tweet?text=@tdalon #MicrosoftTeams #TeamsShortcuts"
+  data-size="large">
+Tweet</a>
+
+You can also [create an issue in GitHub](https://github.com/tdalon/ahk/issues).
 
 ## How to use
 
