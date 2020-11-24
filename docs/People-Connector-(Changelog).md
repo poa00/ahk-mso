@@ -1,5 +1,9 @@
 # [People Connector](People-Connector) Changelog
 
+* 2020-11-24
+  - SysTray Menu:
+  	- add Tweet for support.
+  	- Contact via Teams only for Conti Config.
 * 2020-11-19
 	- LinkedInSearch: extract name from email instead of by name
 * 2020-11-18

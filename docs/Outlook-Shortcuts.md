@@ -16,7 +16,7 @@ See separate page here [PowerTools Setup](PowerTools-Setup).
 
 # How to use
 
-
+## [News](https://twitter.com/search?q=%23OutlookShortcuts%20%23MicrosoftOutlook)
 
 # YouTube Channel
 

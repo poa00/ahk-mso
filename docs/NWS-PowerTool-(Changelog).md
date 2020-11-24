@@ -1,8 +1,11 @@
 # [NWS PowerTool](NWS-PowerTool) Changelog
 
+* 2020-11-24
+    - SysTray Menu:
+      - add Tweet for support.
+      - Contact via Teams only for Conti Config.
 * 2020-11-16
 	- IntelliPaste: fix handling for github.io pages
-
 * 2020-11-10
 	- IntelliPaste for [Blogger links](https://tdalon.blogspot.com/2020/08/blogger-how-to-remove-date-from-url.html) will remove date from url.
 	- Bug fix IntelliPaste. not working e.g. rich text format in Outlook Tasks.

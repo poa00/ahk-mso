@@ -1,5 +1,7 @@
-# Connections Enhancer Changelog
+# [Connections Enhancer](Connections-Enhancer) Changelog
 
+* 2020-11-24
+	- Embed ConNext icon for Conti Config
 * 2020-10-30
 	- Fix Connections_Email2Key. used in PeopleConnector->Open Connections Network
 * 2020-10-01

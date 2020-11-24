@@ -1,7 +1,10 @@
 # [Teams Shortcuts](Teams-Shortcuts) Changelog
 
 * 2020-11-24
-	- [Smart Reply](https://tdalon.blogspot.com/2020/11/teams-shortcuts-smart-reply.html): Add setting to store personal email/name so that Smart Reply also works without connection to Active Directory.
+  - SysTray Menu:
+  	- add Tweet for support.
+  	- Contact via Teams only for Conti Config.
+  - [Smart Reply](https://tdalon.blogspot.com/2020/11/teams-shortcuts-smart-reply.html#getme): Add setting to store personal email/name so that Smart Reply also works without connection to Active Directory.
 * 2020-11-23
 	- [Smart Reply](https://tdalon.blogspot.com/2020/11/teams-shortcuts-smart-reply.html) improved version with Mention.
 * 2020-11-20
