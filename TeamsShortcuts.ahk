@@ -30,6 +30,7 @@ If (TeamsMentionPersonalize)
 Else 
   Menu,SubMenuSettings,UnCheck, Teams Personalize Mentions
 
+Menu, SubMenuSettings, Add, Update Personal Information, GetMe
 
 Menu,Tray,NoStandard
 Menu,Tray,Add,Add to Teams Favorites, Link2TeamsFavs
@@ -280,6 +281,19 @@ If GetKeyState("Ctrl") {
 }
 Run, "https://continental.sharepoint.com/:f:/r/teams/team_10000035/Shared Documents/Collaborate/TEAMS Background Pictures"
 return
+; ----------------------------------------------------------------------
+
+GetMe:
+If GetKeyState("Ctrl") {
+	Run, "https://tdalon.blogspot.com/2020/11/teams-shortcuts-smart-reply.html#getme"
+	return
+}
+suc := People_GetMe()
+If (suc) {
+	TrayTipAutoHide("Personal information updated!","Email, OfficeUid, Display Name were stored to the registry.")
+}
+return
+
 ; ----------------------------------------------------------------------
 
 CursorHighliter:

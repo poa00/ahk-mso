@@ -134,7 +134,13 @@ AD_Init()
 ; Search the AD recursively, starting at root of the domain
 PowerTools_ADCommand.CommandText := "<" . PowerTools_ADPath . ">" . ";(&(objectCategory=User)(" . sFilter . "));" . sField . ";subtree"
 
-objRecordSet := PowerTools_ADCommand.Execute
+Try {
+    objRecordSet := PowerTools_ADCommand.Execute
+} Catch e {
+    MsgBox 0x10, AD Connection Error, Connection to Active directory is not possible.`nCheck that you are connected to your company network!
+    strTxt = ERROR: Connection to AD failed.
+    return strTxt
+}
 ; Get the record set to be returned later
 If (objRecordSet.RecordCount == 0){
     strTxt :=  "No Data"  ; no records returned
@@ -309,13 +315,30 @@ If (InStr(sName,",")) {
 return sName
 }
 
+; ----------------------------------------------------------------------
+People_GetMe(){
+; suc := People_GetMe()
+MyEmail := People_ADGetUserField("sAMAccountName=" . A_UserName, "mail")
+If InStr(MyEmail,"ERROR")
+    return False
+PowerTools_RegWrite("MyEmail",MyEmail)
+MyName := People_ADGetUserField("sAMAccountName=" . A_UserName, "DisplayName")
+PowerTools_RegWrite("MyName",MyName)
+MyOUid:=People_GetMyOUid()
+return True
+} ; eofun
 
 ; ----------------------------------------------------------------------
 People_IsMe(sInput){
 ; returns true if input is my email, my uid, my displayName or my office Uid
-; based on People_ADGetUserField
+; based on People_ADGetUserField. store values in registery for offline call (e.g. Teams_SmartReply)
  
-
+MyEmail := PowerTools_RegRead("MyEmail")
+If (MyEmail="") {
+    suc := People_GetMe()
+    If (Not suc)
+        return
+}
 If InStr(sInput,"@") {
     MyEmail := People_ADGetUserField("sAMAccountName=" . A_UserName, "mail")
     return (MyEmail = sInput)
@@ -323,7 +346,7 @@ If InStr(sInput,"@") {
 If (sInput = A_UserName)
     return True
 
-MyName := People_ADGetUserField("sAMAccountName=" . A_UserName, "DisplayName")
+MyName := PowerTools_RegRead("MyName")
 If (sInput = MyName)
     return True
 
@@ -345,6 +368,8 @@ People_GetMyOUid(){
 RegRead, OfficeUid, HKEY_CURRENT_USER\Software\PowerTools, OfficeUid
 If (OfficeUid="") {
     OfficeUid := People_ADGetUserField("sAMAccountName=" . A_UserName, "mailNickname") ; mailNickname - office uid 
+    If InStr(OfficeUid,"ERROR")
+        return
     PowerTools_RegWrite("OfficeUid",OfficeUid)
 }
 return OfficeUid
