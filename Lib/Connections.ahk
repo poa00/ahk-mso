@@ -119,7 +119,24 @@ Loop, parse, sEmailList, ";"
     sHtmlMentions = %sHtmlMentions%, %sMention%
 }	
 return SubStr(sHtmlMentions,3) ; remove trailing ;
-}
+} ; eofun
+
+
+; ----------------------------------------------------------------------
+Connections_SendMentions(sEmailList){
+Loop, parse, sEmailList, ";"
+{
+    sInput := RegExReplace(A_LoopField,"@.*","")
+	SendInput {@}
+	Sleep 300
+	SendInput %sInput%
+	Sleep 500 ; time for autocompletion
+	SendInput {Enter}{space} ; only Enter works in Status update
+}	
+
+} ;eofun
+
+
 ; ----------------------------------------------------------------------
 CNEmail2Mention(sEmail,sNameStyle := "first"){
 sUid := CNEmail2Uid(sEmail)
@@ -233,11 +250,13 @@ CNEvent2Emails(sUrl){
 		
 	sUrl = https://connext.conti.de/communities/calendar/atom/calendar/event/attendees?eventInstUuid=%sEventUuid%&type=attend
     
-	sHtml := CNGetAtomPages(sUrl)
-	If !sHtml {
-		MsgBox 0x10, ConNext Enhancer: Error, Could not download page!
+	sXml := CNGetAtomPages(sUrl)
+	If (sXml ~= "Error.*") {
+		MsgBox 0x10, Connections Enhancer: Error, Could not download page!
 		return
 	}
+	
+	
 	; <email xmlns:atom="http://www.w3.org/2005/Atom">thierry.dalon@continental-corporation.com</email>
 	sPat = U)<email .*>(.*)</email>
 	Pos = 1 
@@ -249,7 +268,8 @@ CNEvent2Emails(sUrl){
 ; ----------------------------------------------------------------------
 
 CNEvent2Email(sEventUrl){
-; Calls: CNGet, CNEvent2Emails  
+; Calls: CNGet, CNEvent2Emails
+; Create Outlook Email from Event Url  
 
 sPat = &eventInstUuid=(.*)
 If !(RegExMatch(sEventUrl,sPat,sEventUuid)) {
@@ -367,15 +387,14 @@ sOutput .= StrGet(&vUtf8, "CP0") ;cafÃƒÂ©
 }
 
 ; ----------------------------------------------------------------------
-CNGetAtomPages(sUrl){
+CNGetAtomPages(sUrl,pagesize:=150){
 ; Syntax: sXml := CNGetAtom
 ; Called by CNAttendees2Emails
-; Calls: CNGetAtom
-ClipboardSaved := ClipboardAll
+; Calls: CNGet
+
 
 sUrl := RegExReplace(sUrl, "&ps=.*", "")
-
-pagesize := 100
+;pagesize := 100
 pagecnt := 1
 TotalCount := 0
    
@@ -384,6 +403,11 @@ sPageUrl = %sUrl%&ps=%pagesize%&page=%pagecnt%
 
 ;sXml_page := BrowserGetPage(sPageUrl) ; will flash a browser window
 sXml_page := CNGet(sPageUrl)
+
+
+If (sXml_page ~= "Error.*") {
+	return sXml_page
+}
    
 If (pagecnt = 1) {
     sXml := sXml_page
@@ -392,19 +416,21 @@ Else { ; merge pages
     sXml := StrReplace(sXml, "</feed>", "") ; remove ending <feed>
     sXml_page := RegExReplace(sXml_page, "^(.*?)<entry", "<entry")
     sXml := sXml . sXml_page
+	
 }
 
 ; Get number of entry found
-NewStr := RegExReplace(sXml_page, "s)<entry .*?>(.*?)</entry>", "", EntryCount)
+NewStr := RegExReplace(sXml_page, "sU)<entry[^>]*>(.*)</entry>", "", EntryCount)
+
 TotalCount := TotalCount + EntryCount
+
 If (EntryCount = pagesize) {
 	pagecnt ++
     GoTo, LoopPage    
 }
-TrayTipAutoHide("ConNext Enhancer", TotalCount . " attendees were extracted from event.")
+TrayTipAutoHide("Connections Enhancer", TotalCount . " entries were extracted from response.")
 ;MsgBox 0x40, ConNext Enhancer, %TotalCount%  were extracted.  
-Clipboard := ClipboardSaved
-ClipSaved := ""
+
 return sXml
 }
 ; ----------------------------------------------------------------------
@@ -596,13 +622,13 @@ return sTitle
 
 Connections_Link2Text(sLink){
 ; Called by IntelliPaste->Link2Text
-
+ReConnectionsRootUrl := StrReplace(PowerTools_ConnectionsRootUrl,".","\.")
 If Connections_IsConnectionsUrl(sLink,"wiki") {
 	linktext := CNGetTitle(sLink)
 	If !linktext ; empty
 		linktext = Link Text 
 	Else {
-		If RegExMatch(sLink,"://" . PowerTools_ConnectionsRootUrl . "/wikis/.*/page/.*\?section=(.*)",sSection) {
+		If RegExMatch(sLink,"://" . ReConnectionsRootUrl . "/wikis/.*/page/.*\?section=(.*)",sSection) {
 			sSection1 := StrReplace(sSection1,"_"," ")
 			linktext = %linktext% : %sSection1% (Wiki Page)
 		} Else If RegExMatch(sLink,"/comment/.*") { ; comment
@@ -637,9 +663,9 @@ Else If Connections_IsConnectionsUrl(sLink,"blog") {
 		; Check for section link or comment permalink
 		; Example: https://connext.conti.de/blogs/tdalon/entry/teams_chat_link#outlook_vba_create_group_chat_from_email
 		; Example: https://connext.conti.de/blogs/5e459baf-5ca3-4490-848c-4a39ff5488d8/entry/Pop_out_chat?lang=en#threadid=9d904fd6-c550-4722-9f65-f2a40807aef1
-		If RegExMatch(sLink,"://" . PowerTools_ConnectionsRootUrl . "/blogs/.*#threadid=.*$") {
+		If RegExMatch(sLink,"://" . ReConnectionsRootUrl . "/blogs/.*#threadid=.*$") {
 			linktext = %linktext% (Comment)
-		} Else If RegExMatch(sLink,PowerTools_ConnectionsRootUrl . "/blogs/.*#(.*$)",sSection) {			
+		} Else If RegExMatch(sLink,ReConnectionsRootUrl . "/blogs/.*#(.*$)",sSection) {			
 			sSection1 := StrReplace(sSection1,"_"," ")
 			linktext = %linktext% : %sSection1%
 		} Else If RegExMatch(sLink,"/search\?.*&q=([^&]*)",sMatch) {
@@ -706,8 +732,8 @@ return linktext
 CNGet(sUrl){
 ; Syntax:
 ; sXml := CNGet(sUrl)
-; Called by: CNEvent2Emails->CNGetAtomPages
-;            CNEvent2Meeting
+; Called by: CNGetAtomPages->CNEvent2Emails
+;            			   ->CNEvent2Meeting
 
 sPassword := Login_GetPassword() 
 If (sPassword="")
@@ -761,6 +787,7 @@ return
 
 ; ----------------------------------------------------------------------
 Connections_IsConnectionsUrl(sUrl,sType:="") {
+ReConnectionsRootUrl := StrReplace(PowerTools_ConnectionsRootUrl,".","\.")	
 Switch sType
 {
 Case "blog":
@@ -768,9 +795,9 @@ Case "blog":
 Case "forum":
 	return InStr(sUrl,"://" . PowerTools_ConnectionsRootUrl . "/forums/")
 Case "wiki":
-	return RegExMatch(sUrl, PowerTools_ConnectionsRootUrl . "/wikis/")
+	return RegExMatch(sUrl, ReConnectionsRootUrl  . "/wikis/")
 Case "wiki-edit":
-	return RegExMatch(sUrl, PowerTools_ConnectionsRootUrl . "/wikis/.*/edit")
+	return RegExMatch(sUrl, ReConnectionsRootUrl  . "/wikis/.*/edit")
 Default:
  return InStr(sUrl,"://" . PowerTools_ConnectionsRootUrl)
 } ; end switch
@@ -1040,4 +1067,36 @@ PowerTools_ConnectionsRootUrl := StrReplace(PowerTools_ConnectionsRootUrl,"https
 PowerTools_ConnectionsRootUrl := StrReplace(PowerTools_ConnectionsRootUrl,"http://","")
 PowerTools_RegWrite("ConnectionsRootUrl",PowerTools_ConnectionsRootUrl)
 return PowerTools_ConnectionsRootUrl
+} ; eofun
+; -------------------------------------------------------------------------------------------------------------------
+
+Connections_ProfileSearch2Emails(sUrl) {
+; Syntax: sEmailList := Connections_ProfileSearch2Emails(sUrl)
+ReConnectionsRootUrl := StrReplace(PowerTools_ConnectionsRootUrl,".","\.")
+sPat := "^https?://" . ReConnectionsRootUrl  . "/profiles/html/.*"
+
+If !RegExMatch(sUrl,sPat) {
+	TrayTip, ProfileSearch2Emails, Url does not match a profile search '<connectionsroot>/profiles/html/'!,,0x3
+	return
 }
+
+sUrl := RegExReplace(sUrl, "pageSize=[^&]*&","") ; remove pageSize 
+sAtomUrl := RegExReplace(sUrl, "/html/[^/]*[sS]earch.do", "/atom/search.do")
+
+
+sXml := CNGetAtomPages(sAtomUrl)
+
+If (sXml ~= "Error.*") {
+	;MsgBox 0x10, Connections Enhancer: Error, Could not download page!
+	return
+}
+
+; <email xmlns:atom="http://www.w3.org/2005/Atom">thierry.dalon@continental-corporation.com</email>
+sPat = U)<email>(.*)</email>
+Pos = 1 
+While Pos := RegExMatch(sXml,sPat,sEmail,Pos+StrLen(sEmail)){
+	sEmailList = %sEmailList%;%sEmail1%
+}
+return SubStr(sEmailList,2) ; remove starting ;
+} ; eofun
+; -------------------------------------------------------------------------------------------------------------------

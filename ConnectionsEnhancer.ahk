@@ -15,7 +15,7 @@
 
 ; AutoExecute Section must be on the top of the script
 ;#NoEnv
-LastCompiled = 20201124110052
+LastCompiled = 20201126214328
 SetWorkingDir %A_ScriptDir%
 
 #Include <WinClipAPI>
@@ -191,6 +191,7 @@ Menu, SubMenuContactMentions, add, &Teams Chat, MenuItemMentions2Chat
 
 Menu, SubMenuContactEmails, add, &Emails (extract), MenuItemEmails2Emails
 Menu, SubMenuContactEmails, add, &Mentions, MenuItemEmails2Mentions
+Menu, SubMenuContactEmails, add, &Send Mentions, MenuItemEmails2SendMentions
 Menu, SubMenuContactEmails, add, &Teams Chat, MenuItemEmails2Chat
 
 Menu, SubMenuContact, add, &Mentions to, :SubMenuContactMentions
@@ -217,6 +218,7 @@ Menu, ConnectionsEnhancerReadMenu, add, &Event to, :SubMenuEvent
 
 Menu, ConnectionsEnhancerReadMenu, add, (Profile Search) Copy &Mentions, MenuItemProfileSearchToMentions
 Menu, ConnectionsEnhancerReadMenu, add, (Profile Search) Copy &Table of Mentions with Profile pictures, MenuItemCopyUserTable
+Menu, ConnectionsEnhancerReadMenu, add, (Profile Search) Copy Emails, MenuItemProfileSearch2Emails
 Menu, ConnectionsEnhancerReadMenu, Add ; Separator
 Menu, ConnectionsEnhancerReadMenu, add, Create New... (Win+N), CNCreateNew
 Menu, ConnectionsEnhancerReadMenu, add, Download Html, Connections_DownloadHtml
@@ -317,10 +319,12 @@ Else {
 	If InStr(sUrl, PowerTools_ConnectionsRootUrl . "/profiles/html/") {
 		Menu, ConnectionsEnhancerReadMenu, Enable, (Profile Search) Copy &Mentions 
 		Menu, ConnectionsEnhancerReadMenu, Enable, (Profile Search) Copy &Table of Mentions with Profile pictures 
+		Menu, ConnectionsEnhancerReadMenu, Enable, (Profile Search) Copy Emails
 	}
 	Else {
 		Menu, ConnectionsEnhancerReadMenu, Disable, (Profile Search) Copy &Mentions 
 		Menu, ConnectionsEnhancerReadMenu, Disable, (Profile Search) Copy &Table of Mentions with Profile pictures
+		Menu, ConnectionsEnhancerReadMenu, Disable, (Profile Search) Copy Emails
 	}
 
 	Menu, ConnectionsEnhancerReadMenu, Show
@@ -826,6 +830,14 @@ WinClip.SetHtml(sHtmlMentions)
 TrayTipAutoHide("People Connector","Mentions were copied to clipboard in RTF!")   
 return
 
+; ----------------------------------------------------------------------
+MenuItemEmails2SendMentions:
+If GetKeyState("Ctrl") {
+	Run, "https://tdalon.blogspot.com/2020/11/connections-enhancer-send-mentions.html"
+	return
+}
+Connections_SendMentions(Clipboard)
+return
 
 ; ----------------------------------------------------------------------
 MenuItemEmails2Chat:
@@ -853,6 +865,20 @@ TrayTipAutoHide("Copy Mentions", "Mentions were copied to the clipboard!")
 return
 
 ; ----------------------------------------------------------------------
+MenuItemProfileSearchToEmails:
+If GetKeyState("Ctrl") {
+	Run, "https://connext.conti.de/blogs/tdalon/entry/connext_enhancer_reach_out#From_Profile_Search"
+	return
+}
+sUrl := GetActiveBrowserUrl()
+
+
+sEmailList := Connections_ProfileSearch2Emails(sUrl)
+WinClip.SetHtml(sHtml)
+TrayTipAutoHide("Copy Mentions", "Mentions were copied to the clipboard!")
+return
+
+; ----------------------------------------------------------------------
 MenuItemCopyUserTable:
 sUrl := GetActiveBrowserUrl()
 sHtml := CNGet(sUrl) ; TBC
@@ -863,21 +889,37 @@ TrayTipAutoHide("Copy User Table", "Html Table was copied to the clipboard!")
 return
 
 ; ----------------------------------------------------------------------
+
+MenuItemProfileSearch2Emails:
+If GetKeyState("Ctrl") {
+	Run, "https://connext.conti.de/blogs/tdalon/entry/connext_enhancer_generate_nice_user_table" ; TODO
+	return
+}
+sUrl := GetActiveBrowserUrl()
+sEmailList := Connections_ProfileSearch2Emails(sUrl)
+If (sEmailList ="")
+	return
+Clipboard := sEmailList
+TrayTipAutoHide("Copy Emails", "List of Emails was copied to the clipboard!")
+return
+
+; ----------------------------------------------------------------------
 MenuItemUpdateUserTable:
 If GetKeyState("Ctrl") {
 	Run, "https://connext.conti.de/blogs/tdalon/entry/connext_enhancer_generate_nice_user_table"
 	return
 }
 sUrl := Clipboard
-If !RegExMatch(sUrl,"^https?://" . PowerTools_ConnectionsRootUrl  "/profiles/html/") {
+ReConnectionsRootUrl := StrReplace(PowerTools_ConnectionsRootUrl,".","\.")
+If !RegExMatch(sUrl,"^https?://" . ReConnectionsRootUrl .  "/profiles/html/") {
 	MsgBox 0x1031,Connections Enhancer, Copy the search url to your clipboard, go back to the page to edit and press ok!
 	IfMsgBox Cancel
 		return
 }
 sUrl := Clipboard
-If !RegExMatch(sUrl,"^https?://" . PowerTools_ConnectionsRootUrl  "/profiles/html/") {
+If !RegExMatch(sUrl,"^https?://" . ReConnectionsRootUrl . "/profiles/html/") {
 	;MsgBox 0x10,Connections Enhancer, Clipboard does not match url with 'connectionsroot/profiles/html/'!
-	TrayTip, Update User Table, Clipboard does not match url with 'connext.conti.de/profiles/html/'!,,0x3
+	TrayTip, Update User Table, Clipboard does not match url with '<connectionsroot>/profiles/html/'!,,0x3
 	return
 }
 sHtml := CNGetHtmlEditor()
@@ -1168,12 +1210,13 @@ return
 IsWinConNextEdit(sUrl := "") {
 If !sUrl ; empty
 	sUrl := GetActiveBrowserUrl()
+ReConnectionsRootUrl := StrReplace(PowerTools_ConnectionsRootUrl,".","\.")
 If InStr(sUrl,PowerTools_ConnectionsRootUrl . "/wikis/")
-	return RegExMatch(sURL, PowerTools_ConnectionsRootUrl . "/wikis/.*/edit") || RegExMatch(sURL, PowerTools_ConnectionsRootUrl . "/wikis/.*/create")
+	return RegExMatch(sURL, ReConnectionsRootUrl . "/wikis/.*/edit") || RegExMatch(sURL, ReConnectionsRootUrl . "/wikis/.*/create")
 Else If InStr(sUrl, PowerTools_ConnectionsRootUrl . "/blogs/")
 	return InStr(sUrl, PowerTools_ConnectionsRootUrl . "/blogs/roller-ui/authoring/weblog.do") ; method edit or create
 Else
-	return InStr(sUrl, PowerTools_ConnectionsRootUrl . "forums/html/topic?") or InStr(sUrl, PowerTools_ConnectionsRootUrl . "/forums/html/threadTopic?") or  RegExMatch(sURL, PowerTools_ConnectionsRootUrl . "/forums/html/forum\?id=.*showForm=true")
+	return InStr(sUrl, PowerTools_ConnectionsRootUrl . "forums/html/topic?") or InStr(sUrl, PowerTools_ConnectionsRootUrl . "/forums/html/threadTopic?") or  RegExMatch(sURL, ReConnectionsRootUrl . "/forums/html/forum\?id=.*showForm=true")
 }
 
 ; -------------------------------------------------------------------------------------------------------------------
@@ -1770,6 +1813,7 @@ Clipboard := ClipboardSaved
 
 ; ----------------------------------------------------------------------
 CNCreateNew(){
+ReConnectionsRootUrl := StrReplace(PowerTools_ConnectionsRootUrl,".","\.")
 sUrl := GetActiveBrowserUrl()
 If RegExMatch(sUrl,"/wikis/.*/wiki/(.*?)/page/([^/\?]*)",sMatch) { ; exclude also section
 	sWikiLabel := sMatch1
@@ -1815,7 +1859,7 @@ If RegExMatch(sUrl,"/wikis/.*/wiki/(.*?)/page/([^/\?]*)",sMatch) { ; exclude als
 		return
 	sUrl := "https://" . PowerTools_ConnectionsRootUrl . "/forums/html/forum?id=" . sForumId . "&showForm=true"
 	Run, %sUrl%
-} Else If RegExMatch(sUrl,"//" . PowerTools_ConnectionsRootUrl . "/blogs/([^/\?&]*)",sBlogId) {
+} Else If RegExMatch(sUrl,"//" . ReConnectionsRootUrl . "/blogs/([^/\?&]*)",sBlogId) {
 	sUrl := "https://" . PowerTools_ConnectionsRootUrl . "/blogs/roller-ui/authoring/weblog.do?method=create&weblog=" . sBlogId1
 	Run, %sUrl%	
 } Else {
@@ -1899,6 +1943,9 @@ While Pos := RegExMatch(sHtml,sPat,sMatch,Pos+StrLen(sMatch)){
 }
 return sMentionsHtml ; remove first ;
 } ; eof
+
+; ----------------------------------------------------------------------
+
 
 ; ----------------------------------------------------------------------
 GenerateUserTable(sHtml){
