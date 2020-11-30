@@ -21,7 +21,11 @@
 ; Calls: uriDecode
 ; Called by: CleanUrl
 SharePoint_CleanUrl(url){
-	If InStr(url,"_vti_history") ; speciasl case hardlink for old sharepoints
+	; remove ending filesep 
+	If (SubStr(url,0) == "/") ; file or url
+		url := SubStr(url,1,StrLen(url)-1)	
+
+	If InStr(url,"_vti_history") ; special case hardlink for old sharepoints
 	{
 		url := uriDecode(url)
 		RegExMatch(url,"\?url=(.*)",newurl)
@@ -87,18 +91,38 @@ Else {
 
 ; -------------------------------------------------------------------------------------------------------------------
 ; Called by: IntelliPaste -> IntelliHtml
+SharePoint_Link2Text(sLink){
+If RegExMatch(sLink,".*/teams/[^/]*/[^/]*/(.*)",sMatch) {
+	sMatch1 := uriDecode(sMatch1)
+	linktext := sMatch1
+	If Not InStr(linktext,"/") ; item in root level= no breadcrumb
+		return linkext
+	linktext := StrReplace(sMatch1,"/"," > ") ; Breadcrumb navigation for Teams link to folder
+	
+	; Choose how to display: with breadcroumb or only last level
+	FileName := RegExReplace(sMatch1,".*/","")
+	Result := ListBox("IntelliPaste: File Link","Choose how to display",linktext . "|" . FileName,1)
+	If Not (Result ="")
+		linktext := Result
+	
+	return linktext
+}
+} ; eofun
+; -------------------------------------------------------------------------------------------------------------------
+
 SharePoint_IntelliHtml(sLink){
 
-If RegExMatch(sLink,"/teams/team_[^/]*/[^/]*/(.*)",sMatch) {
-	sMatch1 := uriDecode(sMatch1)
-	linktext := StrReplace(sMatch1,"/"," > ") ; Breadcrumb navigation for Teams link to folder
-	 
-	TeamName := Teams_GetTeamName(sLink)
-	If (TeamName != "") ; not empty
-		linktext := TeamName . " > " . linktext
-	
+If RegExMatch(sLink,"(.*/teams/[^/]*/[^/]*)/(.*)",sMatch) {
+	DocPath := uriDecode(sMatch2)
+	sLink := sMatch1
+	Loop, Parse, DocPath, /
+	{
+		sLink = %sLink%/%A_LoopField%
+		sHtml = %sHtml% > <a href="%sLink%">%A_LoopField%</a>
+	}
+	sHtml := SubStr(sHtml,3) ; remove starting >
 }
-
+return sHtml
 
 } ; eofun
 ; -------------------------------------------------------------------------------------------------------------------
@@ -116,12 +140,69 @@ SharePoint_GetSyncIniFile(){
 	sIniFile = %sOneDriveDir%\SPsync.ini
     return sIniFile
 }
+; -------------------------------------------------------------------------------------------------------------------
+
+SharePoint_GetSyncDir(){
+    EnvGet, sOneDriveDir , onedrive
+	sOneDriveDir := StrReplace(sOneDriveDir,"OneDrive - ","")
+    return sOneDriveDir
+}
+; -------------------------------------------------------------------------------------------------------------------
+
+SharePoint_UpdateSyncIniFile(sIniFile:=""){
+If (sIniFile="")
+	sIniFile := SharePoint_GetSyncIniFile()
+
+If !FileExist(sIniFile) { ; file does not exist
+	TrayTip, NWS PowerTool, File %sIniFile% does not exist! File was created in you OneDrive Sync root location. Fill it following user documentation.
+
+	FileAppend, REM See documentation https://connext.conti.de/blogs/tdalon/entry/onedrive_sync_ahk#Setup`n, %sIniFile%
+	FileAppend, REM Use a TAB to separate local root folder from SharePoint root url`n, %sIniFile%
+	FileAppend, REM Replace #TBD by the SharePoint root url. Url shall not end with /`n, %sIniFile%
+	FileAppend, %syncDir%%A_Tab%#TBD`n, %sIniFile%
+	Run https://connext.conti.de/blogs/tdalon/entry/onedrive_sync_ahk#Setup
+	sCmd = Edit "%sIniFile%"
+	Run %sCmd%
+	return sIniFile
+}
+   
+} ; eofun
 
 ; -------------------------------------------------------------------------------------------------------------------
-SharePoint_Url2Sync(sUrl){
-; Path := SharePoint_Url2Sync(sUrl)
+SharePoint_Url2Sync(sUrl,sIniFile:=""){
+; sFile := SharePoint_Url2Sync(sUrl,sIniFile*)
 ; returns empty if not sync'ed
-	
+
+If (sIniFile="")
+	sIniFile := SharePoint_GetSyncIniFile()
+If !FileExist(sIniFile) {
+	SharePoint_UpdateSyncIniFile(sIniFile)
+}
+
+
+If RegExMatch(newurl,"https://[^/]/[^/]/[^/]/[^/]*Documents",rooturl) { ; ?: non capturing group
+	;MsgBox %newurl% %rooturl%
+	needle := "(.*)\t" rooturl "(.*)"
+	needle := StrReplace(needle," ","(?:%20| )")
+	Loop, Read, %sIniFile%
+	{
+	If RegExMatch(A_LoopReadLine, needle, match) {	
+		;MsgBox %rooturl% 1: %match1% 2: %match2%		
+		sFile := StrReplace(newurl, rooturl . match2,Trim(match1) ) ; . "/"
+		sFile := StrReplace(sFile, "/", "\")
+		
+		; MsgBox %A_LoopReadLine% %needle% 
+		return sFile
+		}
+	}
+}
+
+} ; eofun
+; -------------------------------------------------------------------------------------------------------------------
+
+SharePoint_IsSPWithSync(sUrl){
+; returns true if SPO SharePoint or mspe SharePoint
+return RegExMatch(sUrl,"https://[^/]*\.sharepoint.com") or RegExMatch(sUrl,"https://mspe\..*")
 }
 
 
@@ -135,7 +216,16 @@ EnvGet, sOneDriveDir , onedrive
 
 If InStr(sFile,sOneDriveDir . "\") { 
 	MyOUid := People_GetMyOUid()
-	rootUrl = https://continental-my.sharepoint.com/personal/%MyOUid%_contiwan_com/Documents
+	Domain:= PowerTools_GetSetting("Domain")
+	If (Domain="") {
+		return
+	}
+	TenantName := PowerTools_GetSetting("TenantName")
+	If (TenantName="") {
+		return
+	}
+	sDomain := StrReplace(Domain,".","_")
+	rootUrl = https://%TenantName%-my.sharepoint.com/personal/%MyOUid%_%sDomain%/Documents
 	; TODO replace username by oUid
 	sFile := StrReplace(sFile, sOneDriveDir,rootUrl)
 	sFile := StrReplace(sFile, "\", "/")
@@ -154,7 +244,7 @@ If Not FileExist(sIniFile)
 {
 	TrayTip, NWS PowerTool, File %sIniFile% does not exist! File was created in "%sOneDriveDir%". Fill it following user documentation.
 
-	FileAppend, REM See documentation https://connext.conti.de/blogs/tdalon/entry/onedrive_sync_ahk#Setup`n, %sIniFile%
+	FileAppend, REM See documentation https://connext.conti.de/blogs/tdalon/entry/onedrive_sync_ahk#Setup`n, %sIniFile% ;#TODO update link
 	FileAppend, REM Use a TAB to separate local root folder from SharePoint root url`n, %sIniFile%
 	FileAppend, REM Replace #TBD by the SharePoint root url. Url shall not end with /`n, %sIniFile%
 	FileAppend, %syncDir%%A_Tab%#TBD`n, %sIniFile%

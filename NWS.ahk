@@ -19,7 +19,7 @@ SetWorkingDir %A_ScriptDir%
 #Include <Explorer>
 #Include <People>
 
-LastCompiled = 20201109213900
+LastCompiled = 20201124110053
 
 global PowerTools_ConnectionsRootUrl
 If (PowerTools_ConnectionsRootUrl="") {
@@ -184,9 +184,11 @@ Menu,Tray,Standard
 ; NWS Menu (Shown with Win+F1 hotkey in Browser)
 Menu, NWSMenu, add, (Browser) Intelli &Copy current Url (Ctrl+Shift+C), IntelliCopyActiveUrl
 Menu, NWSMenu, add, (Browser) Share by E&mail current Url (Ctrl+Shift+M), EmailShareActiveUrl
-Menu, NWSMenu, add, (Browser) Create IT &Ticket, CreateTicket
-Menu, NWSMenu, add, (Browser) Quick &Search (Win+F), QuickSearch
 Menu, NWSMenu, add, (Browser) Share Url to Teams, TeamsShareActiveUrl
+Menu, NWSMenu, add, (Browser) Quick &Search (Win+F), QuickSearch
+
+If (Config = "Conti")
+	Menu, NWSMenu, add, (Browser) Create IT &Ticket, CreateTicket
 ; -------------------------------------------------------------------------------------------------------------------
 
 ; EDIT : SCRIPT PARAMETERS
@@ -451,60 +453,26 @@ If Connections_IsConnectionsUrl(sURL) {
 } Else If SharePoint_IsSPUrl(sURL) { ; SharePoint
 	newurl:= SharePoint_CleanUrl(sURL) ; returns wihout ending /
 	; For o365 SharePoint check if file is synced in SPsync.ini
-	If InStr(newurl,"continental.sharepoint.com") or InStr(newurl,"https://mspe.conti.de/") { ; mspe can also offers Sync
-		EnvGet, sOneDriveDir , onedrive
-		sOneDriveDir := StrReplace(sOneDriveDir,"OneDrive - ","")
-		sIniFile = %sOneDriveDir%\SPsync.ini
-
-		If Not FileExist(sIniFile)
-		{
-			TrayTip, NWS PowerTool, File %sIniFile% does not exist! File was created in "%sOneDriveDir%". Fill it following user documentation.
-
-			FileAppend, REM See documentation https://connext.conti.de/blogs/tdalon/entry/onedrive_sync_ahk#Setup`n, %sIniFile%
-			FileAppend, REM Use a TAB to separate local root folder from SharePoint root url`n, %sIniFile%
-			FileAppend, REM Replace #TBD by the SharePoint root url. Url shall not end with /`n, %sIniFile%
-			FileAppend, %syncDir%%A_Tab%#TBD`n, %sIniFile%
-			Run https://connext.conti.de/blogs/tdalon/entry/onedrive_sync_ahk#Setup
+	If SharePoint_IsSPWithSync(newurl) { ; mspe can also offers Sync
+		sFile := SharePoint_Url2Sync(sUrl)
+		If (sFile=""){
+			TrayTipAutoHide("NWS PowerTool","SharePoint is not Sync'ed or OneDrive SPSync.ini File is not properly configured!",3,0x3)
 			sCmd = Edit "%sIniFile%"
 			Run %sCmd%
-    		return
+			return
 		}
+		Run %DefExplorerExe% "%sFile%"
 
-		If FileExist(sIniFile){
-			If RegExMatch(newurl,".*/(?:Shared|Project) Documents",rooturl) { ; ?: non capturing group
-				;MsgBox %newurl% %rooturl%
-				needle := "(.*)\t" rooturl "(.*)"
-				needle := StrReplace(needle," ","(?:%20| )")
-				Loop, Read, %sIniFile%
-				{
-				If RegExMatch(A_LoopReadLine, needle, match) {	
-					;MsgBox %rooturl% 1: %match1% 2: %match2%		
-					sFile := StrReplace(newurl, rooturl . match2,Trim(match1) ) ; . "/"
-					sFile := StrReplace(sFile, "/", "\")
-					Run %DefExplorerExe% "%sFile%"
-					; MsgBox %A_LoopReadLine% %needle% 
-					return 
-					}
-				}
-			}
-		}
-	}
-	; new SharePoint open in file explorer/ Dav does not work
-	If InStr(newurl,"continental.sharepoint.com") {
-		TrayTipAutoHide("NWS PowerTool","SharePoint is not Sync'ed or OneDrive SPSync.ini File is not properly configured! (WebDav access does not work for newer SharePoint.)",3,0x3)
-		sCmd = Edit "%sIniFile%"
-		Run %sCmd%
-		return
-	}
-	; Old and new SharePoints
-	newurl:=StrReplace(newurl,"https:","")
-	newurl:=StrReplace(newurl,"+"," ") ; strange issue with blank converted to +
-	newurl:=StrReplace(newurl,"/","\")
-	newurl:=StrReplace(newurl,"conti.de","conti.de@ssl\DavWWWroot")	; without @ssl it takes too long to open
-	newurl:=StrReplace(newurl,"continental.sharepoint.com","continental.sharepoint.com@SSL\DavWWWroot")
-	Run %DefExplorerExe% "%newurl%" 	
-}
-Else {
+		
+	} Else { ; SharePoints without Sync-> use Dav access
+		newurl:=StrReplace(newurl,"https:","")
+		newurl:=StrReplace(newurl,"+"," ") ; strange issue with blank converted to +
+		newurl:=StrReplace(newurl,"/","\")
+		newurl:= RegExReplace(newurl,"https?//[^/]*","$0@ssl\DavWWWroot")
+		;StrReplace(newurl,"conti.de","conti.de@ssl\DavWWWroot")	; without @ssl it takes too long to open
+		Run %DefExplorerExe% "%newurl%"
+	}	 	
+} Else {
 	TrayTipAutoHide("NWS PowerTool",sURL . " did not match a ConNext or SharePoint url!",,0x2)
 }
 return

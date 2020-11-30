@@ -292,6 +292,14 @@ FileAppend, %sText%,%PsFile%
 
 ; Run it;RunWait, PowerShell.exe -NoExit -ExecutionPolicy Bypass -Command %PsFile% ;,, Hide
 RunWait, PowerShell.exe -ExecutionPolicy Bypass -Command %PsFile% ,, Hide
+return CsvFile
+}
+
+; ----------------------------------------------------------------------
+Teams_UpdateSyncIniFile() {
+; calls: Teams_ExportTeams
+CsvFile := Teams_ExportTeams()
+
 }
 
 ; ----------------------------------------------------------------------
@@ -303,8 +311,7 @@ CsvFile = %A_ScriptDir%\Teams_list.csv
 If !FileExist(CsvFile) {
     Teams_ExportTeams()
 }
-
-If RegExMatch(sInput,"/teams/(team_[^/]*)/[^/]*/(.*)",sMatch) {
+If RegExMatch(sInput,"/teams/(team_[^/]*)/",sMatch) {
     MailNickName := sMatch1
     TeamName := ReadCsv(CsvFile,"MailNickName",MailNickName,"DisplayName")
     return TeamName
@@ -320,7 +327,7 @@ return TeamName
 } ; end of function
 ; ----------------------------------------------------------------------
 TeamsLink2TeamName(TeamLink){
-    ; Not used. Replaced by Teams_GetTeamName
+; Obsolete. Replaced by Teams_GetTeamName
 ; TeamName := TeamsLink2TeamName(TeamLink)
 ; Called by Teams_Link2Text
 RegRead, TeamsPowerShell, HKEY_CURRENT_USER\Software\PowerTools, TeamsPowerShell
@@ -330,12 +337,6 @@ If !TeamsPowerShell {
 	    return
     return TeamName
 }
-
-; If (!TeamLink) {
-;     InputBox, TeamLink , Team Link, Enter Team Link:,,640,125 
-;     if ErrorLevel
-; 	    return
-; }
 
 sPat = \?groupId=(.*)&tenantId=(.*)
 If !(RegExMatch(TeamLink,sPat,sId)) {
@@ -582,12 +583,11 @@ If WinActive("ahk_exe Teams.exe") { ; SendMention
     If (sAuthor <> "I") {
         TeamsReplyWithMention := True
         SendInput > ; markdown for quote block
-        Sleep 200  
+        Sleep 500  
         Teams_SendMention(sAuthor)
         sAuthor =
     }
 }
-
 
 If (sMsgLink = "") ; group chat
     sQuoteTitleHtml = %sAuthor% wrote:
@@ -602,7 +602,7 @@ Else
 
 WinClip.SetHTML(sQuoteHtml)
 WinClip.Paste() ; seems asynchronuous
-Sleep 500
+Sleep 500 ; required else clipboard is restored before paste #TODO PasteDelay
 
 ;MsgBox %sQuoteHtml% ; DBG
 
@@ -739,7 +739,11 @@ If RegExMatch(sLink,"https://teams.microsoft.com/l/file/.*&objectUrl=(.*?)&",sMa
 }
 ; Test: https://teams.microsoft.com/_#/files/Allgemein?threadId=19%3A05525c0725eb4dc58caf12183a2faf5b%40thread.skype&ctx=channel&context=01%2520-%2520Draft&rootfolder=%252Fteams%252Fteam_10026816%252FShared%2520Documents%252FGeneral%252FProcesses%2520and%2520Methods%252F00%2520-%2520System%2520Release%2520Note%252F01%2520-%2520Draft
 If RegExMatch(sLink,"https://teams\.microsoft\.com/_#/files/.*&rootfolder=(.*)",sMatch){
-    sLink = https://continental.sharepoint.com%sMatch1%
+    TenantName := PowerTools_GetSetting("TenantName")
+	If (TenantName="") {
+		return sLink 
+	}
+    sLink = https://%TenantName%.sharepoint.com%sMatch1%
     sLink :=uriDecode(sLink)    
     return sLink
 }
