@@ -29,11 +29,19 @@ You can also [create an issue in GitHub](https://github.com/tdalon/ahk/issues).
 
 You can start the Teams Shortcuts menu by pressing the **Windows+T** Hotkey when a Teams window is active.
 
-![Teams Shortcuts Menu](/img/teams_shortcuts_menu.png)
+![TeamsShortcuts Menu](/img/teams_shortcuts_menu.png)
 
 In the menu you can also see which hotkeys directly run the features e.g. Alt+R for Smart Reply.
 
 You can access some settings via the Teams Shortcuts System Tray Icon Context Menu. Right-Mouse-Click on the icon to open it.
+
+## Feature Highlights
+
+### Smart reply (Alt+R)
+
+See [main blog post](https://tdalon.blogspot.com/2020/11/teams-shortcuts-smart-reply.html)
+
+![TeamsShortcuts Smart Reply Gif](/img/TeamsShortcuts_SmartReply.gif)
 
 ## Source code
 

@@ -457,8 +457,7 @@ If Connections_IsConnectionsUrl(sURL) {
 		sFile := SharePoint_Url2Sync(sUrl)
 		If (sFile=""){
 			TrayTipAutoHide("NWS PowerTool","SharePoint is not Sync'ed or OneDrive SPSync.ini File is not properly configured!",3,0x3)
-			sCmd = Edit "%sIniFile%"
-			Run %sCmd%
+			Run "%sIniFile%"
 			return
 		}
 		Run %DefExplorerExe% "%sFile%"
@@ -689,15 +688,6 @@ sFile := RegExReplace(sFile,"`n.*","")
 sFile := GetFileLink(sFile)
 If (!sFile) ; file empty
 	return
-If InStr(sFile,"#TBD")
-{
-	sIniFile := SharePoint_GetSyncIniFile()
-	TrayTip, NWS PowerTool, File %sIniFile% is not configured! Replace #TBD by the SharePoint root url.
-	Run https://connext.conti.de/blogs/tdalon/entry/onedrive_sync_ahk#Setup
-	sCmd = Edit "%sIniFile%"
-	Run, %sCmd%
-    return
-}
 
 SplitPath, sFile, OutFileName, OutDir	
 If InStr(OutFileName,".")  ; then a file is selected (Last part in Path containing "." for file extension)

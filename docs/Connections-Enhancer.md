@@ -4,6 +4,11 @@ This is an Add-on to [HCL Connections](https://www.hcltechsw.com/products/connec
 See [related blog posts](https://tdalon.blogspot.com/search/label/connections-enhancer)
 and mainly [short overview presentation of 2020-09-03](https://tdalon.blogspot.com/connections-powertools-presentation-2020)
 
+<div align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/PRzLNgDo7ms" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe><br><a href="https://youtu.be/PRzLNgDo7ms">Direct Link to YouTube video</a></div>
+
+## YouTube playlist
+
+<div align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/videoseries?list=PLUSZfg60tAwKxuaaVHVVgs8uQUJmjy9TW" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe><br><a href="https://www.youtube.com/playlist?list=PLUSZfg60tAwKxuaaVHVVgs8uQUJmjy9TW">Direct Link to YouTube playlist</a></div>
 
 ## Setup
 

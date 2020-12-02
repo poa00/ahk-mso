@@ -92,11 +92,11 @@ Else {
 ; -------------------------------------------------------------------------------------------------------------------
 ; Called by: IntelliPaste -> IntelliHtml
 SharePoint_Link2Text(sLink){
-If RegExMatch(sLink,".*/teams/[^/]*/[^/]*/(.*)",sMatch) {
+If RegExMatch(sLink,"^https://[^/]*/[^/]*/[^/]*/[^/]*/(.*)",sMatch) {
 	sMatch1 := uriDecode(sMatch1)
 	linktext := sMatch1
 	If Not InStr(linktext,"/") ; item in root level= no breadcrumb
-		return linkext
+		return linktext
 	linktext := StrReplace(sMatch1,"/"," > ") ; Breadcrumb navigation for Teams link to folder
 	
 	; Choose how to display: with breadcroumb or only last level
@@ -121,7 +121,7 @@ If RegExMatch(sLink,"(.*/teams/[^/]*/[^/]*)/(.*)",sMatch) {
 		sHtml = %sHtml% > <a href="%sLink%">%A_LoopField%</a>
 	}
 	sHtml := SubStr(sHtml,3) ; remove starting >
-}
+} 
 return sHtml
 
 } ; eofun
@@ -150,21 +150,74 @@ SharePoint_GetSyncDir(){
 ; -------------------------------------------------------------------------------------------------------------------
 
 SharePoint_UpdateSyncIniFile(sIniFile:=""){
+; showWarn := SharePoint_UpdateSyncIniFile(sIniFile:="")
 If (sIniFile="")
 	sIniFile := SharePoint_GetSyncIniFile()
 
-If !FileExist(sIniFile) { ; file does not exist
-	TrayTip, NWS PowerTool, File %sIniFile% does not exist! File was created in you OneDrive Sync root location. Fill it following user documentation.
 
-	FileAppend, REM See documentation https://connext.conti.de/blogs/tdalon/entry/onedrive_sync_ahk#Setup`n, %sIniFile%
-	FileAppend, REM Use a TAB to separate local root folder from SharePoint root url`n, %sIniFile%
-	FileAppend, REM Replace #TBD by the SharePoint root url. Url shall not end with /`n, %sIniFile%
-	FileAppend, %syncDir%%A_Tab%#TBD`n, %sIniFile%
-	Run https://connext.conti.de/blogs/tdalon/entry/onedrive_sync_ahk#Setup
-	sCmd = Edit "%sIniFile%"
-	Run %sCmd%
-	return sIniFile
+If Not FileExist(sIniFile)
+{
+	TrayTip, NWS PowerTool, File %sIniFile% does not exist! File was created in "%sOneDriveDir%". Fill it following user documentation.
+
+	FileAppend, REM See documentation https://tdalon.github.io/ahk/Sync`n, %sIniFile% 
+	FileAppend, REM Use a TAB to separate local root folder from SharePoint sync root url`n, %sIniFile%
+	FileAppend, REM It might be the default mapping is wrong if you've synced from a subfolder not in the first level. Url shall not end with /`n, %sIniFile%
+
 }
+
+FileRead, IniContent, %sIniFile%
+
+showWarn := False
+Loop, Reg, HKEY_CURRENT_USER\Software\SyncEngines\Providers\OneDrive, K
+{
+	
+	RegRead MountPoint, HKEY_CURRENT_USER\Software\SyncEngines\Providers\OneDrive\%A_LoopRegName%, MountPoint
+	MountPoint := StrReplace(MountPoint,"\\","\")
+
+	; Exclude Personal OneDrive
+	If InStr(MountPoint,"\OneDrive -")
+		Continue
+
+	If Not InStr(IniContent,MountPoint . A_Tab) {
+		RegExMatch(MountPoint,"[^\\]*$",sFolderName)
+
+		RegRead UrlNamespace, HKEY_CURRENT_USER\Software\SyncEngines\Providers\OneDrive\%A_LoopRegName%, UrlNamespace
+		
+		If FolderName := RegExReplace(sFolderName,"[^-]* - ([^-]*) -([^-]*)",sMatch) ;  Private Channel
+			If (sMatch1 = sMatch2) { ; root folder has same name
+				UrlNamespace := SubStr(UrlNamespace,1,-1) ; remove trailing /	
+			} Else {
+				UrlNamespace := UrlNamespace . sMatch2
+				showWarn := True
+			}
+		Else {
+			FolderName := RegExReplace(sFolderName,".*- ","")
+
+			If Not (FolderName = "Documents") { ; not root level
+				UrlNamespace := UrlNamespace . FolderName
+				; For Teams SharePoint check for General channel folder to ignore displaying warning
+				If RegExMatch(UrlNamespace,"sharepoint\.com/teams/team_")
+					If Not (FolderName = "General")
+						showWarn := True
+				Else
+					showWarn := True
+			} Else ; root level -> remove trailing /
+				UrlNamespace := SubStr(UrlNamespace,1,-1)
+
+		}
+		FileAppend, %MountPoint%%A_Tab%%UrlNamespace%`n, %sIniFile%
+
+	}
+} ; end Loop
+
+If (showWarn) {
+	sTrayTip = If you are not syncing on the root level, you need to check the default mapping!
+	TrayTip Check Mapping in SPsync.ini! , %sTrayTip%,,0x2
+	Run "%sIniFile%"
+}
+
+return showWarn
+
    
 } ; eofun
 
@@ -215,18 +268,7 @@ SharePoint_Sync2Url(sFile){
 EnvGet, sOneDriveDir , onedrive
 
 If InStr(sFile,sOneDriveDir . "\") { 
-	MyOUid := People_GetMyOUid()
-	Domain:= PowerTools_GetSetting("Domain")
-	If (Domain="") {
-		return
-	}
-	TenantName := PowerTools_GetSetting("TenantName")
-	If (TenantName="") {
-		return
-	}
-	sDomain := StrReplace(Domain,".","_")
-	rootUrl = https://%TenantName%-my.sharepoint.com/personal/%MyOUid%_%sDomain%/Documents
-	; TODO replace username by oUid
+	RegRead, rooturl, HKEY_CURRENT_USER\Software\SyncEngines\Providers\OneDrive, UrlNamespace
 	sFile := StrReplace(sFile, sOneDriveDir,rootUrl)
 	sFile := StrReplace(sFile, "\", "/")
 	return sFile
@@ -239,19 +281,12 @@ needle := needle "\\[^\\]*"
 If Not (RegExMatch(sFile,needle,syncDir))
 	Return
 
-sIniFile = %sOneDriveDir%\SPsync.ini
-If Not FileExist(sIniFile)
-{
-	TrayTip, NWS PowerTool, File %sIniFile% does not exist! File was created in "%sOneDriveDir%". Fill it following user documentation.
-
-	FileAppend, REM See documentation https://connext.conti.de/blogs/tdalon/entry/onedrive_sync_ahk#Setup`n, %sIniFile% ;#TODO update link
-	FileAppend, REM Use a TAB to separate local root folder from SharePoint root url`n, %sIniFile%
-	FileAppend, REM Replace #TBD by the SharePoint root url. Url shall not end with /`n, %sIniFile%
-	FileAppend, %syncDir%%A_Tab%#TBD`n, %sIniFile%
-	Run https://connext.conti.de/blogs/tdalon/entry/onedrive_sync_ahk#Setup
-	sCmd = Edit "%sIniFile%"
-	Run %sCmd%
-	return
+sIniFile = %sOneDriveDir%\SPSync.ini
+FileRead, IniContent, %sIniFile%
+If Not InStr(IniContent,syncDir . A_Tab) {
+	doWarn := SharePoint_UpdateSyncIniFile(sIniFile)
+	If (doWarn)
+		return
 }
 
 Loop, Read, %sIniFile%
@@ -259,24 +294,17 @@ Loop, Read, %sIniFile%
 	Array := StrSplit(A_LoopReadLine, A_Tab," `t",2)
 	If !Array
 		continue
-	rootDir := StrReplace(Array[1],"??",".*")
+	rootDir := StrReplace(Array[1],"??",".*") ; for emojis
 	rootDirRe := StrReplace(rootDir,"\","\\") ; escape filesep
 	If (RegExMatch(syncDir, rootDirRe)) {
 		rootUrl := Array[2]
-		If rootUrl = "#TBD"
-			break
 		sFile := StrReplace(sFile, syncDir,rootUrl)
 		sFile := StrReplace(sFile, "\", "/")
 		return sFile
 	}
 }	; End Loop		
 
-If (!rootUrl) { ; empty
-	FileAppend, %syncDir%%A_Tab%#TBD`n, %sIniFile%			
-}
 TrayTip, NWS PowerTool, File SPsync.ini is not properly filled for %syncDir%! Fill it following user documentation.,,0x23
-sCmd = Edit "%sIniFile%"
-Run %sCmd%
-;Run https://connext.conti.de/blogs/tdalon/entry/onedrive_sync_ahk
+Run "%sIniFile%"
 return
 } ; eofun
