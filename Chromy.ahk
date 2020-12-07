@@ -1,3 +1,4 @@
+; See documentation https://tdalon.blogspot.com/2020/12/chromy.html
 #Include <WinClipAPI>
 #Include <WinClip>
 global PT_wc

@@ -1,5 +1,8 @@
 # [Connections Enhancer](Connections-Enhancer) Changelog
 
+* 2020-12-07
+  - Fix: Check if Edit mode based on Mouse cursor for forums to display proper Read or Edit Menu.
+  - Refactor Connections_IsWinActive/WinEdit
 * 2020-11-26
   - New [SendMentions Feature](https://tdalon.blogspot.com/2020/11/connections-enhancer-send-mentions.html)
 * 2020-11-24
