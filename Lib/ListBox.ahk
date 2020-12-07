@@ -2,7 +2,7 @@
 ; AutoResize: https://www.autohotkey.com/boards/viewtopic.php?style=17&t=1403
 ; -------------------------------------------------------------------------------
 
-ListBox(Title := "", Prompt := "", List := "", Select := 0) {
+ListBox(Title := "", Prompt := "", List := "", Select := 0, AlwaysOnTop := True) {
 ;-------------------------------------------------------------------------------
     ; show a custom input box with a ListBox control
     ; return the text of the selected item
@@ -28,6 +28,9 @@ ListBox(Title := "", Prompt := "", List := "", Select := 0) {
 
     Gui, Add, Button, w60 Default, &OK
     Gui, Add, Button, x+m wp, &Cancel
+
+    If (AlwaysOnTop = True)
+        Gui, +AlwaysOnTop
 
     Gui, Show, AutoSize
     ; main wait loop

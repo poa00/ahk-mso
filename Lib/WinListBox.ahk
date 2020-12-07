@@ -31,6 +31,7 @@ WinListBox(Title := "", Prompt := "", List := "", Select := 0) {
     Gui, Add, Button, x+m wp, &Cancel
     Gui, Add, Button, x+m wp, &Activate
 
+    Gui, +AlwaysOnTop
     Gui, Show, AutoSize
     ; main wait loop
     Gui, +LastFound
