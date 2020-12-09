@@ -205,21 +205,9 @@ If GetKeyState("Ctrl") {
 	Run, "https://connext.conti.de/blogs/tdalon/entry/emails2teammembers"
 	return
 }
-RegRead, TeamsPowerShell, HKEY_CURRENT_USER\Software\PowerTools, TeamsPowerShell
-If (TeamsPowerShell := !TeamsPowerShell) {
-    sUrl := "https://connext.conti.de/wikis/home/wiki/Wc4f94c47297c_42c8_878f_525fd907cb68/page/Teams%20PowerShell%20Setup"
-    Run, "%sUrl%" 
-    MsgBox 0x1024,People Connector, Have you setup Teams PowerShell on your PC?
-	IfMsgBox No
-		return
-    OfficeUid := People_GetMyOUid()
 
-    ;sWinUid := People_ADGetUserField("mail=" . sEmail, "sAMAccountName")  ;- login uid
-
-    PowerTools_RegWrite("TeamsPowerShell",TeamsPowerShell)
-   ; Menu,SubMenuSettings,Check, Teams PowerShell
-}
-
+If !Teams_PowerShellCheck()
+    return
 
 If (TeamLink=="") {
     InputBox, TeamLink , Team Link, Enter Team Link:,,640,125 
@@ -265,11 +253,16 @@ RunWait, PowerShell.exe -NoExit -ExecutionPolicy Bypass -Command %PsFile% ;,, Hi
 
 ; ----------------------------------------------------------------------
 Teams_ExportTeams() {
+; CsvFile := Teams_ExportTeams
+; returns empty if not created/ failed
+
 If GetKeyState("Ctrl") {
 	Run, "https://connext.conti.de/blogs/tdalon/entry/emails2teammembers" ; TODO
 	return
 }
 
+If Not Teams_PowerShellCheck()
+    return
 CsvFile = %A_ScriptDir%\Teams_list.csv
 If FileExist(CsvFile)
     FileDelete, %CsvFile%
@@ -296,11 +289,24 @@ return CsvFile
 }
 
 ; ----------------------------------------------------------------------
-Teams_UpdateSyncIniFile() {
-; calls: Teams_ExportTeams
-CsvFile := Teams_ExportTeams()
+Teams_PowerShellCheck() {
+; returns True if Teams PowerShell is setup, False else
+RegRead, TeamsPowerShell, HKEY_CURRENT_USER\Software\PowerTools, TeamsPowerShell
+If (TeamsPowerShell := !TeamsPowerShell) {
+    sUrl := "https://tdalon.blogspot.com/2020/08/teams-powershell-setup.html"
+    Run, "%sUrl%" 
+    MsgBox 0x1024,People Connector, Have you setup Teams PowerShell on your PC?
+	IfMsgBox No
+		return False
+    OfficeUid := People_GetMyOUid()
 
-}
+    PowerTools_RegWrite("TeamsPowerShell",TeamsPowerShell)
+    return True
+} Else ; was already set
+    return True 
+
+} ; eofun
+
 
 ; ----------------------------------------------------------------------
 Teams_GetTeamName(sInput) {
@@ -646,6 +652,8 @@ sTeamLink := StrReplace(sMatch1,"&amp;amp;","&")
 return sTeamLink
 } ; eofun
 
+
+
 ; -------------------------------------------------------------------------------------------------------------------
 Teams_SendMention(sInput, doPerso := ""){
 ; See notes https://tdalon.blogspot.com/teams-shortcuts-send-mention
@@ -662,7 +670,7 @@ If InStr(sInput,"@") { ; Email
 SendInput {@}
 Sleep 300
 SendInput %sInput%
-Sleep 1000 ; time for autocompletion
+Sleep 1300 ; time for autocompletion ; TODO Setting
 SendInput +{Tab} ; use Shift+Tab because Tab will switch focus to next UI element in case no mention autocompletion can be done (e.g. name not member of Team)
 
 ; Personalize mention -> Firstname
@@ -684,9 +692,16 @@ SendInput {Right}
 
 If (IsRealMention) {
     If (sLastLetter = ")")
-        SendInput {Backspace}^{Left}{Backspace}
+        SendInput {Backspace}^{Left}
     Else 
+        SendInput ^{Left}
+
+    SendInput +{Left} 
+    sLastLetter := GetSelection()   
+    If (sLastLetter = "-")
         SendInput ^{Left}{Backspace}
+    Else 
+        SendInput {Backspace}
 } Else {
     ; do not personalize if no match to avoid ambiguity which name was mentioned if shorten to firstname and reprompt for matching
     return
@@ -695,8 +710,20 @@ If (IsRealMention) {
 
     SendInput ^{Left}^{Backspace}^{Backspace}^{Right}
 }
-
-
+} ; eofun
+; -------------------------------------------------------------------------------------------------------------------
+Teams_Emails2Mentions(sEmailList,doPerso :=""){
+If (doPerso = "")
+    doPerso := PowerTools_RegRead("TeamsMentionPersonalize")
+MyEmail := People_GetMyEmail()
+Loop, parse, sEmailList, ";"
+{
+	If (A_LoopField=MyEmail) ; Skip my email
+        continue
+    Teams_SendMention(A_LoopField,doPerso)
+	SendInput {,}{Space} 
+}	; End Loop 
+SendInput {Backspace}{Backspace}{Space} ; remove final ,
 } ; eofun
 ; -------------------------------------------------------------------------------------------------------------------
 Teams_Link2Text(sLink){
@@ -1026,10 +1053,18 @@ Teams_GetMainWindow(){
 ; See implementation explanations here: https://tdalon.blogspot.com/get-teams-window-ahk
 
 WinGet, WinCount, Count, ahk_exe Teams.exe
+static MainWinIdChecked := False
 If (WinCount > 0) { ; fall-back if wrong exe found: close Teams
     TeamsMainWinId := PowerTools_RegRead("TeamsMainWinId")
     If WinExist("ahk_id " . TeamsMainWinId) {
-        return TeamsMainWinId
+        If (MainWinIdChecked = False) {
+            oAcc := Acc_Get("Object","4",0,"ahk_id " TeamsMainWinId)
+            sName := oAcc.accName(0)
+            If RegExMatch(sName,".* | Microsoft Teams, Main Window$") {
+                MainWinIdChecked := True
+                return TeamsMainWinId
+            }
+        }  
     }
 }
 
