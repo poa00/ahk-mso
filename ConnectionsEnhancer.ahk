@@ -15,7 +15,7 @@
 
 ; AutoExecute Section must be on the top of the script
 ;#NoEnv
-LastCompiled = 20201126214328
+LastCompiled = 20201209152426
 SetWorkingDir %A_ScriptDir%
 
 #Include <WinClipAPI>
@@ -29,8 +29,9 @@ SetWorkingDir %A_ScriptDir%
 
 global PowerTools_ConnectionsRootUrl
 PowerTools_ConnectionsRootUrl := Connections_GetRootUrl()
-If !PowerTools_ConnectionsRootUrl {
+If (PowerTools_ConnectionsRootUrl="") {
 	TrayTipAutoHide("Error!","Connections Root Url is not defined!",2000,3)
+	return
 }
 
 GroupAdd, ChromeBasedBrowser, ahk_exe chrome.exe
@@ -341,9 +342,7 @@ return
 
 #IfWinActive, ahk_group ChromeBasedBrowser
 ; Ctrl+S - save
-; Do not use Alt key because of issue with IE
 ^s:: ; <--- [Chrome] Save current post or page
-;!e:: ; Alt+E because Ctrl+E is used and can not be overwritten with Windows 10 and IE/Edge Browser Universal App
 sUrl := GetActiveBrowserUrl()
 If Connections_IsUrl(sUrl) { 
 	Connections_Save(sURL)

@@ -3,7 +3,8 @@
 #Include <uriDecode>
 #Include <WinActiveBrowser>
 ; Calls ButtonBox
-
+global PowerTools_ConnectionsRootUrl
+PowerTools_ConnectionsRootUrl := Connections_GetRootUrl()
 ; ----------------------------------------------------------------------
 CNAuth() {
 
@@ -1025,16 +1026,16 @@ Run, %sApiUrl%
 
 ; -------------------------------------------------------------------------------------------------------------------
 Connections_GetRootUrl(){
-global PowerTools_ConnectionsRootUrl
-If (PowerTools_ConnectionsRootUrl)
-	return PowerTools_ConnectionsRootUrl
 PowerTools_ConnectionsRootUrl := PowerTools_RegRead("ConnectionsRootUrl")
 If (PowerTools_ConnectionsRootUrl)
 	return PowerTools_ConnectionsRootUrl
 
 If (PowerTools_ConnectionsRootUrl="") {
-	If FileExist("PowerTools.ini")
-		IniRead, PowerTools_ConnectionsRootUrl, PowerTools.ini, Connections, ConnectionsRootUrl
+	If FileExist("PowerTools.ini") {
+		IniRead, ConnectionsRootUrl, PowerTools.ini, Main, ConnectionsRootUrl
+		If !(ConnectionsRootUrl="ERROR")
+			PowerTools_ConnectionsRootUrl = ConnectionsRootUrl
+	}
 }
 
 PowerTools_ConnectionsRootUrl := Connections_SetRootUrl()
@@ -1043,8 +1044,15 @@ return PowerTools_ConnectionsRootUrl
 ; -------------------------------------------------------------------------------------------------------------------
 
 Connections_SetRootUrl(){
-global PowerTools_ConnectionsRootUrl
-InputBox, PowerTools_ConnectionsRootUrl, Connections Url, Enter Connections Root Url: ,, 200, 125,,, , , %PowerTools_ConnectionsRootUrl%
+DefConnectionsRootUrl := PowerTools_RegRead("ConnectionsRootUrl")
+If (DefConnectionsRootUrl="") {
+	If FileExist("PowerTools.ini") {
+		IniRead, DefConnectionsRootUrl, PowerTools.ini, Connections, ConnectionsRootUrl
+		If (DefConnectionsRootUrl="ERROR")
+			DefConnectionsRootUrl = connext.conti.de
+	}
+}
+InputBox, PowerTools_ConnectionsRootUrl, Connections Url, Enter Connections Root Url: ,, 200, 125,,, , , %DefConnectionsRootUrl%
 If ErrorLevel
    	return
 PowerTools_ConnectionsRootUrl := StrReplace(PowerTools_ConnectionsRootUrl,"https://","")

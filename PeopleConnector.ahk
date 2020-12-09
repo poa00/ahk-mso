@@ -3,7 +3,7 @@
 ; See help/homepage: https://tdalon.github.io/ahk/People-Connector
 
 ; Calls: ExtractEmails, TrayTipAutoHide, ToStartup
-LastCompiled = 20201202192844
+LastCompiled = 20201209152432
 
 #SingleInstance force ; for running from editor
 
