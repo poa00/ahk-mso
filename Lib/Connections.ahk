@@ -1,8 +1,10 @@
 ﻿#Include <Login>
 #Include <DateConv>
 #Include <uriDecode>
+#Include <WinActiveBrowser>
 ; Calls ButtonBox
 
+; ----------------------------------------------------------------------
 CNAuth() {
 
 sPassword := Login_SetPassword()
@@ -490,7 +492,8 @@ Else If InStr(sUrl,"://" . PowerTools_ConnectionsRootUrl . "/wikis/")
     return ConNextGetWikiTitle(sUrl)
 Else If InStr(sUrl,"communityUuid=") 
     return ConNextGetCommunityTitle(sUrl)
-}
+} ; eofun
+; ----------------------------------------------------------------------
 
 ConNextGetWikiTitle(sUrl){
 ; Shall support link by pageid
@@ -523,6 +526,7 @@ If (RegExMatch(sResponse, sPat, sTitle)) {
 MsgBox, 16, Error, Can not get wiki title.
 }
 
+; ----------------------------------------------------------------------
 
 ; Calls: HttpGet (does not work via VPN connection, requires Password, faster)
 ;        DownloadToString (if with VPN, does not require password)
@@ -578,6 +582,7 @@ If (RegExMatch(sSource, sPat, sTitle)) {
 }
 } ; eofun
 
+; ----------------------------------------------------------------------
 
 ConNextGetForumTitle(sUrl){
 ; Calls: DownloadToString 
@@ -623,7 +628,7 @@ return sTitle
 Connections_Link2Text(sLink){
 ; Called by IntelliPaste->Link2Text
 ReConnectionsRootUrl := StrReplace(PowerTools_ConnectionsRootUrl,".","\.")
-If Connections_IsConnectionsUrl(sLink,"wiki") {
+If Connections_IsUrl(sLink,"wiki") {
 	linktext := CNGetTitle(sLink)
 	If !linktext ; empty
 		linktext = Link Text 
@@ -655,7 +660,7 @@ If Connections_IsConnectionsUrl(sLink,"wiki") {
 	if ErrorLevel ; Cancel
 		return
 }
-Else If Connections_IsConnectionsUrl(sLink,"blog") {
+Else If Connections_IsUrl(sLink,"blog") {
 	linktext := CNGetTitle(sLink)
 	If !linktext
 		linktext = Link Text 
@@ -687,7 +692,7 @@ Else If Connections_IsConnectionsUrl(sLink,"blog") {
 	}
 
 	
-} Else If Connections_IsConnectionsUrl(sLink,"forum") {
+} Else If Connections_IsUrl(sLink,"forum") {
 	linktext := CNGetTitle(sLink)
 	sQuery =
 	; https://connext.conti.de/forums/html/forum?id=755c8bb9-52a5-4db8-9ac9-933777b4322d&ps=500&tags=meeting%20virtual&query=participant%20limit
@@ -727,8 +732,6 @@ return linktext
 } ; eofun
  
 ; -------------------------------------------------------------------------------------------------------------------
-
-; ----------------------------------------------------------------------
 CNGet(sUrl){
 ; Syntax:
 ; sXml := CNGet(sUrl)
@@ -783,25 +786,7 @@ If RegExMatch(sSource, sPat, sForumUuid)
 
 MsgBox,48,Warning!,Forum Id not found!
 return
-}
-
-; ----------------------------------------------------------------------
-Connections_IsConnectionsUrl(sUrl,sType:="") {
-ReConnectionsRootUrl := StrReplace(PowerTools_ConnectionsRootUrl,".","\.")	
-Switch sType
-{
-Case "blog":
-	return InStr(sUrl,"://" . PowerTools_ConnectionsRootUrl . "/blogs/")
-Case "forum":
-	return InStr(sUrl,"://" . PowerTools_ConnectionsRootUrl . "/forums/")
-Case "wiki":
-	return RegExMatch(sUrl, ReConnectionsRootUrl  . "/wikis/")
-Case "wiki-edit":
-	return RegExMatch(sUrl, ReConnectionsRootUrl  . "/wikis/.*/edit")
-Default:
- return InStr(sUrl,"://" . PowerTools_ConnectionsRootUrl)
-} ; end switch
-} ; end function
+} ; eofun
 
 ; ----------------------------------------------------------------------
 
@@ -911,7 +896,6 @@ TrayTipAutoHide("ConNextEnhancer Setting", "TOC Style was set to " . Choice)
 
 
 ; -------------------------------------------------------------------------------------------------------------------
-; -------------------------------------------------------------------------------------------------------------------
 Connections_ExpandMentionsWithProfilePicture(sHtml,sUid:=""){
 ; Prepend profile picture with link to the profile page before @mentions
 ;  
@@ -945,6 +929,7 @@ While Pos :=    RegExMatch(sHtml, sPat, sSearch,Pos+StrLen(sSearch)) {
 }
 return sHtmlNew
 }
+; -------------------------------------------------------------------------------------------------------------------
 
 CNExpandMentionsWithProfilePicture_InputDlg(ByRef ExpandMentionsWithProfilePicture_PicSize, ByRef ExpandMentionsWithProfilePicture_Sep){
 If !ExpandMentionsWithProfilePicture_PicSize
@@ -978,9 +963,8 @@ Gui, Submit
 Gui, Destroy
 
 Return
-}
+} ; eofun
 
-; -------------------------------------------------------------------------------------------------------------------
 ; -------------------------------------------------------------------------------------------------------------------
 Connections_PersonalizeMentions(sHtml,sUid:=""){
 ; Prepend profile picture with link to the profile page before @mentions
@@ -1100,3 +1084,49 @@ While Pos := RegExMatch(sXml,sPat,sEmail,Pos+StrLen(sEmail)){
 return SubStr(sEmailList,2) ; remove starting ;
 } ; eofun
 ; -------------------------------------------------------------------------------------------------------------------
+
+
+; -------------------------------------------------------------------------------------------------------------------
+; Returns true if current window can be an opened connext editor
+Connections_IsWinEdit(sUrl := "") {
+If !sUrl ; empty
+	sUrl := GetActiveBrowserUrl()
+ReConnectionsRootUrl := StrReplace(PowerTools_ConnectionsRootUrl,".","\.")
+If InStr(sUrl,PowerTools_ConnectionsRootUrl . "/wikis/")
+	return RegExMatch(sURL, ReConnectionsRootUrl . "/wikis/.*/edit") || RegExMatch(sURL, ReConnectionsRootUrl . "/wikis/.*/create")
+Else If InStr(sUrl, PowerTools_ConnectionsRootUrl . "/blogs/")
+	return InStr(sUrl, PowerTools_ConnectionsRootUrl . "/blogs/roller-ui/authoring/weblog.do") ; method edit or create
+Else If InStr(sUrl, PowerTools_ConnectionsRootUrl . "forums/html/topic?") or InStr(sUrl, PowerTools_ConnectionsRootUrl . "/forums/html/threadTopic?") or  RegExMatch(sURL, ReConnectionsRootUrl . "/forums/html/forum\?id=.*showForm=true")
+	return (A_Cursor = "IBeam")
+}
+; -------------------------------------------------------------------------------------------------------------------
+
+Connections_IsWinActive(){
+If Not WinActiveBrowser()
+    return False
+sUrl := GetActiveBrowserUrl()
+return Connections_IsUrl(sUrl)
+} ; eofun
+; -------------------------------------------------------------------------------------------------------------------
+
+Connections_IsUrl(sUrl,sType:="") {
+If (sType = "")
+	return InStr(sUrl,"://" . PowerTools_ConnectionsRootUrl)
+	
+ReConnectionsRootUrl := StrReplace(PowerTools_ConnectionsRootUrl,".","\.")	
+Switch sType
+{
+Case "blog":
+	return InStr(sUrl,"://" . PowerTools_ConnectionsRootUrl . "/blogs/")
+Case "forum":
+	return InStr(sUrl,"://" . PowerTools_ConnectionsRootUrl . "/forums/")
+Case "wiki":
+	return RegExMatch(sUrl, ReConnectionsRootUrl  . "/wikis/")
+Case "wiki-edit":
+	return RegExMatch(sUrl, ReConnectionsRootUrl  . "/wikis/.*/edit")
+Default:
+ return InStr(sUrl,"://" . PowerTools_ConnectionsRootUrl)
+} ; end switch
+} ; end function
+
+; ----------------------------------------------------------------------

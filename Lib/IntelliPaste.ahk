@@ -22,7 +22,7 @@ Link2Text(sLink) {
 If InStr(sLink,"https://teams.microsoft.com/") {
 	return Teams_Link2Text(sLink)
 }
-If Connections_IsConnectionsUrl(sLink) {
+If Connections_IsUrl(sLink) {
     return Connections_Link2Text(sLink)
 }
 
@@ -37,7 +37,7 @@ If InStr(sLink,"/gist/") {
 	; example: http://confluence.conti.de:8090/pages/viewpage.action?spaceKey=projectCFTI&title=Roadmap+-+Process+and+Method+Improvement
 }
 
-; #59: beautify IMS/MKS links
+; beautify IMS/MKS links
 ; http://%MKSSI_HOST%:%MKSSI_PORT%/si/viewrevision?projectName=%PROJECT%&selection=%MEMBER%
 Else If RegExMatch(sLink,"/si/viewrevision\?projectName=(?P<Project>.*)&revision=(?P<Revision>.*)&selection=(?P<Member>.*)",OutputVar) 
 	linktext = %OutputVarMember% (Rev %OutputVarRevision%)
@@ -50,7 +50,7 @@ Else If RegExMatch(sLink,"/im/issues\?selection=(.*)",OutputVar)
 Else If RegExMatch(sLink,"/im/viewissue\?selection=(.*)",OutputVar) 
 	linktext = %OutputVar1%
 
-; #86 Jira Issue link
+; Jira Issue link
 Else If RegExMatch(sLink,"/browse/(?P<IssueKey>.*)$",OutputVar) {
 	sLink :=StrReplace(sLink,"/browse/","/rest/api/latest/issue/")
 	sLink := sLink . "?fields=summary"
@@ -63,6 +63,18 @@ Else If RegExMatch(sLink,"/browse/(?P<IssueKey>.*)$",OutputVar) {
 }
 Else If RegExMatch(sLink,"/browse/(?P<ProjectKey>[A-Z]*)-(?P<IssueNb>\d*)$",OutputVar) {
 	linktext = %OutputVarProjectKey%-%OutputVarIssueNb%
+; Jira ServiceDesk
+; https://jira-it.zone2.agileci.conti.de/plugins/servlet/desk/portal/1/PMTJSD-5745
+} Else If RegExMatch(sLink,"/desk/portal/1/(?P<IssueKey>.*)$",OutputVar) {
+	sLink := RegExReplace(sLink,"https?://","")
+	JiraRoot := RegExReplace(sLink,"/.*","")
+	RestUrl = https://%JiraRoot%/rest/api/2/issue/%OutputVarIssueKey%?fields=summary
+	sResponse := JiraGet(RestUrl)
+	sPat = "summary":"(.*?)"
+	If RegExMatch(sResponse,sPat,sSummary)
+		linktext = %OutputVarIssueKey%: %sSummary1%
+	Else
+		linktext = %OutputVarIssueKey%
 }
 
 ; LL/RAI Issue Link
@@ -77,6 +89,7 @@ Else If RegExMatch(sLink,"https://web.microsoftstream.com/browse\?q=(.*)",sQuery
 	linktext = Stream videos matching: %sQuery1% 
 	linktext := StrReplace(linktext,"%23","#")		
 } Else If RegExMatch(sLink,"/teams/team_[^/]*/[^/]*/(.*)",sMatch) {
+; #TODO replace by SharePoint_IntelliHtml
 	sMatch1 := uriDecode(sMatch1)
 	linktext := StrReplace(sMatch1,"/"," > ") ; Breadcrumb navigation for Teams link to folder
 	 
@@ -93,14 +106,14 @@ Else If RegExMatch(sLink,"https://web.microsoftstream.com/browse\?q=(.*)",sQuery
 	return linktext
 
 } Else {
-	;linktext := StrReplace(sFileName,"%20"," ")
+	
 	; remove ending filesep 
 	If (SubStr(sLink,0) == "\") or (SubStr(sLink,0) == "/") ; file or url
 		sLink := SubStr(sLink,1,StrLen(sLink)-1)	
 	
 	SplitPath, sLink, linktext,,sFileExt ; Extension without . linktext set to FileName with ext
 	If !sFileExt  { ; empty/ no file extension
-		If InStr(sLink,"github.") ; display full github link if not a file
+		If (InStr(sLink,"github.") and Not InStr(sLink,"github.io/")) ; display full github link if not a file
 			linktext := sLink
 		;linktext := StrReplace(linktext,"_"," ")
 		;linktext := StrReplace(linktext,"-"," ")
@@ -108,16 +121,24 @@ Else If RegExMatch(sLink,"https://web.microsoftstream.com/browse\?q=(.*)",sQuery
 	}
 	; Blogpost https://tdalon.blogspot.com/2020/08/executor-my-preferred-app-launcher.html
 	If InStr(sLink,".blogspot.") {
-		linktext := StrReplace(linktext,"-"," ")
 		linktext := StrReplace(linktext,".html","")
-		StringUpper, linktext, linktest , T ; upper case first letter
 	}
 	; Removing ending ? e.g. https://continental.sharepoint.com/:p:/r/teams/team_10000778/Shared%20Documents/Explore/New%20Work%20Style%20%E2%80%93%20O365%20-%20Why%20using%20Teams.pptx?d=we1a512b97ed844fc92dd5a1d028ef827&csf=1&e=crdehv 
 	linktext := RegExReplace(linktext, "\?.*$","")
-	
+
+	; convert to title case only if not all upper
+	If Not RegExMatch(linktext,"^http") {
+		StringUpper, Ulinktext, linktext
+		StringCaseSense On
+		If (Ulinktext <> linktext) {
+			StringUpper, linktext, linktext , T ; upper case first letter
+			linktext := StrReplace(linktext,"-"," ")
+		}
+	}
 	; Add specific prefix to linktext: UserVoice, CoachNet
 	If InStr(sLink,".uservoice.")
-		linktext = UserVoice: %linktext% 		
+		linktext = UserVoice: %linktext% 	
+	
 } ; End If
 
 linktext := uriDecode(linktext) 
@@ -136,8 +157,54 @@ return linktext
 ; Calls CNFormatImg, Link2Text, Link2Ico
 IntelliHtml(sInput,useico:=True){
 
-If InStr(sInput,"https://teams.microsoft.com/l/message/") {
+If (RegExMatch(sInput,"[A-Z]:\\")) {
+	sInput := GetFileLink(sInput)
+}
+If SharePoint_IsSPUrl(sInput) {
+	sInput := SharePoint_CleanUrl(sInput) ; keep name used as link for ico
+	linktext := SharePoint_Link2Text(sInput)
+	If InStr(linktext,">") ; use breadcrumbs
+		sHtml := SharePoint_IntelliHtml(sInput)
+	Else
+		sHtml =	<a href="%sInput%">%linktext%</a>
+
+	If RegExMatch(sInput,"/teams/(team_[^/]*)/",sMatch) {
+		CsvFile = %A_ScriptDir%\Teams_list.csv
+		If !FileExist(CsvFile) {
+			CsvFile := Teams_ExportTeams() ; requires PowerShell
+			If (CsvFile = "") 
+				Goto, Cont1
+		}
+		MailNickName := sMatch1
+		TeamName := ReadCsv(CsvFile,"MailNickName",MailNickName,"DisplayName")
+		If Not (TeamName = "") {
+			GroupId := ReadCsv(CsvFile,"MailNickName",MailNickName,"GroupId")
+			TeamLink = https://teams.microsoft.com/l/team/?groupId=%GroupId%
+			sHtml = <a href="%TeamLink%">%TeamName% Team</a>: %sHtml%
+		}
+	}
+	Cont1:
+
+} Else If InStr(sInput,"https://teams.microsoft.com/l/message/") {
 	sHtml := Teams_MessageLink2Html(sInput)
+
+} Else If RegExMatch(sInput,"/desk/portal/1/(?P<IssueKey>.*)$",OutputVar) {
+	sInput := RegExReplace(sInput,"https?://","")
+	JiraRoot := RegExReplace(sInput,"/.*","")
+	RestUrl = https://%JiraRoot%/rest/api/2/issue/%OutputVarIssueKey%?fields=summary
+	sResponse := JiraGet(RestUrl)
+	sPat = "summary":"(.*?)"
+	If RegExMatch(sResponse,sPat,sSummary)
+		linktext = %OutputVarIssueKey%: %sSummary1%
+	Else
+		linktext = %OutputVarIssueKey%
+	
+	; Convert Ticket Link to Issue link
+	MsgBox, 0x24,IntelliPaste: Question, Do you want to convert Ticket link into an Issue link?	
+	IfMsgBox Yes 
+		sInput = https://%JiraRoot%/browse/%OutputVarIssueKey%
+	sHtml = <a href="%sInput%">%linktext%</a>
+
 } Else If RegExMatch(sInput,"(SD[\d]{1,})",sId) { ; SD HPSM issue
 		sInput = https://hpsm-web.cw01.contiwan.com/sm/ess.do?ctx=docEngine&file=incidents&query=incident.id_percent3D_percent22%sId1%_percent22
 		sInput := StrReplace(sInput,"_percent","%")
@@ -180,7 +247,7 @@ Else If RegExMatch(sInput,"https://youtu\.be/([^\?&]*)",sVideoId) ; https://yout
 	sHtml = <div align="center">%sHtml%<br><a href="%sInput%">Direct Link to YouTube video</a></div>
 }
 
-Else If RegExMatch(sInput,"https://www.youtube.com/playlist\?list=([^\?&]*)",sVideoId) ; https://www.youtube.com/playlist?list=PLUSZfg60tAwLIIs8TpcOJIG9ghbQd5nHj
+Else If RegExMatch(sInput,"https://www\.youtube\.com/playlist\?list=([^\?&]*)",sVideoId) ; https://www.youtube.com/playlist?list=PLUSZfg60tAwLIIs8TpcOJIG9ghbQd5nHj
 { 
 	sHtml =	<iframe width="560" height="315" src="https://www.youtube.com/embed/videoseries?list=%sVideoId1%" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 	sHtml = <div align="center">%sHtml%<br><a href="%sInput%">Direct Link to YouTube playlist</a></div>
@@ -201,17 +268,15 @@ Else If RegExMatch(sInput,"https://web\.microsoftstream\.com/video/.*\?st=(.*)",
 	sHtml = <a href="%sInput%">%linktext%</a>
 }
 
-Else If RegExMatch(sInput,"https://web.microsoftstream.com/video/"){
-	sInput := sInput
-	sVideoId := StrReplace(sInput,"https://web.microsoftstream.com/video/","")
-	sEmbedCode = <iframe width="640" height="360" src="https://web.microsoftstream.com/embed/video/%sVideoId%?autoplay=false&amp;showinfo=true" style="border:none;" allowfullscreen ></iframe>
-	sHtml = <p style="text-align: center;">%sEmbedCode%<br><a href="%sInput%">Direct Link to Stream video</a></p>
+Else If RegExMatch(sInput,"https://web\.microsoftstream\.com/video/([^/]*)",sVideoId){
+
+	sEmbedCode = <iframe width="640" height="360" src="https://web.microsoftstream.com/embed/video/%sVideoId1%?autoplay=false&amp;showinfo=true" style="border:none;" allowfullscreen ></iframe>
+	sHtml = <div align="center">%sEmbedCode%<br><a href="%sInput%">Direct Link to Stream video</a></div>
 }
-Else If RegExMatch(sInput,"https://web.microsoftstream.com/channel/"){
-	sInput := sInput
-	sVideoId := StrReplace(sInput,"https://web.microsoftstream.com/channel/","")
-	sEmbedCode = <iframe width="960" height="540" src="https://web.microsoftstream.com/embed/channel/%sVideoId%?sort=trending" style="border:none;" allowfullscreen ></iframe>	
-	sHtml = <p style="text-align: center;">%sEmbedCode%<br><a href="%sInput%">Direct Link to Stream Channel</a></p>
+Else If RegExMatch(sInput,"^https://web\.microsoftstream\.com/channel/([^/]*)",sChannel){
+	;MsgBox % sChannel1 ; DBG
+	sEmbedCode = <iframe width="960" height="540" src="https://web.microsoftstream.com/embed/channel/%sChannel1%?sort=trending" style="border:none;" allowfullscreen ></iframe>	
+	sHtml = <div align="center">%sEmbedCode%<br><a href="%sInput%">Direct Link to Stream Channel</a></div>
 }
 	
 If !sHtml {	; empty
@@ -220,13 +285,13 @@ If !sHtml {	; empty
 	if !linktext ; empty => cancel
 		return
 	sHtml =	<a href="%sInput%">%linktext%</a>
-	If useico { ; not empty; File Link with FileType icon
-		imgsrc := Link2Ico(sInput)
-		if imgsrc ; not empty
-			sHtml = <a href="%sInput%"><img src="%imgsrc%" width="32"/></a>%sHtml%
-	}
 } ; End If sHtml empty
 
+If useico { ; not empty; File Link with FileType icon
+	imgsrc := Link2Ico(sInput)
+	if imgsrc ; not empty
+		sHtml = <a href="%sInput%"><img src="%imgsrc%" width="32"/></a>%sHtml%
+}
 
 return sHtml
 }
@@ -283,15 +348,15 @@ Else If InStr(sLink,"communityUuid=") {
 	sPat=.*?\?communityUuid=([^ ]*)
 	sRep = https://%PowerTools_ConnectionsRootUrl%/communities/service/html/image?communityUuid=$1
 	imgsrc:= RegExReplace(sLink,sPat,sRep)
-} Else If Connections_IsConnectionsUrl(sLink,"wiki")
+} Else If Connections_IsUrl(sLink,"wiki")
 	IniRead, imgsrc, %IniFile%, ConnectionsIcons, WikiIcon
-Else If Connections_IsConnectionsUrl(sLink,"blog")
+Else If Connections_IsUrl(sLink,"blog")
 	IniRead, imgsrc, %IniFile%, ConnectionsIcons, BlogIcon
-Else If Connections_IsConnectionsUrl(sLink,"forum")
+Else If Connections_IsUrl(sLink,"forum")
 	IniRead, imgsrc, %IniFile%, ConnectionsIcons, ForumIcon
 Else If InStr(sLink,"/gist/")
 	IniRead, imgsrc, %IniFile%, ConnectionsIcons, GistIcon
-Else If InStr(sLink,"github")
+Else If (InStr(sLink,"github.") and Not (InStr(sLink,"github.io/")))
 	IniRead, imgsrc, %IniFile%, ConnectionsIcons, GithubIcon
 Else If Jira_IsUrl(sLink)
 	IniRead, imgsrc, %IniFile%, ConnectionsIcons, JiraIcon
@@ -316,12 +381,17 @@ CleanUrl(url,decode:=false){
 ;
 ; Calls: Lib/GetSharepointUrl, GetFileLink, UriDecode
 ; Call: SubFunctions: GetGoogleUrl, IsGoogleUrl
-	
+
+
+
 url := Trim(url)
 
 url := Teams_FileLinkBeautifier(url)
 
-If Connections_IsConnectionsUrl(url) {
+If Connections_IsUrl(url) {
+
+	ReConnectionsRootUrl := StrReplace(PowerTools_ConnectionsRootUrl,".","\.")
+	
 	; Switch to https
 	url := StrReplace(url,"http://","https://")
 	
@@ -347,7 +417,7 @@ If Connections_IsConnectionsUrl(url) {
 	; Ex. http://connext.conti.de/files/form/anonymous/api/library/ffd279a0-2764-46bb-a8ec-b1aa3c713072/document/87249fa7-87f8-4977-b511-6c49a1597e31/media/wikis_32.jpg?logDownload=true&downloadType=view&versionNum=1
 
 	;url := RegExReplace(url, "\?versionNum=\d+" , "")
-	url := RegExReplace(url, "://" . PowerTools_ConnectionsRootUrl . "/files/form/anonymous/api/library/([^?]*)\?.*", "://" . PowerTools_ConnectionsRootUrl . "/files/form/anonymous/api/library/$1")
+	url := RegExReplace(url, "://" . ReConnectionsRootUrl . "/files/form/anonymous/api/library/([^?]*)\?.*", "://" . PowerTools_ConnectionsRootUrl . "/files/form/anonymous/api/library/$1")
 	
 	; Remove lastMod (when copying profile picture)
 	; Ex. http://connext.conti.de/profiles/photo.do?key=7df0fd93-6999-426d-869c-d36d434d11fa&lastMod=1500531017000
@@ -379,14 +449,13 @@ Else If (RegExMatch(url,"^https://teams.microsoft.com/l/file/")) {
 		url := newurl1
 		url := uriDecode(url)
 	}
-} Else
-	url := GetFileLink(url)
+} 
 			
 If (decode) {
 	url := uriDecode(url)	
 
 	; fix beautified url for ConNext wikis
-	If (Connections_IsConnectionsUrl(url,"wiki"))	{
+	If (Connections_IsUrl(url,"wiki"))	{
 		;url := StrReplace(url,"(","%28")
 		;url := StrReplace(url,")","%29")
 		url := StrReplace(url,"/#","/%23") ; links to page starting with # won't open
@@ -451,6 +520,19 @@ IntelliPaste(){
 ;global PT_wc - declared in NWS.ahk
 sClipboard := Clipboard  
 
+
+If (Jira_IsWinActive()) { ;
+	sFullText := Jira_FormatLinks(sClipboard,sStyle)
+	PT_wc.iSetText(sFullText)
+	PT_wc.iPaste()
+	return
+}
+
+If (Confluence_IsWinActive()) {
+	Confluence_ExpandLinks(sClipboard)
+	return
+}
+
 If InStr(sClipboard,"`n") { ; MultiLine 
 	;MsgBox 0x21, MultiLine, You are pasting Multiple lines!
 	sStyle = ?
@@ -472,19 +554,12 @@ If InStr(sClipboard,"`n") { ; MultiLine
 	sStyle = single-line ; Default
 
 SetTitleMatchMode, 2 ; partial match
-If (WinActive("jira.conti.de")) ||  (WinActive("JIRA BS")) { ;TODO replace by IsJira
-	sFullText := JiraFormatLinks(sClipboard,sStyle)
-	PT_wc.iSetText(sFullText)
-	PT_wc.iPaste()
-	return
-}
 
-If (WinActive("Confluence")) {
-	ConfluenceExpandLinks(sClipboard)
-	return
-}
+If (Connections_IsWinActive())
+	useico := True
+Else
+	useico := False ; Deactivate till it is refactored. #TODO
 
-useico := True
 ; Do not ask for ico for specific applications where pasting icon doesn't work
 If WinActive("ahk_group MSOffice") or  WinActive("Confluence") or WinActive("Microsoft Teams")  or WinActive("Microsoft Stream") or WinActive("Microsoft Whiteboard")
 	useico := False
@@ -507,11 +582,11 @@ Else If !InStr(sClipboard,"`n") { ; single entry
 }
 
 ; Check if one ico is necessary (slower but less user annoying: do not ask if not needed)
-If useico {
+If (useico) {
 	useico := False
 	Loop, parse, sClipboard, `n, `r
 	{
-		sLink := CleanUrl(A_LoopField)
+		sLink := CleanUrl(A_LoopField) ; TODO call again below
 		imgsrc := Link2Ico(sLink)
 		;MsgBox %sLink% : %imgsrc% ; DBG
 		If not (imgsrc="") { ; icon not empty
@@ -522,7 +597,7 @@ If useico {
 }
 
 WinGet WinId, ID, A
-If useico {
+If (useico) {
 	MsgBox, 3,IntelliPaste: Question, Would you like to insert icons before links?	
 	IfMsgBox Yes
 		useico := True
@@ -544,11 +619,10 @@ sFullHtml =
 sFullText =
 ; IntelliPaste Links
 
-;oldClipboard := Clipboard
+ClipSaved := ClipboardAll
 If !InStr(sClipboard,"`n") { ; single input
 	sLink := CleanUrl(sClipboard)
 	sHtml := IntelliHtml(sLink, useico)
-
 	PT_wc.SetHTML(sHtml) ; iSetHTML  does not work e.g. in Outlook Task
 
 	If (sLink = sClipboard) { ; no action on clean -> transform to html
@@ -557,8 +631,8 @@ If !InStr(sClipboard,"`n") { ; single input
 		PT_wc.SetText(sLink)
 	}
 	PT_wc.Paste() 
-	;Sleep 500 ; required else clipboard is restored before paste
-	;Clipboard := oldClipboard ; restore clipboard
+	Sleep 500 ; required else clipboard is restored before paste #TODO PasteDelay
+	Clipboard := ClipSaved ; restore clipboard
 	return
 }
 
@@ -597,9 +671,12 @@ If (Fmt = "Text") {
 	PT_wc.SetHTML(sFullHtml) ; iSetHTML does not work sometimes e.g. Outlook Tasks
 	PT_wc.SetText(sFullText)
 }
+
 PT_wc.Paste() 
-Clipboard := oldClipboard ; restore clipboard
+Sleep 500 ; required else clipboard is restored before paste #TODO PasteDelay
+Clipboard := ClipSaved ; restore clipboard
 return
+
 } ; eofun IntelliPaste()
 
 ; -------------------------------------------------------------------------------------------------------------------
@@ -640,20 +717,22 @@ PowerTools_OpenDoc("intelli_paste")
 ; -------------------------------------------------------------------------------------------------------------------
 
 IntelliPaste_Refresh(){
-;#TODO
-; Refresh Teams List
+; Refresh SPSync.ini 
+SharePoint_UpdateSyncIniFile()
+; Refresh Teams Export List
 Teams_ExportTeams()
-; Refresh SPSync.ini
 } ; eofun
 
 ; -------------------------------------------------------------------------------------------------------------------
-; Function GetFileLink
-; Calls: Subfunction: DriveMap_Get
-; Called by: CleanUrl
 GetFileLink(sFile) {
+; Function GetFileLink
+; Calls: Subfunction: DriveMap_Get, SharePoint_Sync2Url
+; Called by: IntelliPaste
 	If InStr(sFile,"http") {
 		Return sFile
 	}
+	
+	sFile := StrReplace(sFile,"%20"," ") ; replace %20 by spaces etc (uri decode does not work on file path)
    	   
 	sUrl := SharePoint_Sync2Url(sFile)
 	If !(sUrl = "")

@@ -1,18 +1,31 @@
-IsConfluenceUrl(sUrl){
-return (InStr(sUrl,"//confluence.conti.de")) || (InStr(sUrl,"confluence-ibs"))
-}
+#Include <WinActiveBrowser>
 
-ConfluenceExpandLinks(sLinks){
+Confluence_IsUrl(sUrl){
+If RegExMatch(sUrl,"confluence[\.-]")
+	return True
+}
+; -------------------------------------------------------------------------------------------------------------------
+
+Confluence_IsWinActive(){
+If Not WinActiveBrowser()
+    return False
+sUrl := GetActiveBrowserUrl()
+return Confluence_IsUrl(sUrl)
+} ; eofun
+; -------------------------------------------------------------------------------------------------------------------
+
+Confluence_ExpandLinks(sLinks){
+; Called by IntelliPaste
 	Loop, parse, sLinks, `n, `r
 	{
 		sLink_i := CleanUrl(A_LoopField)	; calls also GetSharepointUrl
-		Confluence_ExpandLink(sLink_i)
+		ExpandLink(sLink_i)
 	}
 }
 
 ; -------------------------------------------------------------------------------------------------------------------
 ; Confluence Expand Link
-Confluence_ExpandLink(sLink){
+ExpandLink(sLink){
 	sLinkText := Link2Text(sLink)
 	MoveBack := StrLen(sLinkText)
 	
@@ -27,7 +40,7 @@ Confluence_ExpandLink(sLink){
 
 ; Confluence Search - Search within current Confluence Space
 ; Called by: NWS.ahk (Win+F Hotkey)
-ConfluenceSearch(sUrl){
+Confluence_Search(sUrl){
 static sConfluenceSearch, sKey
 ; http://confluence.conti.de:8090/dosearchsite.action?cql=siteSearch+~+"project+status+report"+and+space+=+"projectCFTPT"+and+type+=+"page"
 

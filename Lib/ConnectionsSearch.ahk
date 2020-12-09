@@ -13,7 +13,7 @@ static sWikiSearch, sWikiLabel
 static sForumSearch, sForumUuid
 static sBlogSearch, sBlogId
 
-If Connections_IsConnectionsUrl(sUrl,"wiki") {
+If Connections_IsUrl(sUrl,"wiki") {
 	sOldWikiLabel := sWikiLabel
 	sWikiLabel := GetWikiLabel(sUrl)
 	If !sWikiLabel
@@ -47,7 +47,7 @@ If Connections_IsConnectionsUrl(sUrl,"wiki") {
 	sWikiSearch := Trim(sSearch) 
 	SearchWiki(sWikiLabel,sWikiSearch)
 
-} Else If Connections_IsConnectionsUrl(sUrl,"forum") {
+} Else If Connections_IsUrl(sUrl,"forum") {
 	sForumUuid := CNGetForumId(sUrl)
 	If !sForumUuid
 		return
@@ -77,7 +77,7 @@ If Connections_IsConnectionsUrl(sUrl,"wiki") {
 		return
 	SearchForum(sForumUuid,Trim(sSearch))
 
-} Else If Connections_IsConnectionsUrl(sUrl,"blog") {
+} Else If Connections_IsUrl(sUrl,"blog") {
 	sOldBlogId := sBlogId
 	sPat = /blogs/([^/\?]*)[/\?]
 	Pos := RegExMatch(sUrl, sPat, sBlogId)

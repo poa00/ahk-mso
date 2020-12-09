@@ -5,7 +5,7 @@
 ; Source : https://github.com/tdalon/ahk/blob/master/TeamsShortcuts.ahk
 ;
 
-LastCompiled = 20201123230512
+LastCompiled = 20201124110056
 
 #Include <Teams>
 #Include <PowerTools>
@@ -73,18 +73,20 @@ sTooltip = Teams Shortcuts %LastMod%`nUse 'Win+T' to open main menu in Teams.`nR
 Menu, Tray, Tip, %sTooltip%
 
 ; -------------------------------------------------------------------------------------------------------------------
-Menu, TeamsShortcutMenu, add, Smart &Reply (Alt+R), Teams_SmartReply
-Menu, TeamsShortcutMenu, add, &Quote Conversation (Alt+Q), QuoteConversation
-Menu, TeamsShortcutMenu, add, Create E&mail with link to current conversation (Win+M), ShareByMail
-Menu, TeamsShortcutMenu, add, &New Expanded Conversation (Win+N), NewConversation
-Menu, TeamsShortcutMenu, add, Send Mentions (Win+Q), SendMentions
-Menu, TeamsShortcutMenu, add, Personalize &Mention (Win+1), PersonalizeMention
-Menu, TeamsShortcutMenu, add, View &Unread (Win+U), ViewUnread
-Menu, TeamsShortcutMenu, add, View &Saved (Win+S), ViewSaved
-Menu, TeamsShortcutMenu, add, &Pop-out Chat (Win+P), Pop
-Menu, TeamsShortcutMenu, add, Add to &Favorites, Link2TeamsFavs
+Menu, TeamsShortcutsMenu, add, Smart &Reply (Alt+R), Teams_SmartReply
+Menu, TeamsShortcutsMenu, add, &Quote Conversation (Alt+Q), QuoteConversation
+Menu, TeamsShortcutsMenu, add, Create E&mail with link to current conversation (Win+M), ShareByMail
+Menu, TeamsShortcutsMenu, add, &New Expanded Conversation (Win+N), NewConversation
+Menu, TeamsShortcutsMenu, add, Send Mentions (Win+Q), SendMentions
+Menu, TeamsShortcutsMenu, add, Personalize &Mention (Win+1), PersonalizeMention
+Menu, TeamsShortcutsMenu, add, View &Unread (Win+U), ViewUnread
+Menu, TeamsShortcutsMenu, add, View &Saved (Win+S), ViewSaved
+Menu, TeamsShortcutsMenu, add, &Pop-out Chat (Win+P), Pop
+Menu, TeamsShortcutsMenu, add, Add to &Favorites, Link2TeamsFavs
 ; -------------------------------------------------------------------------------------------------------------------
 
+; Reset Main WinId at startup because of some collision
+PowerTools_RegWrite("TeamsMainWinId","")
 
 #IfWinActive,ahk_exe Teams.exe
 
@@ -167,7 +169,7 @@ Send {Enter}
 return	
 
 #t::
-Menu, TeamsShortcutMenu, Show
+Menu, TeamsShortcutsMenu, Show
 return
 
 ; Win+C
@@ -228,20 +230,10 @@ If GetKeyState("Ctrl") {
 	Run, "https://tdalon.blogspot.com/teams-shortcuts-send-mentions"
 	return
 }
-sSelection := WinClip.GetHTML()
-If (sSelection="")
-    sSelection := Clipboard
-sSelection := Trim(sSelection,"`n`r`t`s")
-sEmailList := People_GetEmailList(sSelection)
-
+sEmailList := Clipboard
 doPerso := PowerTools_RegRead("TeamsMentionPersonalize")
+Teams_Emails2Mentions(sEmailList, doPerso)
 
-Loop, parse, sEmailList, ";"
-{
-	Teams_SendMention(A_LoopField,doPerso)
-	SendInput {,}{Space} 
-}	; End Loop 
-SendInput {Backspace}{Backspace}{Space} ; remove final ,
 return
 
 ; ----------------------------------------------------------------------

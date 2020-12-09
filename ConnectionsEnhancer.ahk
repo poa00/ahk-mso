@@ -293,42 +293,45 @@ return
 ;Win+C
 #c:: ; <--- [Browser] Open Connections Enhancer Menu
 ;^RButton:: ; Ctrl+Right Mouse Click (Win key does not work) -> will also open normal context menu7 overlap
-;MsgBox % IsWinConNextEdit()
+;MsgBox % Connections_IsWinEdit()
 sUrl := GetActiveBrowserUrl()
-If IsWinConNextEdit(sUrl) 
+If Connections_IsWinEdit(sUrl) 
 {
-	If Connections_IsConnectionsUrl(sUrl,"wiki-edit") 
+	If Connections_IsUrl(sUrl,"wiki-edit") 
 		Menu, SubMenuToc, Enable, (Wiki) Generate &SubPages TOC
 	Else
 		Menu, SubMenuToc, Disable, (Wiki) Generate &SubPages TOC
 	
 	Menu, ConnectionsEnhancerMenu, Show
+	return
 }
 
+If Not Connections_IsWinActive()
+	return
+
+If Connections_IsUrl(sUrl,"blog") 
+	Menu, ConnectionsEnhancerReadMenu, Enable, (&Blog) Likers to
+Else
+	Menu, ConnectionsEnhancerReadMenu, Disable, (&Blog) Likers to
+
+If InStr(sUrl,"&eventInstUuid=") 
+	Menu, ConnectionsEnhancerReadMenu, Enable, &Event to
+Else
+	Menu, ConnectionsEnhancerReadMenu, Disable, &Event to
+
+If InStr(sUrl, PowerTools_ConnectionsRootUrl . "/profiles/html/") {
+	Menu, ConnectionsEnhancerReadMenu, Enable, (Profile Search) Copy &Mentions 
+	Menu, ConnectionsEnhancerReadMenu, Enable, (Profile Search) Copy &Table of Mentions with Profile pictures 
+	Menu, ConnectionsEnhancerReadMenu, Enable, (Profile Search) Copy Emails
+}
 Else {
-	If Connections_IsConnectionsUrl(sUrl,"blog") 
-		Menu, ConnectionsEnhancerReadMenu, Enable, (&Blog) Likers to
-	Else
-		Menu, ConnectionsEnhancerReadMenu, Disable, (&Blog) Likers to
-
-	If InStr(sUrl,"&eventInstUuid=") 
-		Menu, ConnectionsEnhancerReadMenu, Enable, &Event to
-	Else
-		Menu, ConnectionsEnhancerReadMenu, Disable, &Event to
-
-	If InStr(sUrl, PowerTools_ConnectionsRootUrl . "/profiles/html/") {
-		Menu, ConnectionsEnhancerReadMenu, Enable, (Profile Search) Copy &Mentions 
-		Menu, ConnectionsEnhancerReadMenu, Enable, (Profile Search) Copy &Table of Mentions with Profile pictures 
-		Menu, ConnectionsEnhancerReadMenu, Enable, (Profile Search) Copy Emails
-	}
-	Else {
-		Menu, ConnectionsEnhancerReadMenu, Disable, (Profile Search) Copy &Mentions 
-		Menu, ConnectionsEnhancerReadMenu, Disable, (Profile Search) Copy &Table of Mentions with Profile pictures
-		Menu, ConnectionsEnhancerReadMenu, Disable, (Profile Search) Copy Emails
-	}
-
-	Menu, ConnectionsEnhancerReadMenu, Show
+	Menu, ConnectionsEnhancerReadMenu, Disable, (Profile Search) Copy &Mentions 
+	Menu, ConnectionsEnhancerReadMenu, Disable, (Profile Search) Copy &Table of Mentions with Profile pictures
+	Menu, ConnectionsEnhancerReadMenu, Disable, (Profile Search) Copy Emails
 }
+
+Menu, ConnectionsEnhancerReadMenu, Show
+
 return 	
 
 #+c:: ; <--- [Browser] Clean all
@@ -342,7 +345,7 @@ return
 ^s:: ; <--- [Chrome] Save current post or page
 ;!e:: ; Alt+E because Ctrl+E is used and can not be overwritten with Windows 10 and IE/Edge Browser Universal App
 sUrl := GetActiveBrowserUrl()
-If Connections_IsConnectionsUrl(sUrl) { 
+If Connections_IsUrl(sUrl) { 
 	Connections_Save(sURL)
 	return
 } Else {
@@ -450,7 +453,7 @@ return
 
 MenuItemGenerateToc:
 sUrl := GetActiveBrowserUrl()
-If Not IsWinConNextEdit(sUrl)
+If Not Connections_IsWinEdit(sUrl)
 	return
 
 sInsLoc := GetInsLoc()
@@ -1020,7 +1023,7 @@ If Not IsFunc(sFuncName) {
 	MsgBox Function %sFuncName% not defined!
 	return
 }
-If Not IsWinConNextEdit()
+If Not Connections_IsWinEdit()
 {
 	TrayTipAutoHide("Connections Enhancer", "This feature requires to be in Edit mode!")
 	return
@@ -1044,7 +1047,7 @@ Send {Enter}
 ; -------------------------------------------------------------------------------------------------------------------
 ExpandMentionsWithProfilePic(){
 ; Expand selected mention or all mentions if no selection
-If Not IsWinConNextEdit()
+If Not Connections_IsWinEdit()
 {
 	TrayTipAutoHide("Connections Enhancer", "This feature requires to be in Edit mode!")
 	return
@@ -1082,7 +1085,7 @@ If GetKeyState("Ctrl") {
 	return
 }
 sUrl := GetActiveBrowserURL()
-If Not IsWinConNextEdit(sUrl)
+If Not Connections_IsWinEdit(sUrl)
 {
 	TrayTipAutoHide("Connections Enhancer", "This feature requires to be in Edit mode!")
 	return
@@ -1204,20 +1207,7 @@ ClipPasteHtml(sHtml)
 return
 }
 
-; -------------------------------------------------------------------------------------------------------------------
-; -------------------------------------------------------------------------------------------------------------------
-; Returns true if current window can be an opened connext editor
-IsWinConNextEdit(sUrl := "") {
-If !sUrl ; empty
-	sUrl := GetActiveBrowserUrl()
-ReConnectionsRootUrl := StrReplace(PowerTools_ConnectionsRootUrl,".","\.")
-If InStr(sUrl,PowerTools_ConnectionsRootUrl . "/wikis/")
-	return RegExMatch(sURL, ReConnectionsRootUrl . "/wikis/.*/edit") || RegExMatch(sURL, ReConnectionsRootUrl . "/wikis/.*/create")
-Else If InStr(sUrl, PowerTools_ConnectionsRootUrl . "/blogs/")
-	return InStr(sUrl, PowerTools_ConnectionsRootUrl . "/blogs/roller-ui/authoring/weblog.do") ; method edit or create
-Else
-	return InStr(sUrl, PowerTools_ConnectionsRootUrl . "forums/html/topic?") or InStr(sUrl, PowerTools_ConnectionsRootUrl . "/forums/html/threadTopic?") or  RegExMatch(sURL, ReConnectionsRootUrl . "/forums/html/forum\?id=.*showForm=true")
-}
+
 
 ; -------------------------------------------------------------------------------------------------------------------
 GenerateWikiTocSubPages(sUrl,nDepth,sTocStyle) {
@@ -1529,7 +1519,7 @@ OnInsLocMsgBox() {
 CNGetHtml(){
 ; Syntax: sHtml := CNGetHtml()
 ; Calls: ConNextGetHtmlEditor, GetActiveBrowserUrl,ConNextGetSource
-If IsWinConNextEdit() 
+If Connections_IsWinEdit() 
 {
 	sHtml := CNGetHtmlEditor()
 	Send {Esc}  ; Close Html Source Window
@@ -1601,7 +1591,7 @@ If GetKeyState("Ctrl") {
 	return
 }
 
-If !IsWinConNextEdit() 
+If !Connections_IsWinEdit() 
 {
 	TrayTipAutoHide("View Source", "View Source is only possible in Edit mode!")
 	return
@@ -1907,15 +1897,6 @@ WikiGetPageIdOld(sWikiLabel,sPageLabel){
 	}
 	return sMatch1
 }
-; ----------------------------------------------------------------------
-CopyEmails(sHtml){
-sPat = U)Office email:\r\n<strong>\r\n<a href="mailto:(.*)" 
-Pos = 1 
-While Pos := RegExMatch(sHtml,sPat,sEmail,Pos+StrLen(sEmail)){
-    sEmailList = %sEmailList%;%sEmail1%
-}
-return SubStr(sEmailList,2) ; remove first ;
-} ; eof
 
 ; ----------------------------------------------------------------------
 CenterIframe(sHTMLCode){
