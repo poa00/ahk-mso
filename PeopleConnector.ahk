@@ -1,9 +1,9 @@
 ; Author: Thierry Dalon
 ; Standalone AHK File also delivered as compiled Standalone EXE file
-; See help/homepage: https://connext.conti.de/blogs/tdalon/entry/people_connector
+; See help/homepage: https://tdalon.github.io/ahk/People-Connector
 
 ; Calls: ExtractEmails, TrayTipAutoHide, ToStartup
-LastCompiled = 20201015164214
+LastCompiled = 20201202192844
 
 #SingleInstance force ; for running from editor
 
@@ -72,22 +72,26 @@ Menu, MainMenu, add, Soft Phone Call, Tel
 Menu, MainMenu,Add ; Separator
 Menu, MainMenu, add, Create &Email, MailTo
 Menu, MainMenu, add, Create Outlook &Meeting, MeetTo
+Menu, MainMenu, add, (Outlook) Meeting to Emails, Meeting2Emails
+Menu, MainMenu, add, (Outlook) Meeting Recipients to Excel, Meeting2Excel
 If (PowerTools_ConnectionsRootUrl != "") {
     Menu, MainMenu, add, Copy Connections &at-Mentions, CNEmail2Mention
     Menu, MainMenu,Add ; Separator
     Menu, MainMenu, add, &Open Connections Profile, CNOpenProfile
+    Menu, MainMenu, add, Open Connections Network, CNOpenNetwork
 }
 
 Menu, MainMenu,Add ; Separator
 Menu, MainMenu, add, Open o365/&Delve Profile, DelveProfile
 Menu, MainMenu, add, &Bing Search, BingSearch
-Menu, MainMenu, add, &LinkedIn Search By Name, LinkedInSearchByName
+Menu, MainMenu, add, &LinkedIn Search By Name, LinkedInSearch
 Menu, MainMenu, add, Stream Profile, StreamProfile
-If !(PT_Config=Conti)
+If (PT_Config = "Conti")
     Menu, MainMenu, add, People&View OrgChart (MySuccess), PeopleView
 Menu, MainMenu,Add ; Separator
 Menu, MainMenu, add, Copy Office &Uids, Emails2Uids
 Menu, MainMenu, add, Copy Windows Uids, Emails2WinUids
+Menu, MainMenu, add, Copy Windows Uids with Domain, Emails2DUids
 Menu, MainMenu, add, Uids to Emails, winUids2Emails
 Menu, MainMenu, add, Copy Emails, CopyEmails
 Menu, MainMenu,Add ; Separator
@@ -97,7 +101,7 @@ If (PowerTools_ConnectionsRootUrl != "") {
     Menu, SubMenuCNMentions, add, &Mentions (extract), ConNextMentions2Emails
     Menu, MainMenu, add, (Connections) Mentions to, :SubMenuCNMentions
 }
-Menu, MainMenu, add, (Outlook) Addressees to Excel, Outlook2Excel
+Menu, MainMenu, add, Emails to Excel, Emails2Excel
 return
 
 Shift:: ; (Double Press) <--- Open People Connector Menu
@@ -110,19 +114,13 @@ If (A_PriorHotKey = A_ThisHotKey and A_TimeSincePriorHotkey < 500) {
         If !(sSelection) ; empty
             sSelection := GetSelection()
     }
+    ; MsgBox %sSelection% ; DBG
 
     If !(sSelection) { ; empty
         sSelection := Clipboard
         ;TrayTipAutoHide("People Connector warning!","You need first to select something!")   
         ;return
     } 
-  
-    ;MsgBox %sSelection% ; DBG
-
-    If WinActive("ahk_exe OUTLOOK.exe")
-        Menu, MainMenu, Enable, (Outlook) Addressees to Excel
-    Else
-        Menu, MainMenu, Disable, (Outlook) Addressees to Excel
     
     If (PowerTools_ConnectionsRootUrl != "") {
         If WinActiveBrowser()
@@ -130,6 +128,15 @@ If (A_PriorHotKey = A_ThisHotKey and A_TimeSincePriorHotkey < 500) {
         Else
             Menu, MainMenu, Disable, (Connections) Mentions to
     }
+
+    If WinActive("ahk_exe Outlook.exe") {
+         Menu, MainMenu, Enable, (Outlook) Meeting to Emails
+         Menu, MainMenu, Enable, (Outlook) Meeting Recipients to Excel
+    } Else {
+        Menu, MainMenu, Disable, (Outlook) Meeting to Emails
+        Menu, MainMenu, Disable, (Outlook) Meeting Recipients to Excel
+    }
+
     
     Menu, MainMenu, Show
 }
@@ -250,7 +257,7 @@ If !sEmailList { ; empty
     return
 }
 sEmailList := StrReplace(sEmailList, ";",",")
-MsgBox %sEmailList%
+;MsgBox %sEmailList%
 Run im:%sEmailList%
 
 return
@@ -268,21 +275,19 @@ return
 
 
 ConNextMentions2Mentions:
-sHtml := GetSelection("html")
-sHtml := CNMentions2Mentions(sHtml)
+;sHtml := GetSelection("html")
+sHtml := CNMentions2Mentions(sSelection)
 WinClip.SetHtml(sHtml)
 TrayTipAutoHide("Copy Mentions", "Mentions were copied to the clipboard in RTF!")
 return
 
 ConNextMentions2TeamsChat:
-sHtml := GetSelection("html")
-sEmailList := CNMentions2Emails(sHtml)
+sEmailList := CNMentions2Emails(sSelection)
 Teams_Emails2ChatDeepLink(sEmailList)
 return
 
 ConNextMentions2Emails:
-sHtml := GetSelection("html")
-sEmailList := CNMentions2Emails(sHtml)
+sEmailList := CNMentions2Emails(sSelection)
 WinClip.SetText(sEmailList)
 TrayTipAutoHide("Copy Emails", "Emails were copied to the clipboard!")
 return
@@ -308,7 +313,7 @@ If (sEmailList = "") {
     TrayTipAutoHide("People Connector warning!","No email could be found!")   
     return
 }
-sUidList := Emails2Uids(sEmailList)
+sUidList := People_Emails2Uids(sEmailList)
 clipboard := sUidList
 TrayTipAutoHide("Copy Uid","Uids " . sUidList . " were copied to the clipboard!")   
 return
@@ -323,10 +328,26 @@ If (sEmailList = "") {
     TrayTipAutoHide("People Connector warning!","No email could be found!")   
     return
 }
-sUidList := Emails2Uids(sEmailList,"sAMAccountName")
+sUidList := People_Emails2Uids(sEmailList,"sAMAccountName")
 clipboard := sUidList
 TrayTipAutoHide("Copy Uid","Uids " . sUidList . " were copied to the clipboard!")   
 return
+
+Emails2DUids:
+If GetKeyState("Ctrl") {
+	Run, "https://connext.conti.de/blogs/tdalon/entry/people_connector_get_domainuserid"
+	return
+}
+sEmailList := People_GetEmailList(sSelection)
+If (sEmailList = "") { 
+    TrayTipAutoHide("People Connector warning!","No email could be found!")   
+    return
+}
+sUidList := People_Emails2DUids(sEmailList)
+clipboard := sUidList
+TrayTipAutoHide("Copy Uid","Domain\Uids " . sUidList . " were copied to the clipboard!")   
+return
+
 
 ; ------------------------------------------------------------------
 winUids2Emails:
@@ -359,14 +380,12 @@ If (sEmailList = "") {
 Teams_Emails2Users(sEmailList)
 
 return
+; ------------------------------------------------------------------
 
-Outlook2Excel:
-If GetKeyState("Ctrl") {
-	Run, "https://connext.conti.de/blogs/tdalon/entry/people_connector_ol2xl"
-	return
-}
-OL2XL(sSelection)
+Emails2Excel:
+People_Emails2Excel(sSelection)
 return
+; ------------------------------------------------------------------
 
 MailTo:
 sEmailList := People_GetEmailList(sSelection)
@@ -384,6 +403,7 @@ Catch
 MailItem.To := sEmailList
 MailItem.Display ;Make email visible
 return
+; ------------------------------------------------------------------
 
 MeetTo:
 sEmailList := People_GetEmailList(sSelection)
@@ -403,7 +423,17 @@ Loop, parse, sEmailList, ";"
 }	
 oItem.Display ;Make email visible
 return
-
+; ------------------------------------------------------------------
+Meeting2Emails:
+oItem := Outlook_GetCurrentItem()
+sEMailList := Outlook_Recipients2Emails(oItem)
+WinClip.SetText(sEmailList)
+TrayTipAutoHide("Meeting2Emails", "Attendees Emails were copied to the clipboard!")
+return 
+; ------------------------------------------------------------------
+Meeting2Excel:
+Outlook_Meeting2Excel()
+return 
 ; ------------------------------------------------------------------
 DelveProfile:
 sEmailList := People_GetEmailList(sSelection)
@@ -422,6 +452,10 @@ CNOpenProfile:
 People_ConnectionsOpenProfile(sSelection)
 return
 
+CNOpenNetwork:
+People_ConnectionsOpenNetwork(sSelection)
+return
+
 ; ------------------------------------------------------------------
 StreamProfile:
 sEmailList := People_GetEmailList(sSelection)
@@ -437,13 +471,29 @@ If (sEmailList != "") {
 return
 
 ; ------------------------------------------------------------------
+LinkedInSearch:
+sEmailList := People_GetEmailList(sSelection)
+If (sEmailList != "") {
+    Loop, parse, sEmailList, ";"
+    {
+        sName:= People_Email2Name(A_LoopField)
+        Run, https://www.linkedin.com/search/results/people/?keywords=%sName%
+    }	
+} Else {
+    sName := People_GetName(sSelection)
+    Run, https://www.linkedin.com/search/results/people/?keywords=%sName%
+}
+return
+; ------------------------------------------------------------------
 LinkedInSearchByName:
+sSelection := GetSelection()
 sName := People_GetName(sSelection)
 sName := RegExReplace(sName,"\d*","") ; remove any numbers
 Run, https://www.linkedin.com/search/results/people/?keywords=%sName%
 return
 
 BingSearch:
+sSelection := GetSelection()
 sSelection := People_GetName(sSelection)
 Run, http://www.bing.com/search?q=%sSelection%#,Person 
 return
