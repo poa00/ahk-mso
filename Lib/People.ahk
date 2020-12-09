@@ -21,11 +21,13 @@ People_GetEmailList(sInput){
 global PowerTools_ConnectionsRootUrl
 sInput := StrReplace(sInput,"%40","@") ; for connext profile links - decode @
 
-; Teams visit card in html ends with @unq.gbl.spaces @thread.skype
-sPat = ([0-9a-zA-Z\.\-]+@[0-9a-zA-Z\-\.]*\.[a-z]{2,3})[^a-z\.]{0,1}
+sPat = ([0-9a-zA-Z\.\-]+@[0-9a-zA-Z\-\.]*\.[a-z]{2,4})[^a-z\.]{0,1}
 ; TODO bug if Connext mention
 Pos = 1 
 While Pos := RegExMatch(sInput,sPat,sMatch,Pos+StrLen(sMatch)){
+    ; Teams visit card in html ends with @unq.gbl.spaces @thread.skype
+    If InStr(sMatch1,"@thread.sky") or InStr(sMatch1,"@unq.gbl") or InStr(sMatch1,"@thread.tacv") 
+        continue 
     If InStr(sEmailList,sMatch1 . ";")
         continue
     sEmailList := sEmailList . sMatch1 . ";"
@@ -55,13 +57,27 @@ Email2Uid(sEmail,FieldName:="mailNickname"){
     return sUid
 }
 ; ----------------------------------------------------------------------
-Emails2Uids(sEmailList,FieldName:="mailNickname"){
+People_Emails2Uids(sEmailList,FieldName:="mailNickname"){
 ;Emails2Uids(sEmailList,FieldName:="mailNickname"|"sAMAccountName")
 Loop, parse, sEmailList, ";"
 {
     sUid := Email2Uid(A_LoopField,FieldName)
     sUidList = %sUidList%, %sUid%
 }	
+return SubStr(sUidList,2) ; remove starting ,
+}
+
+; ----------------------------------------------------------------------
+People_Emails2DUids(sEmailList){
+;return list of domain/uids from Email
+Loop, parse, sEmailList, ";"
+{
+    sDN := People_ADGetUserField("mail=" . A_LoopField, "distinguishedName")
+    RegExMatch(sDN,"\((.*)\)",sUid)
+    RegExMatch(sDN,",DC=([^,]*)",sDC)
+    sUidList = %sUidList%, %sDC1%\%sUid1%
+}	
+
 return SubStr(sUidList,2) ; remove starting ,
 }
 
@@ -137,8 +153,8 @@ PowerTools_ADCommand.CommandText := "<" . PowerTools_ADPath . ">" . ";(&(objectC
 Try {
     objRecordSet := PowerTools_ADCommand.Execute
 } Catch e {
-    MsgBox 0x10, AD Connection Error, Connection to Active directory is not possible.`nCheck that you are connected to your company network!
-    strTxt = ERROR: Connection to AD failed.
+    MsgBox 0x10, AD Command Error, AD Command Error.`nCheck that you are connected to your company network or the input field '%sField%'!
+    strTxt = ERROR: AD Command failed.
     return strTxt
 }
 ; Get the record set to be returned later
@@ -359,7 +375,13 @@ return False
 ; ----------------------------------------------------------------------
 People_GetMyEmail(){
 ; MyEmail := People_GetMyEmail()
-MyEmail := People_ADGetUserField("sAMAccountName=" . A_UserName, "mail") 
+MyEmail := PowerTools_RegRead("MyEmail")
+If (MyEmail="") {
+    suc := People_GetMe()
+    If (Not suc)
+        return
+}
+MyEmail := PowerTools_RegRead("MyEmail")
 return MyEmail
 }
 ; ----------------------------------------------------------------------
