@@ -19,24 +19,7 @@ SetWorkingDir %A_ScriptDir%
 #Include <Explorer>
 #Include <People>
 
-LastCompiled = 20201124110053
-
-global PowerTools_ConnectionsRootUrl
-If (PowerTools_ConnectionsRootUrl="") {
-	If FileExist("PowerTools.ini") {
-		IniRead, PowerTools_ConnectionsRootUrl, PowerTools.ini, Main, ConnectionsRootUrl
-		If (PowerTools_ConnectionsRootUrl="ERROR")
-			PowerTools_ConnectionsRootUrl = connext.conti.de
-	} Else
-		PowerTools_ConnectionsRootUrl = connext.conti.de
-}
-
-global PowerTools_DocRootUrl
-If FileExist("PowerTools.ini") {
-	IniRead, PowerTools_DocRootUrl, PowerTools.ini, Main, DocRootUrl
-} Else
-	PowerTools_DocRootUrl = https://connext.conti.de/blogs/tdalon/entry/
-
+LastCompiled = 20201214084652
 
 ; AutoExecute Section must be on the top of the script
 ;#NoEnv
@@ -74,7 +57,7 @@ GroupAdd, NoIntelliPasteIns, ahk_exe freemind.exe
 
 #SingleInstance force ; for running from editor - avoid warning another instance is running
 
-Config := PowerTools_GetConfig()
+Config := PowerTools_GetConfig() ; check also if defined
 
 SubMenuSettings := PowerTools_MenuTray()
 Menu,Tray,Insert,Settings,Power Tools Bundler, PowerTools_RunBundler
@@ -447,7 +430,7 @@ return
 ^e:: ; <--- [Browser] Edit ConNext or Open SharePoint in File Explorer
 ;!e:: ; Alt+E because Ctrl+E is used and can not be overwritten with Windows 10 and IE/Edge Browser Universal App
 sURL := GetActiveBrowserUrl()
-If Connections_IsConnectionsUrl(sURL) { 
+If Connections_IsUrl(sURL) { 
 	Connections_Edit(sURL)
 	return
 } Else If SharePoint_IsSPUrl(sURL) { ; SharePoint
@@ -498,7 +481,7 @@ WinGetActiveTitle, linktext
 StringGetPos,pos,linktext,%A_space%-,R
 if (pos >=0)
 	linktext := SubStr(linktext,1,pos)
-If Connections_IsConnectionsUrl(sLink,"blog") { ; ConNext Blog
+If Connections_IsUrl(sLink,"blog") { ; ConNext Blog
 	linktext := StrReplace(linktext,"Blog Blog","Blog")
 }
 Else If Jira_IsUrl(sLink){
@@ -531,7 +514,7 @@ StringGetPos,pos,linktext,%A_space%-,R
 if (pos != -1)
 	linktext := SubStr(linktext,1,pos)
 
-If Connections_IsConnectionsUrl(sLink,"blog")  { ; ConNext Blog
+If Connections_IsUrl(sLink,"blog")  { ; ConNext Blog
 	linktext := StrReplace(linktext,"Blog Blog","Blog")
 }
 sHTMLBody = Hello<br>I thought you might be interested in this post: <a href="%sLink%">%linktext%</a>.<br>
@@ -781,7 +764,7 @@ OpenLink(sURL) {
 		Run, iexplore.exe "%sURL%"
 		;Sleep 1000
 		;WinActivate, ahk_exe, iexplore.exe
-	} Else If IsConfluenceUrl(sURL)  || Jira_IsUrl(sURL)  { ; JIRA or Confluence urls							
+	} Else If Confluence_IsUrl(sURL)  || Jira_IsUrl(sURL)  { ; JIRA or Confluence urls							
 		;Run, C:\Users\%A_UserName%\AppData\Local\Google\Chrome\Application\chrome.exe %sURL%
 		Run, "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe" --profile-directory="Profile 3" "%sURL%"
 	} Else If InStr(sURL,"https://teams.microsoft.com/") { ; Teams url=>open by default in App
@@ -805,12 +788,12 @@ If !sUrl { ; empty
 	MsgBox Cannot get URL ; DBG
 	return
 }
-If Connections_IsConnectionsUrl(sUrl) 
+If Connections_IsUrl(sUrl) 
 	ConnectionsSearch(sUrl)
-Else If IsConfluenceUrl(sUrl) {
-	ConfluenceSearch(sUrl)
+Else If Confluence_IsUrl(sUrl) {
+	Confluence_Search(sUrl)
 } Else If Jira_IsUrl(sUrl)
-	JiraSearch(sUrl)
+	Jira_Search(sUrl)
 }	
 ; ----------------------------------------------------------------------
 SysTrayCreateTicket:

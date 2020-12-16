@@ -1,5 +1,10 @@
 # [People Connector](People-Connector) Changelog
 
+* 2020-12-08
+	- Extrat emails from Outlook Meeting Recipients
+	- Increased time for mention autocompletion 1300ms
+* 2020-12-02
+  - Extract Domain\Uid
 * 2020-11-24
   - SysTray Menu:
   	- add Tweet for support.

@@ -1,5 +1,7 @@
 # [PowerTools Bundler](PowerTools-Bundler) Changelog
 
+* 2020-12-08
+  * Revert back Help links for Config = Conti. (Redirect internal documentation to ext.)
 * 2020-11-23
   - Added Tweet Feature (dev mode)
 * 2020-10-30

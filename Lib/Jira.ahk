@@ -4,6 +4,7 @@
 #Include <Login> 
 ; for JiraFormatLinks: CleanUrl, Link2Text
 #Include <IntelliPaste>
+#Include <WinActiveBrowser>
 
 ; ----------------------------------------------------------------------
 JiraGet(sUrl){
@@ -30,12 +31,20 @@ return sResponse
 ; ----------------------------------------------------------------------
 Jira_IsUrl(sUrl){
 return (InStr(sUrl,"http://it-ea-agile.conti.de:7090")) || (InStr(sUrl,"jira"))
-}
+} ;eofun
+; ----------------------------------------------------------------------
+
+Jira_IsWinActive(){
+If Not WinActiveBrowser()
+    return False
+sUrl := GetActiveBrowserUrl()
+return Jira_IsUrl(sUrl)
+} ; eofun
 
 ; ----------------------------------------------------------------------
 ; Jira Search - Search within current Jira Project
 ; Called by: NWS.ahk Quick Search (Win+F Hotkey)
-JiraSearch(sUrl){
+Jira_Search(sUrl){
 static sJiraSearch, sKey
 
 ; http://confluence.conti.de:8090/dosearchsite.action?cql=siteSearch+~+"project+status+report"+and+space+=+"projectCFTPT"+and+type+=+"page"
@@ -81,8 +90,9 @@ b64Encode(string)
 }
 
 
+; ----------------------------------------------------------------------
 
-JiraFormatLinks(sLinks,sStyle){
+Jira_FormatLinks(sLinks,sStyle){
 If Not InStr(sLinks,"`n") { ; single line
     sLink := CleanUrl(sLinks)	; calls also GetSharepointUrl
     sLink := StrReplace(sLink,"%20%"," ")
@@ -106,4 +116,5 @@ Loop, parse, sLinks, `n, `r
         sFull := sFull . "* " . sLink . "`n"
 }
 return sFull
-}
+} ; eofun
+; ----------------------------------------------------------------------

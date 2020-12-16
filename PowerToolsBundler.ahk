@@ -2,36 +2,43 @@
 
 #Include <PowerTools>
 #Include <AHK>
+#Include <Login>
 ; Calls: Lib/ToStartup
 
-LastCompiled = 20200806152811
+LastCompiled = 20201209153522
 
 IcoFile := RegExReplace(A_ScriptFullPath,"\..*",".ico")
 If (FileExist(IcoFile)) 
 	Menu,Tray,Icon, %IcoFile%
 
-AppList = MO,ConnectionsEnhancer,NWS,OutlookShortcuts,PeopleConnector,TeamsShortcuts,Teamsy
+AppList = ConnectionsEnhancer,NWS,OutlookShortcuts,PeopleConnector,TeamsShortcuts,Teamsy,Cursor Highlighter
+Config := PowerTools_GetConfig()
+If (Config = "Conti") 
+    AppList = MO,%AppList%
 
-sGuiTitle = PowerTools Bundle
+
+sGuiTitle = PowerTools Bundler
 Gui, New,,%sGuiTitle%
 
 ; ListView
 Gui, Add, ListView, h200 w180 Checked, %sGuiTitle%  ; Create a ListView.
-ImageListID := IL_Create(6)  ; Create an ImageList to hold 10 small icons.
+ImageListID := IL_Create(9)  ; Create an ImageList to hold 10 small icons.
 LV_SetImageList(ImageListID)  ; Assign the above ImageList to the current ListView.
 
-
+IconCount := 0
 Loop, Parse, AppList, `,
 {  ; Load the ImageList with a series of icons from the DLL.
-    If a_iscompiled {
-        IL_Add(ImageListID, A_LoopField . ".exe") 
-    } Else {
-        IcoFile := A_ScriptDir . "\" . A_LoopField . ".ico"
-        If FileExist(IcoFile) {
-            IL_Add(ImageListID,IcoFile) 
-        }
-    }
-    LV_Add("Icon" . A_Index , A_LoopField)
+    If a_iscompiled 
+        IcoFile = %A_ScriptDir%\%A_LoopField%.exe
+    Else 
+        IcoFile = %A_ScriptDir%\%A_LoopField%.ico
+        
+    If FileExist(IcoFile) {
+        IL_Add(ImageListID,IcoFile)
+        IconCount := IconCount +1
+        LV_Add("Icon" . IconCount , A_LoopField)
+    } Else
+        LV_Add("Icon10" , A_LoopField)
 } ; End Loop     
 
 
@@ -46,6 +53,7 @@ Menu, ItemsMenu, Add, Uncheck all`tCtrl+Shift+A, UncheckAll
 If !a_iscompiled {
     Menu, ActionsMenu, Add, &Compile`tCtrl+C, Compile
     Menu, ActionsMenu, Add, Compile And &Push`tCtrl+P, CompileAndPush
+    Menu, ActionsMenu, Add, &Tweet`tCtrl+T, Tweet
     Menu, ActionsMenu, Add, Compile Bundler, CompileSelf
     Menu, ActionsMenu, Add, &Developper Mode`tCtrl+D, DevMode
     Menu, ActionsMenu, Add, Exe Mode, ExeMode
@@ -55,20 +63,45 @@ If !a_iscompiled {
 Menu, ActionsMenu, Add, Add to &Startup`tCtrl+S, AddToStartup
 Menu, ActionsMenu, Add, &Run`tCtrl+R, Run
 Menu, ActionsMenu, Add, E&xit`tCtrl+X, Exit
-Menu, ActionsMenu, Add, Open Help`tCtrl+H, OpenPTHelp
-Menu, ActionsMenu, Add, Open Change&log`tCtrl+L, OpenPTChangelog
+Menu, ActionsMenu, Add, Open Help`tCtrl+H, OpenHelp
+Menu, ActionsMenu, Add, Open Change&log`tCtrl+L, OpenChangelog
 
+Menu, SettingsMenu, Add, Set Config, PowerTools_SetConfig
+Menu, SettingsMenu, Add, Load Config, PowerTools_LoadConfig
+Menu, SettingsMenu, Add, Open ini file, OpenIni
 
-Menu, HelpMenu, Add, Open Help, OpenHelp
+Menu, SettingsMenu, Add,Set Password, Login_SetPassword
+Menu, SettingsMenu, Add, Notification at Startup, MenuCb_ToggleSettingNotificationAtStartup
+
+RegRead, SettingNotificationAtStartup, HKEY_CURRENT_USER\Software\PowerTools, NotificationAtStartup
+If (SettingNotificationAtStartup = "")
+	SettingNotificationAtStartup := True ; Default value
+If (SettingNotificationAtStartup) {
+  Menu, SettingsMenu, Check, Notification at Startup
+} Else {
+  Menu, SettingsMenu, UnCheck, Notification at Startup
+}
+
+Menu, HelpMenu, Add, Open Help, OpenPTHelp
 Menu, HelpMenu, Add, Check for Update, CheckForUpdateSelf
+Menu, HelpMenu, Add, Open Change&log, OpenPTChangelog
+
 
 Menu, MyMenuBar, Add, &Items, :ItemsMenu 
 Menu, MyMenuBar, Add, &Actions, :ActionsMenu 
+Menu, MyMenuBar, Add, &Settings, :SettingsMenu 
 Menu, MyMenuBar, Add, &Help, :HelpMenu
 Gui, Menu, MyMenuBar
 
 Gui, Show
+Return
 
+; -------------------------------------------------------------------------------------------------------------------
+OpenIni:
+sIniFile = %A_ScriptDir%\PowerTools.ini 
+If FileExist(sIniFile)
+    Run, notepad.exe %sIniFile%
+Return
 ; -------------------------------------------------------------------------------------------------------------------
 
 SelectAll:
@@ -80,11 +113,18 @@ return
 ; -------------------------------------------------------------------------------------------------------------------
 
 CheckForUpdateSelf:
-PTCheckForUpdate()
+PowerTools_CheckForUptate()
 return
 ; -------------------------------------------------------------------------------------------------------------------
 
 CheckForUpdate: ; CFU
+; warning if connected via VPN
+If (Login_IsVPN()) {
+    MsgBox, 0x1011, CheckForUpdate with VPN?,It seems you are connected with VPN.`nCheck for update might not work. Consider disconnecting VPN.`nContinue now?
+    IfMsgBox Cancel
+        return
+}
+
 RowNumber = 0
 Loop {
     RowNumber := LV_GetNext(RowNumber, "Checked")
@@ -92,20 +132,28 @@ Loop {
 	    break
 	
     LV_GetText(ItemName, RowNumber, 1)
-	PTCheckForUpdate(ItemName)
+	PowerTools_CheckForUptate(ItemName)
 }
 
 ; Update PowerTools.ini - only once
-guExe = %A_ScriptDir%\github_updater.exe
-sUrl = https://raw.githubusercontent.com/tdalon/ahk/master/PowerTools.ini
-UrlDownloadToFile, %sUrl%, PowerTools.ini.github
-sCmd = %guExe% PowerTools.ini
-RunWait, %sCmd%,,Hide
+IniFile =  %A_ScriptDir%\PowerTools.ini
+sUrl = https://github.com/tdalon/ahk/raw/master/PowerTools.ini
+If Not FileExist(IniFile) {
+    UrlDownloadToFile, %sUrl%, %IniFile%
+} Else {
+    guExe = %A_ScriptDir%\github_updater.exe
+    If Not FileExist(guExe)
+        UrlDownloadToFile, https://github.com/tdalon/ahk/raw/master/PowerTools/github_updater.exe, %guExe%
+    UrlDownloadToFile, %sUrl%, PowerTools.ini.github
+    sCmd = %guExe% PowerTools.ini
+    RunWait, %sCmd%,,Hide
+}
 
+; open directory
 Run %A_ScriptDir%
 return
 ; -------------------------------------------------------------------------------------------------------------------
-OpenHelp:
+OpenPTHelp:
 PowerTools_Help("Bundler")
 return
 ; -------------------------------------------------------------------------------------------------------------------
@@ -121,11 +169,11 @@ Loop {
     Else
 	    ScriptFullPath = %A_ScriptDir%\%ItemName%.ahk
 
-    AHKExit(ScriptFullPath)
+    AHK_Exit(ScriptFullPath)
 }
 return
 ; -------------------------------------------------------------------------------------------------------------------
-OpenPTChangelog: 
+OpenChangelog: 
 RowNumber = 0
 Loop {
     RowNumber := LV_GetNext(RowNumber, "Checked")
@@ -136,7 +184,7 @@ Loop {
 }
 return
 ; -------------------------------------------------------------------------------------------------------------------
-OpenPTHelp: 
+OpenHelp: 
 RowNumber = 0
 Loop {
     RowNumber := LV_GetNext(RowNumber, "Checked")
@@ -176,10 +224,26 @@ Loop {
 	ScriptFullPath = %A_ScriptDir%\%ItemName%.ahk
     AHK_Compile(ScriptFullPath,,"PowerTools")
     FileList =  %FileList% %ItemName%.exe
+    ; Add changelog
+    cl := PowerTools_Changelog(ItemName,False)
+    cl := RegExReplace(cl,".*\","")
+    FileList =  %FileList% %cl%
 } 
 RunWait, git add %FileList%, %A_ScriptDir%\PowerTools
 RunWait, git commit -m "Update compiled powertools", %A_ScriptDir%\PowerTools
 RunWait, git push origin master, %A_ScriptDir%\PowerTools
+return
+
+Tweet:
+RowNumber = 0
+FileList =
+Loop {
+    RowNumber := LV_GetNext(RowNumber, "Checked")
+    if not RowNumber 
+	    break
+	LV_GetText(ItemName, RowNumber, 1)
+	PowerTools_TweetPush(ItemName)
+} 
 return
 ; -------------------------------------------------------------------------------------------------------------------
 AddToStartup:
@@ -219,7 +283,7 @@ Loop % LV_GetCount()
     If IsChecked
         Run, %ScriptFullPath%
     Else
-        AHKExit(ScriptFullPath)
+        AHK_Exit(ScriptFullPath)
 }
 return
 
@@ -227,6 +291,10 @@ return
 StartMO:
 Run %A_ScriptDir%\PowerTools\MO.exe
 return
+; -------------------------------------------------------------------------------------------------------------------
+OpenPTChangelog:
+PowerTools_Changelog("Bundler")
+return 
 ; -------------------------------------------------------------------------------------------------------------------
 
 DevMode:
@@ -247,13 +315,22 @@ ExeMode:
 Loop, Parse, AppList, `,
 {  
     ScriptFullPath = %A_ScriptDir%\%A_LoopField%.ahk
-    AHKExit(ScriptFullPath)        
+    AHK_Exit(ScriptFullPath)        
     ScriptFullPath = %A_ScriptDir%\PowerTools\%A_LoopField%.exe
     Run, %ScriptFullPath%
 } ; End Loop
 return
 ; -------------------------------------------------------------------------------------------------------------------
-
+MenuCb_ToggleSettingNotificationAtStartup:
+If (SettingNotificationAtStartup := !SettingNotificationAtStartup) {
+  Menu, SettingsMenu, Check, Notification at Startup
+}
+Else {
+  Menu, SettingsMenu, UnCheck, Notification at Startup
+}
+PowerTools_RegWrite("NotificationAtStartup",SettingNotificationAtStartup)
+return
+; -------------------------------------------------------------------------------------------------------------------
 
 GuiClose:
 ExitApp

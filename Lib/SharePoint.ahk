@@ -92,7 +92,7 @@ Else {
 ; -------------------------------------------------------------------------------------------------------------------
 ; Called by: IntelliPaste -> IntelliHtml
 SharePoint_Link2Text(sLink){
-If RegExMatch(sLink,"^https://[^/]*/[^/]*/[^/]*/[^/]*/(.*)",sMatch) {
+If RegExMatch(sLink,"^https://[^/]*/[^/]*/(.*)",sMatch) {
 	sMatch1 := uriDecode(sMatch1)
 	linktext := sMatch1
 	If Not InStr(linktext,"/") ; item in root level= no breadcrumb
@@ -111,8 +111,8 @@ If RegExMatch(sLink,"^https://[^/]*/[^/]*/[^/]*/[^/]*/(.*)",sMatch) {
 ; -------------------------------------------------------------------------------------------------------------------
 
 SharePoint_IntelliHtml(sLink){
-
-If RegExMatch(sLink,"(.*/teams/[^/]*/[^/]*)/(.*)",sMatch) {
+; breadcrumb
+If RegExMatch(sLink,"(^https://[^/]*/[^/]*)/(.*)",sMatch) {
 	DocPath := uriDecode(sMatch2)
 	sLink := sMatch1
 	Loop, Parse, DocPath, /
@@ -183,16 +183,19 @@ Loop, Reg, HKEY_CURRENT_USER\Software\SyncEngines\Providers\OneDrive, K
 
 		RegRead UrlNamespace, HKEY_CURRENT_USER\Software\SyncEngines\Providers\OneDrive\%A_LoopRegName%, UrlNamespace
 		
-		If FolderName := RegExReplace(sFolderName,"[^-]* - ([^-]*) -([^-]*)",sMatch) ;  Private Channel
+		sFolderName := RegExReplace(sFolderName,"^EXT - ","") ; Special case for EXT -
+		
+
+		If FolderName := RegExMatch(sFolderName,"^[^-]* - ([^-]*) - ([^-]*)$",sMatch) { ;  Private Channel
 			If (sMatch1 = sMatch2) { ; root folder has same name
 				UrlNamespace := SubStr(UrlNamespace,1,-1) ; remove trailing /	
 			} Else {
 				UrlNamespace := UrlNamespace . sMatch2
 				showWarn := True
 			}
-		Else {
+		} Else {
 			FolderName := RegExReplace(sFolderName,".*- ","")
-
+			
 			If Not (FolderName = "Documents") { ; not root level
 				UrlNamespace := UrlNamespace . FolderName
 				; For Teams SharePoint check for General channel folder to ignore displaying warning
@@ -218,7 +221,6 @@ If (showWarn) {
 
 return showWarn
 
-   
 } ; eofun
 
 ; -------------------------------------------------------------------------------------------------------------------

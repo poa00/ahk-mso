@@ -105,6 +105,64 @@ WinClip.SetHTML(sHtml)
 WinClip.Paste()	
 return
 
+; ################### PowerTools RTF Hotstrings ##########################
+::Teams.ahk:: ; Teams.ahk (RTF Link)
+sText = ahk/Lib/Teams.ahk -> (function)
+sLink := "https://github.com/tdalon/ahk/blob/master/Lib/Teams.ahk"
+sHtml = <a href="%sLink%">%sText%</a>
+WinClip.SetHTML(sHtml)
+WinClip.SetText(sLink)
+WinClip.Paste()	
+return
+
+::PT_TS:: ; TeamsShortcuts (RTF Link)
+sText = Teams Shortcuts
+sLink := "https://tdalon.github.io/ahk/Teams-Shortcuts"
+sHtml = <a href="%sLink%">%sText%</a>
+WinClip.SetHTML(sHtml)
+WinClip.SetText(sLink)
+WinClip.Paste()	
+return
+
+::PT_T:: ; Teamsy (RTF Link)
+sText = Teamsy
+sLink := "https://tdalon.github.io/ahk/Teamsy"
+sHtml = <a href="%sLink%">%sText%</a>
+WinClip.SetHTML(sHtml)
+WinClip.SetText(sLink)
+WinClip.Paste()	
+return
+
+::PT_CE:: ; Connections Enhancer (RTF Link)
+sText = Connections Enhancer
+sLink := "https://tdalon.github.io/ahk/Connections-Enhancer"
+sHtml = <a href="%sLink%">%sText%</a>
+WinClip.SetHTML(sHtml)
+WinClip.SetText(sLink)
+WinClip.Paste()	
+return
+
+::PT_N:: ; NWS PowerTool (RTF Link)
+sText = NWS PowerTool
+sLink := "https://tdalon.github.io/ahk/NWS-PowerTool"
+sHtml = <a href="%sLink%">%sText%</a>
+WinClip.SetHTML(sHtml)
+WinClip.SetText(sLink)
+WinClip.Paste()	
+return
+
+::PT_OS:: ; OutlookShortcuts (RTF Link)
+sText = Outlook Shortcuts
+sLink := "https://tdalon.github.io/ahk/Outlook-Shortcuts"
+sHtml = <a href="%sLink%">%sText%</a>
+WinClip.SetHTML(sHtml)
+WinClip.SetText(sLink)
+WinClip.Paste()	
+return
+
+
+
+
 ; ##### Hotkeys ####
 ; Win + q
 #q:: ; My Work Email

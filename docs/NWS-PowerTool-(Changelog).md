@@ -1,5 +1,29 @@
 # [NWS PowerTool](NWS-PowerTool) Changelog
 
+* 2020-12-14
+	- IntelliPaste for Confluence: revert to standard RTF paste
+* 2020-12-11
+	- IntelliPaste SharePoint url: Extend Breadcrumb to root sharepoint and doc lib
+* 2020-12-09
+	- More robust VPNConnect in case client already opened.
+* 2020-12-07
+  - IntelliPaste: ListBox for breadcrumb liktext display type AlwaysOnTop
+* 2020-12-03
+  - Fix IntelliPaste Jira|Confluence_IsWinActive
+  - Fix IntelliPaste links: Upper case and replace - by spaces from link display text. Fix upper case full links.
+* 2020-12-01
+  - Improved [Sync](https://tdalon.github.io/ahk/Sync) feature: get top mapping from registry. Sync2Url: auto-update Sync.ini
+* 2020-11-30
+	- Sync2Url for personal OneDrive. Get value from registry HKEY_CURRENT_USER\Software\SyncEngines\Providers\OneDrive -> UrlNamespace
+* 2020-11-27
+	- IntelliPaste: fix: GetTeamName for document library root level
+	- IntelliPaste: Link to SPO/ Teams files: bread crumb with clickable link on each folder
+	- IntelliPaste: Link to Teams files: prefix Team Name with link to Team in Teams
+	- IntelliPaste: new settings for TenantName used by Teams_FileLinkBeautifier
+* 2020-11-25
+	- IntelliPaste for Jira Service Desk
+	- fix IntelliPaste e.g. Outlook. add PasteDelay
+	- fix IntelliPaste Title case: only if not all upper case (e.g. Jira Issue url)
 * 2020-11-24
     - SysTray Menu:
       - add Tweet for support.

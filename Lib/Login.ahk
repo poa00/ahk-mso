@@ -63,18 +63,17 @@ Login_IsVPN(){
 }
 ; ----------------------------------------------------------------------
 
-VPNConnect(){
+VPNConnect(doWait:=False){
 SetTitleMatchMode, 1 ; start with
 MainTitle = Cisco AnyConnect Secure
 LoginTitle = Cisco AnyConnect |
 hWnd := WinExist(LoginTitle)
-If (hWnd <>0)  { ; in case it was already opened
+If (hWnd <> 0)  { ; in case it was already opened
     WinActivate, ahk_id %hWnd%  
     GoTo InputVPNPassword
 }
 hWnd := WinExist(MainTitle)
-
-If (hWnd <>0) {
+If (hWnd <> 0) {
     WinActivate, ahk_id %hWnd% 
 } Else {
     VPNexePath := "C:\Program Files (x86)\Cisco\Cisco AnyConnect Secure Mobility Client\vpnui.exe"
@@ -85,7 +84,6 @@ ControlClick, Connect
 If ErrorLevel ; Button not found - Disconnect
     return
 
-
 WinWaitActive,Cisco AnyConnect |
 
 InputVPNPassword:
@@ -94,9 +92,10 @@ If (sPassword="")
 	return
 
 ControlSetText,Edit2,%sPassword%
-Send,{Enter}
 
-WinWaitClose, Cisco AnyConnect Secure
+Send,{Enter}
+If (doWait=True)
+    WinWaitClose, Cisco AnyConnect Secure
 } ; eofun
 ; ----------------------------------------------------------------------
 IsConnectedToInternet()

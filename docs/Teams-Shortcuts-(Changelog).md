@@ -1,5 +1,9 @@
 # [Teams Shortcuts](Teams-Shortcuts) Changelog
 
+* 2020-12-08
+	- Fixed: Personalize Mentions with Firstname with -
+* 2020-12-04
+  - Fixed Teams_GetMainWindow: collision of previous WinId. Added check for Window name as static variable
 * 2020-11-24
   - SysTray Menu:
   	- add Tweet for support.

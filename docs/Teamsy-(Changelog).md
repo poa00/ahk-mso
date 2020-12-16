@@ -1,5 +1,8 @@
 # [Teamsy](Teamsy) Changelog
 
+
+* 2020-12-04
+  - Fixed Teams_GetMainWindow: collision of previous WinId. Added check for Window name as static variable
 * 2020-11-17
 	- Teams_GetMainWindow: improved version using Acc (no need to minimize all windows)
 * 2020-11-09

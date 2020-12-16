@@ -350,6 +350,7 @@ If Connections_IsUrl(sUrl) {
 } Else {
 	SendInput ^s
 }
+return
 
 ; ----------------------------------------------------------------------
 CEHelpEditor:

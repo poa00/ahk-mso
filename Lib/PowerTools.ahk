@@ -2,6 +2,8 @@
 
 #Include <AHK>
 AppList = ConNextEnhancer,MO,NWS,OutlookShortcuts,PeopleConnector,TeamsShortcuts
+global Config
+Config := PowerTools_GetConfig()
 
 PowerTools_CheckForUptate(ToolName :="") {
 If !a_iscompiled {
@@ -40,31 +42,57 @@ RunWait, %sCmd%,,Hide
 
 ; ---------------------------------------------------------------------- 
 PowerTools_Help(ScriptName,doOpen := True){
-Switch ScriptName 
-{
-Case "ConnectionsEnhancer":
-    sUrl = https://tdalon.github.io/ahk/Connections-Enhancer
-Case "TeamsShortcuts":
-    sUrl = https://tdalon.github.io/ahk/Teams-Shortcuts
-Case "MO":
-    sUrl := "https://connext.conti.de/wikis/home/wiki/Wc4f94c47297c_42c8_878f_525fd907cb68/page/MO%20PowerTool"
-Case "PeopleConnector":
-    sUrl = https://tdalon.github.io/ahk/People-Connector
-Case "OutlookShortcuts":
-    sUrl = https://tdalon.github.io/ahk/Outlook-Shortcuts
-Case "Teamsy":
-    sUrl = https://tdalon.github.io/ahk/Teamsy
-Case "NWS":
-    sUrl := "https://tdalon.github.io/ahk/NWS-PowerTool"
-Case "Bundler":
-    sUrl :="https://tdalon.github.io/ahk/PowerTools-Bundler"
-Case "Cursor Highlighter":
-    sUrl = https://tdalon.github.io/ahk/Cursor-Highlighter
-Case "all":
-Default:
-    sUrl := "https://tdalon.github.io/ahk/PowerTools"	
+If (Config="Conti"){
+    Switch ScriptName 
+    {
+    Case "ConnectionsEnhancer":
+        sUrl = https://connext.conti.de/blogs/tdalon/entry/connext_enhancer
+    Case "TeamsShortcuts":
+        sUrl = https://connext.conti.de/blogs/tdalon/entry/teams_shortcuts_ahk
+    Case "MO":
+        sUrl := "https://connext.conti.de/wikis/home/wiki/Wc4f94c47297c_42c8_878f_525fd907cb68/page/MO%20PowerTool"
+    Case "PeopleConnector":
+        sUrl = https://connext.conti.de/blogs/tdalon/entry/people_connector
+    Case "OutlookShortcuts":
+        sUrl = https://connext.conti.de/blogs/tdalon/entry/outlook_autohotkey_script
+    Case "Teamsy":
+        sUrl = https://connext.conti.de/blogs/tdalon/entry/teamsy
+    Case "NWS":
+        sUrl := "https://connext.conti.de/wikis/home/wiki/Wc4f94c47297c_42c8_878f_525fd907cb68/page/NWS%20PowerTool"
+    Case "Bundler":
+        sUrl :="https://tdalon.github.io/ahk/PowerTools-Bundler"
+    Case "Cursor Highlighter":
+        sUrl = https://tdalon.github.io/ahk/Cursor-Highlighter
+    Case "all":
+    Default:
+        sUrl := "https://connext.conti.de/wikis/home/wiki/Wc4f94c47297c_42c8_878f_525fd907cb68/page/GUIDEs%20Power%20Tools"	
+    }
+} Else {
+    Switch ScriptName 
+    {
+    Case "ConnectionsEnhancer":
+        sUrl = https://tdalon.github.io/ahk/Connections-Enhancer
+    Case "TeamsShortcuts":
+        sUrl = https://tdalon.github.io/ahk/Teams-Shortcuts
+    Case "MO":
+        sUrl := "https://connext.conti.de/wikis/home/wiki/Wc4f94c47297c_42c8_878f_525fd907cb68/page/MO%20PowerTool"
+    Case "PeopleConnector":
+        sUrl = https://tdalon.github.io/ahk/People-Connector
+    Case "OutlookShortcuts":
+        sUrl = https://tdalon.github.io/ahk/Outlook-Shortcuts
+    Case "Teamsy":
+        sUrl = https://tdalon.github.io/ahk/Teamsy
+    Case "NWS":
+        sUrl := "https://tdalon.github.io/ahk/NWS-PowerTool"
+    Case "Bundler":
+        sUrl :="https://tdalon.github.io/ahk/PowerTools-Bundler"
+    Case "Cursor Highlighter":
+        sUrl = https://tdalon.github.io/ahk/Cursor-Highlighter
+    Case "all":
+    Default:
+        sUrl := "https://tdalon.github.io/ahk/PowerTools"	
+    }
 }
-
 If doOpen
     Run, %sUrl%
 return sUrl
@@ -183,6 +211,25 @@ Run,  "%sUrl%"
 }
 
 
+
+; ----------------------------------------------------------------------
+PowerTools_GetSetting(SettingName){
+RegRead, Setting, HKEY_CURRENT_USER\Software\PowerTools, %SettingName%
+If (Setting=""){
+    Setting := PowerTools_SetSetting(SettingName)
+}
+return Setting
+}
+; ----------------------------------------------------------------------
+PowerTools_SetSetting(SettingName){
+RegRead, Setting, HKEY_CURRENT_USER\Software\PowerTools, %SettingName%
+InputBox, Setting, PowerTools Setting, Enter Setting for %SettingName%,, 200, 125
+If ErrorLevel
+    return
+PowerTools_RegWrite(SettingName,Setting)
+return Setting
+} ; eofun
+
 ; ----------------------------------------------------------------------
 PowerTools_GetConfig(){
 RegRead, Config, HKEY_CURRENT_USER\Software\PowerTools, Config
@@ -240,10 +287,12 @@ PowerTools_LoadConfig(Config :=""){
 If (Config=""){
     Config := PowerTools_GetConfig()
 }
+
 Switch Config
 {
     Case "Conti":
         PowerTools_RegWrite("Domain","contiwan.com")
+        PowerTools_RegWrite("TenantName","continental")
         PowerTools_RegWrite("ConnectionsRootUrl","connext.conti.de")
         PowerTools_RegWrite("ConnectionsName","ConNext")
         PowerTools_RegWrite("TeamsOnly",1)
@@ -253,6 +302,7 @@ Switch Config
          PowerTools_RegWrite("ConnectionsRootUrl","invite.vitesco-technologies.net/")
     Case "Public":
         PowerTools_RegWrite("Domain","")
+        PowerTools_RegWrite("TenantName","")
         PowerTools_RegWrite("ConnectionsRootUrl","")
         PowerTools_RegWrite("TeamsOnly",0)
         PowerTools_RegWrite("DocRootUrl","https://tdalon.blogspot.com/")
@@ -313,11 +363,14 @@ Run, %CHFile%
 
 PowerTools_MenuTray(){
 ; SubMenuSettings := PowerTools_MenuTray()
-Menu,Tray,NoStandard
-Menu,Tray,Add, &Help, MenuCb_PTHelp
-Menu,Tray,Add,Support (Teams Channel), MenuCb_PowerTools_Support
-Menu,Tray,Add,Check for update, MenuCb_PTCheckForUpdate
-Menu,Tray,Add,Changelog, MenuCb_PTChangelog
+Menu, Tray, NoStandard
+Menu, Tray, Add, &Help, MenuCb_PTHelp
+Config := PowerTools_GetConfig()
+If (Config="Conti")
+    Menu,Tray,Add,Support (Teams Channel), MenuCb_PowerTools_Support
+Menu, Tray, Add, Tweet for support, MenuCb_PowerTools_Tweet
+Menu, Tray, Add, Check for update, MenuCb_PTCheckForUpdate
+Menu, Tray, Add, Changelog, MenuCb_PTChangelog
 
 If !a_iscompiled {
 	IcoFile := RegExReplace(A_ScriptFullPath,"\..*",".ico")
@@ -371,6 +424,11 @@ ScriptName := RegExReplace(A_ScriptName,"\..*","")
 PowerTools_Support(ScriptName)    
 }
 
+MenuCb_PowerTools_Tweet(ItemName, ItemPos, MenuName){
+ScriptName := RegExReplace(A_ScriptName,"\..*","")
+PowerTools_TweetMe(ScriptName)    
+}
+
 MenuCb_PTCheckForUpdate(ItemName, ItemPos, MenuName){
 PowerTools_CheckForUptate()    
 }
@@ -392,7 +450,42 @@ sText := uriEncode(sText)
 sTweetUrl = https://twitter.com/intent/tweet?text=%sText%  ;&hashtags=%ScriptName%&url=%sToolUrl%
 Run, %sTweetUrl%
 
-
-}
+} ;eofun
 
 ; -------------------------------------------------------------------------------------------------------------------
+
+PowerTools_TweetMe(ScriptName){
+
+sLogUrl := PowerTools_Changelog(ScriptName,False)
+;sToolUrl := PowerTools_Help(ScriptName,False)
+
+If (ScriptName ="NWS")
+    ScriptName = NWSPowerTool
+
+sText = @tdalon
+
+sText := uriEncode(sText)
+sTweetUrl = https://twitter.com/intent/tweet?text=%sText%&hashtags=%ScriptName%
+Run, %sTweetUrl%
+
+} ;eofun
+
+
+; -------------------------------------------------------------------------------------------------------------------
+
+PowerTools_GetParam(Param) {
+If FileExist("PowerTools.ini") {
+	IniRead, ParamVal, PowerTools.ini, Parameters, %Param%
+	If !(ParamVal="ERROR")
+		return ParamVal
+}
+
+Switch Param
+{
+    Case "PasteDelay":
+        return 500
+    Case "TeamsMentionDelay":
+        return 1300
+}
+
+} ;eofun

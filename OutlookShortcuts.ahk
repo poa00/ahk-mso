@@ -2,7 +2,7 @@
 ; Code Project Documentation is available on ContiSource GitHub here: https://github.com/tdalon/ahk/blob/master/NWS.ahk
 ;  Source: https://github.com/tdalon/ahk/blob/master/OutlookShortcuts.ahk
 
-LastCompiled = 20201118084837
+LastCompiled = 20201209152430
 
 #Include <PowerTools>
 #SingleInstance force ; for running from editor
@@ -27,7 +27,8 @@ If !a_iscompiled {
 }
 FormatTime LastMod, %LastMod% D1 R
 
-sTooltip = Outlook Shortcuts %LastMod%`nCtrl+Click on menu item to open help.`nRight-Click on icon to access Help and other functionalities.
+sTooltip = Outlook Shortcuts %LastMod%`nUse 'Win+O' to open main menu in Outlook.`nRight-Click on systray icon to access other functionalities.
+
 Menu, Tray, Tip, %sTooltip%
 
 ; -------------------------------------------------------------------------------------------------------------------
@@ -80,7 +81,26 @@ loop {
 }
 }
 ; ----------------------------------------------------------------------
+
+
+; -------------------------------------------------------------------------------------------------------------------
+Menu, OutlookShortcutsMenu, add, Meeting to Emails, Meeting2Emails
+Menu, OutlookShortcutsMenu, add, Meeting Recipients to Excel, Meeting2Excel
+; -------------------------------------------------------------------------------------------------------------------
+
 return
+
+; ------------------------------------------------------------------
+Meeting2Emails:
+oItem := Outlook_GetCurrentItem()
+sEMailList := Outlook_Recipients2Emails(oItem)
+WinClip.SetText(sEmailList)
+TrayTipAutoHide("Meeting2Emails", "Attendees Emails were copied to the clipboard!")
+return 
+; ------------------------------------------------------------------
+Meeting2Excel:
+Outlook_Meeting2Excel()
+return 
 
 ;************************
 ;Hotkeys for Outlook 2013
@@ -151,6 +171,10 @@ else if WinActive("Inbox - ")
 	Send s 
 	Send {Enter}
 }
+return
+
+#o::
+Menu, OutlookShortcutsMenu, Show
 return
 
 ; Categorize All Categories -> Alt+C

@@ -608,7 +608,8 @@ Else
 
 WinClip.SetHTML(sQuoteHtml)
 WinClip.Paste() ; seems asynchronuous
-Sleep 500 ; required else clipboard is restored before paste #TODO PasteDelay
+PasteDelay := PowerTools_GetParam("PasteDelay")
+Sleep %PasteDelay% 
 
 ;MsgBox %sQuoteHtml% ; DBG
 
@@ -670,7 +671,8 @@ If InStr(sInput,"@") { ; Email
 SendInput {@}
 Sleep 300
 SendInput %sInput%
-Sleep 1300 ; time for autocompletion ; TODO Setting
+MentionDelay := PowerTools_GetParam("TeamsMentionDelay")
+Sleep %MentionDelay% 
 SendInput +{Tab} ; use Shift+Tab because Tab will switch focus to next UI element in case no mention autocompletion can be done (e.g. name not member of Team)
 
 ; Personalize mention -> Firstname
@@ -809,7 +811,7 @@ return sHtml
 
 Teams_OpenSecondInstance(){
 If GetKeyState("Ctrl") {
-	Run, "https://connext.conti.de/blogs/tdalon/entry/teams_multiple_instances"
+	Run, "https://tdalon.blogspot.com/2020/12/open-multiple-microsoft-teams-instances.html"
 	return
 }
 EnvGet, A_UserProfile, userprofile

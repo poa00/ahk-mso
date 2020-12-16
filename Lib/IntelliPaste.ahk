@@ -235,22 +235,22 @@ Else If RegExMatch(sInput,"/Lists/[^.]*.aspx") & Not InStr(sInput,"DispForm.aspx
 
 ; YouTube embed code - center	
 Else If RegExMatch(sInput,"<iframe [^>]* src=""https://www\.youtube\.com/embed/") {
-	sHtml = <div align="center">%sInput%</div>
+	sHtml = <p style="text-align: center;">%sInput%</p>
 }
 Else If RegExMatch(sInput,"https://www\.youtube\.com/watch\?.*v=([^\?&]*)",sVideoId) { ; bug fix links https://www.youtube.com/watch?time_continue=1&v=y6qT502Ao58 {
 	sHtml =	<iframe width="560" height="315" src="https://www.youtube.com/embed/%sVideoId1%" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-	sHtml = <div align="center">%sHtml%<br><a href="%sInput%">Direct Link to YouTube video</a></div>
+	sHtml = <p style="text-align: center;">%sHtml%<br><a href="%sInput%">Direct Link to YouTube video</a></p>
 }
 Else If RegExMatch(sInput,"https://youtu\.be/([^\?&]*)",sVideoId) ; https://youtu.be/ngLfEVU46x0?t=1007
 { 
 	sHtml =	<iframe width="560" height="315" src="https://www.youtube.com/embed/%sVideoId1%" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-	sHtml = <div align="center">%sHtml%<br><a href="%sInput%">Direct Link to YouTube video</a></div>
+	sHtml = <p style="text-align: center;">%sHtml%<br><a href="%sInput%">Direct Link to YouTube video</a></p>
 }
 
 Else If RegExMatch(sInput,"https://www\.youtube\.com/playlist\?list=([^\?&]*)",sVideoId) ; https://www.youtube.com/playlist?list=PLUSZfg60tAwLIIs8TpcOJIG9ghbQd5nHj
 { 
 	sHtml =	<iframe width="560" height="315" src="https://www.youtube.com/embed/videoseries?list=%sVideoId1%" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-	sHtml = <div align="center">%sHtml%<br><a href="%sInput%">Direct Link to YouTube playlist</a></div>
+	sHtml = <p style="text-align: center;">%sHtml%<br><a href="%sInput%">Direct Link to YouTube playlist</a></p>
 }
 
 ; Stream embed code - center+ add title with direct link	
@@ -439,7 +439,7 @@ If Connections_IsUrl(url) {
 } Else If (SharePoint_IsSPUrl(url)) 
 	url := SharePoint_CleanUrl(url)	
 Else If InStr(url,".blogspot.") {
-	url := RegExReplace(url,"/\d{4}/\d{2}","")
+	;url := RegExReplace(url,"/\d{4}/\d{2}","") - such shortened links takes longer to load -> remove
 	url := StrReplace(url,".html","")
 }
 Else If (IsGoogleUrl(url))
@@ -525,11 +525,6 @@ If (Jira_IsWinActive()) { ;
 	sFullText := Jira_FormatLinks(sClipboard,sStyle)
 	PT_wc.iSetText(sFullText)
 	PT_wc.iPaste()
-	return
-}
-
-If (Confluence_IsWinActive()) {
-	Confluence_ExpandLinks(sClipboard)
 	return
 }
 
@@ -631,7 +626,8 @@ If !InStr(sClipboard,"`n") { ; single input
 		PT_wc.SetText(sLink)
 	}
 	PT_wc.Paste() 
-	Sleep 500 ; required else clipboard is restored before paste #TODO PasteDelay
+	PasteDelay := PowerTools_GetParam("PasteDelay")
+	Sleep %PasteDelay% 
 	Clipboard := ClipSaved ; restore clipboard
 	return
 }
@@ -673,7 +669,8 @@ If (Fmt = "Text") {
 }
 
 PT_wc.Paste() 
-Sleep 500 ; required else clipboard is restored before paste #TODO PasteDelay
+PasteDelay := PowerTools_GetParam("PasteDelay")
+Sleep %PasteDelay% 
 Clipboard := ClipSaved ; restore clipboard
 return
 

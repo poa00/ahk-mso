@@ -1032,7 +1032,7 @@ If (PowerTools_ConnectionsRootUrl)
 
 If (PowerTools_ConnectionsRootUrl="") {
 	If FileExist("PowerTools.ini") {
-		IniRead, ConnectionsRootUrl, PowerTools.ini, Main, ConnectionsRootUrl
+		IniRead, ConnectionsRootUrl, PowerTools.ini, Connections, ConnectionsRootUrl
 		If !(ConnectionsRootUrl="ERROR")
 			PowerTools_ConnectionsRootUrl = ConnectionsRootUrl
 	}
