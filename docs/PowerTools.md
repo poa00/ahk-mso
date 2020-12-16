@@ -23,7 +23,7 @@ The Exe versions are available in the [PowerTools subdirectory](https://github.c
 
 <div align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/videoseries?list=PLUSZfg60tAwLhlYPKTdbSo8biyrZM794o" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe><br><a href="https://www.youtube.com/playlist?list=PLUSZfg60tAwLhlYPKTdbSo8biyrZM794o">Direct Link to YouTube playlist</a></div>
 
-## source
+## Source
 
 These tools are implemented in [this repository](https://github.com/tdalon/ahk) using AutoHotkey.
 
