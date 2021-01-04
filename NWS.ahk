@@ -58,6 +58,7 @@ GroupAdd, NoIntelliPasteIns, ahk_exe freemind.exe
 #SingleInstance force ; for running from editor - avoid warning another instance is running
 
 Config := PowerTools_GetConfig() ; check also if defined
+PowerTools_ConnectionsRootUrl := PowerTools_RegRead("ConnectionsRootUrl")
 
 SubMenuSettings := PowerTools_MenuTray()
 Menu,Tray,Insert,Settings,Power Tools Bundler, PowerTools_RunBundler
@@ -213,6 +214,14 @@ return
 ; Hotkeys with CapsLock modifier.  See https://autohotkey.com/docs/Hotkeys.htm#combo
 ;================================================================================================
 
+#If (PowerTools_ConnectionsRootUrl != "")
+CapsLock & c:: ;  <--- ConNext Global Search
+sSelection:= GetSelection()
+Run, https://connext.conti.de/search/web/search?query=%sSelection%     ; Launch with contents of clipboard
+Return
+
+#If
+
 CapsLock & d:: ;  <--- Get DEFINITION of selected word.
 sSelection:= GetSelection()
 Run, http://www.google.com/search?q=define+%sSelection%     ; Launch with contents of clipboard
@@ -242,14 +251,17 @@ sSelection:= GetSelection()
 Run, https://en.wikipedia.org/wiki/%sSelection%              ; Launch with contents of clipboard
 Return
 
+#If (Config = "Conti")
 CapsLock & n:: ; <--- Open NWS Search or trigger NWS Search with selected text
 PowerTools_NWSSearch()
 return
 
+#If
+
 CapsLock & y:: ; <--- YouTube search of selected text
 sSelection:= GetSelection()
 Run, https://www.youtube.com/results?search_query=%sSelection%              ; Launch with contents of clipboard
-Return
+return
 
 
 ; -------------------------------------------------------------------------------------------------------------------

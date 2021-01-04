@@ -1,5 +1,8 @@
 # [NWS PowerTool](NWS-PowerTool) Changelog
 
+* 2021-01-04
+	- CapsLock Search Engines: add CapsLock+C for global connections searcj if ConnectionsRootUrl defined in Settings
+	- CapsLock+N for NWS Search only for Config="Conti"
 * 2020-12-14
 	- IntelliPaste for Confluence: revert to standard RTF paste
 * 2020-12-11
