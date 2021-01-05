@@ -1015,10 +1015,10 @@ WinCount := 0
 Select := 0
 Loop %Win% {
     WinId := Win%A_Index%
+
     If (WinId = TeamsMainWinId) ; Exclude Main Teams Window
         Continue
     WinGetTitle, Title, % "ahk_id " WinId    
-
     IfEqual, Title,, Continue
     Title := StrReplace(Title," | Microsoft Teams","")
     If InStr(Title,",")  ; Exclude windows with , in the title (Popped-out 1-1 chat)
@@ -1029,6 +1029,8 @@ Loop %Win% {
     If WinId = %TeamsMeetingWinId% 
         Select := WinCount  
 } ; End Loop
+
+
 
 If (WinCount = 0)
     return
@@ -1056,20 +1058,21 @@ Teams_GetMainWindow(){
 
 WinGet, WinCount, Count, ahk_exe Teams.exe
 static MainWinIdChecked := False
+
 If (WinCount > 0) { ; fall-back if wrong exe found: close Teams
     TeamsMainWinId := PowerTools_RegRead("TeamsMainWinId")
+
     If WinExist("ahk_id " . TeamsMainWinId) {
         If (MainWinIdChecked = False) {
             oAcc := Acc_Get("Object","4",0,"ahk_id " TeamsMainWinId)
             sName := oAcc.accName(0)
-            If RegExMatch(sName,".* | Microsoft Teams, Main Window$") {
+            If RegExMatch(sName,".* \| Microsoft Teams, Main Window$") {
                 MainWinIdChecked := True
                 return TeamsMainWinId
             }
         }  
     }
 }
-
 If (WinCount = 1) {
     TeamsMainWinId := WinExist("ahk_exe Teams.exe")
     PowerTools_RegWrite("TeamsMainWinId",TeamsMainWinId)
@@ -1083,7 +1086,7 @@ Loop, %id%
     hWnd := id%A_Index%
     oAcc := Acc_Get("Object","4",0,"ahk_id " hWnd)
     sName := oAcc.accName(0)
-    If RegExMatch(sName,".* | Microsoft Teams, Main Window$") {
+    If RegExMatch(sName,".* \| Microsoft Teams, Main Window$") {
         PowerTools_RegWrite("TeamsMainWinId",hWnd)
         return hWnd
     }

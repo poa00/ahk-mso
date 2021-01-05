@@ -72,12 +72,14 @@ Case "l","leave": ; leave meeting
     If !WinId ; empty
         return
     WinActivate, ahk_id %WinId%
-    SendInput ^+b  
+    SendInput ^+b ; ctrl+shift+b
     return
 Case "sh","share":  
     WinId := Teams_GetMeetingWindow()
+    
     If !WinId ; empty
         return
+    
     WinActivate, ahk_id %WinId%
     SendInput ^+e ; ctrl+shift+e 
     sleep, 1000
@@ -88,14 +90,14 @@ Case "mu","mute":
     If !WinId ; empty
         return
     WinActivate, ahk_id %WinId%
-    SendInput ^+m ; ctrl+shift+m 
+    SendInput ^+m ;  ctrl+shift+m
     return
 Case "de":  ; decline call
     WinId := Teams_GetMainWindow()
     If !WinId ; empty
         return
     WinActivate, ahk_id %WinId%
-    SendInput ^+d ; expand compose box ctrl+shift+d 
+    SendInput ^+d ;  ctrl+shift+d 
     return
 Case "q","quit": ; quit
     sCmd = taskkill /f /im "Teams.exe"

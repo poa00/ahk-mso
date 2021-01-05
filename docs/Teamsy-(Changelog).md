@@ -1,6 +1,7 @@
 # [Teamsy](Teamsy) Changelog
 
-
+* 2021-01-05
+	- Fix: Teams_GetMeetingWindow, Teams_GetMainWindow regexp escape |
 * 2020-12-04
   - Fixed Teams_GetMainWindow: collision of previous WinId. Added check for Window name as static variable
 * 2020-11-17
