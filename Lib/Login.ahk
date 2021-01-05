@@ -80,10 +80,13 @@ If (hWnd <> 0) {
     Run, %VPNexePath%
     WinWaitActive, %MainTitle%
 }
+
+SetTitleMatchMode, 3 ; exact match for controlclick Connect - else ErrorLevel is 0 with Disconnect button
 ControlClick, Connect
 If ErrorLevel ; Button not found - Disconnect
     return
 
+SetTitleMatchMode, 1 ; start with
 WinWaitActive,Cisco AnyConnect |
 
 InputVPNPassword:
