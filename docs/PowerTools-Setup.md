@@ -19,3 +19,6 @@ If you want to manage multiple PowerTools together, the best way is to use the [
 You can download the standalone version by clicking directly [here](https://github.com/tdalon/ahk/raw/master/PowerTools/PowerToolsBundler.exe).
 
 At the best you store it in a new fresh directory with the name **PowerTools** for example because all other PowerTools will be saved in this directory as well as some helper files (git_updater, ini file...).
+
+From there you can donwload selected PowerTools via the Actions-> Check for Update/ Download.
+![PowerTools Bundler Check for Update/Download](/img/powertools_bundler_checkforupdate.png)

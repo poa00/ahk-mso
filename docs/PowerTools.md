@@ -15,9 +15,15 @@ This includes:
 
 ## [How to setup the PowerTools](PowerTools-Setup)
 
+See detailed explanation with video tutorial [here](PowerTools-Setup).
 The Exe versions are available in the [PowerTools subdirectory](https://github.com/tdalon/ahk/tree/master/PowerTools).
 
-## [Changelogs](PowerTools-Changelogs).
+## How to update the PowerTools
+
+You can update to the latest version either one-by-one from each tool via its system tray icon context menu "Check for update".
+Or by running the [PowerTools Bundler](PowerTools-Bundler), selecting which tools to update and choosing under the menu Actions->Check for update/ Download.
+
+## [Changelogs](PowerTools-Changelogs)
 
 ## YouTube playlist
 
