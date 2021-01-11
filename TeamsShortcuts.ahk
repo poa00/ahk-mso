@@ -5,7 +5,7 @@
 ; Source : https://github.com/tdalon/ahk/blob/master/TeamsShortcuts.ahk
 ;
 
-LastCompiled = 20201209152434
+LastCompiled = 20210111131721
 
 #Include <Teams>
 #Include <PowerTools>
@@ -85,7 +85,7 @@ Menu, TeamsShortcutsMenu, add, &Pop-out Chat (Win+P), Pop
 Menu, TeamsShortcutsMenu, add, Add to &Favorites, Link2TeamsFavs
 ; -------------------------------------------------------------------------------------------------------------------
 
-; Reset Main WinId at startup because of some collision
+; Reset Main WinId at startup because of some possible hwnd collision
 PowerTools_RegWrite("TeamsMainWinId","")
 
 #IfWinActive,ahk_exe Teams.exe

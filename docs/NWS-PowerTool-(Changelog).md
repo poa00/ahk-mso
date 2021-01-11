@@ -1,5 +1,11 @@
 # [NWS PowerTool](NWS-PowerTool) Changelog
 
+* 2021-01-07
+	- IntelliPaste old SharePoint Librarey opened in file explorer with address e.g. \\aws3.conti.de without @SSL\\DavWWWRoot in it. Revert url to https and propose breadcrumb option
+* 2021-01-05
+	- IntelliPaste for Jira: remove Jira_FormatLinks (Jira like Confluence supports now RichText pasting)
+	- Bug fix VPNConnect
+	- IntelliPaste Stream video for ConNext revert div align to p align center
 * 2021-01-04
 	- CapsLock Search Engines: add CapsLock+C for global connections searcj if ConnectionsRootUrl defined in Settings
 	- CapsLock+N for NWS Search only for Config="Conti"

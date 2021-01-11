@@ -486,9 +486,10 @@ Run %tempFile%
 }
 
 ; -------------------------------------------------------------------------------------------------------------------
+
 Teams_SmartReply(doReply:=True){
 If GetKeyState("Ctrl") {
-	Run, "https://tdalon.blogspot.com/2020/11/teams-shortcuts-smart-reply.html"
+    Run, "https://tdalon.blogspot.com/2020/11/teams-shortcuts-smart-reply.html"
 	return
 }
 
@@ -526,12 +527,12 @@ If InStr(sSelectionHtml,"data-tid=""messageBodyContent""") { ; Full thread selec
         return
     }
 
-    SendInput +{Up} ; Shift + Up Arrow: select all thread
+    ;SendInput +{Up} ; Shift + Up Arrow: select all thread -> not needed anymore. covered by Ctrl+A
+    SendInput ^a ; Select all thread
     Sleep 200
-    SendInput ^a
     sHtmlThread := GetSelection("html",False)
 }
-;MsgBox %sQuoteBodyHtml%
+
 ; Extract Teams Link
 
 ; Full thread selection to get link and author
@@ -554,6 +555,7 @@ If (RegExMatch(sHtmlThread,sPat,sMatch)) {
 If (sAuthor = "") { ; something went wrong
 ; TODO error handling
     MsgBox Something went wrong! Please retry.
+    MsgBox %sHtmlThread% ; DBG
     Clipboard := savedClipboard
     return
 }
@@ -1057,20 +1059,13 @@ Teams_GetMainWindow(){
 ; See implementation explanations here: https://tdalon.blogspot.com/get-teams-window-ahk
 
 WinGet, WinCount, Count, ahk_exe Teams.exe
-static MainWinIdChecked := False
 
 If (WinCount > 0) { ; fall-back if wrong exe found: close Teams
     TeamsMainWinId := PowerTools_RegRead("TeamsMainWinId")
-
     If WinExist("ahk_id " . TeamsMainWinId) {
-        If (MainWinIdChecked = False) {
-            oAcc := Acc_Get("Object","4",0,"ahk_id " TeamsMainWinId)
-            sName := oAcc.accName(0)
-            If RegExMatch(sName,".* \| Microsoft Teams, Main Window$") {
-                MainWinIdChecked := True
-                return TeamsMainWinId
-            }
-        }  
+        WinGet AhkExe, ProcessName, ahk_id %TeamsMainWinId% ; safe-check hWnd belongs to Teams.exe
+        If (AhkExe = "Teams.exe")
+            return TeamsMainWinId  
     }
 }
 If (WinCount = 1) {

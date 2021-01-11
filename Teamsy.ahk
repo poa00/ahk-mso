@@ -34,6 +34,9 @@ Case "w": ; Web App
         Teams_OpenWebApp()
     }
     return
+Case "h","-h","help":
+    Run, https://tdalon.github.io/ahk/Teamsy
+    return
 Case "u":
     sKeyword = unread
 Case "p":

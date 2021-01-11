@@ -4,7 +4,7 @@ Teamsy is a Microsoft Teams Plugin for a Launcher like Launchy or Executor.
 
 ## [Main Blog Post](https://tdalon.blogspot.com/teamsy)
 
-See [all blog posts tagged with #teamsy](https://tdalon.blogspot.com/search/label/teamsy).
+See [all blog posts tagged with #teamsy](https://tdalon.blogspot.com/2020/07/teamsy.html).
 
 ## YouTube Playlist
 

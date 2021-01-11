@@ -2,7 +2,7 @@
 
 This is the project homepage for my collection of AutoHotkey-based scripts and utilities located in [this GitHub repository](https://github.com/tdalon/ahk).
 
-This includes the so-called [PowerTools](PowerTools) suite.
+This includes the so-called [PowerTools](PowerTools) suite for Windows.
 It will specially improve your productivity and make your life easier, if you use Microsoft Office 365 Tools (Outlook, Teams, SharePoint,...) or HCL Connections.
 
 AutoHotkey only runs for **Windows OS**.

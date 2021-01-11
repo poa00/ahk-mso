@@ -13,7 +13,7 @@ This includes:
 - [Chromy](Chromy)
 
 
-## [How to setup the PowerTools](PowerTools-Setup).
+## [How to setup the PowerTools](PowerTools-Setup)
 
 The Exe versions are available in the [PowerTools subdirectory](https://github.com/tdalon/ahk/tree/master/PowerTools).
 
