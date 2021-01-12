@@ -40,7 +40,9 @@ You can access some settings via the Teams Shortcuts System Tray Icon Context Me
 ### New Conversation (Alt+N)
 
 It will open a new conversation with the expanded compose box and move back the cursor right on the subject line - within one hotkey.
-![TeamsShortcuts Menu](/img/TeamsShortcuts_NewConversation.gif)
+
+<img align="center" src="/img/TeamsShortcuts_NewConversation.gif" alt="Teams Shortcuts New Conversation">
+
 See [main blog post](https://tdalon.blogspot.com/2020/10/teamsy-new-conversation.html)
 
 ### Smart reply (Alt+R)
