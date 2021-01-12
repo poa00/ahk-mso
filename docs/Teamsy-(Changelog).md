@@ -1,7 +1,9 @@
 # [Teamsy](Teamsy) Changelog
 
+* 2021-01-11
+	- Added keyword to open help/ documentation.
 * 2021-01-08
-	- Update SmartReply due to change in UI Ctrl+A behavior.
+	- Bug fix: Update SmartReply (due to change in UI Ctrl+A behavior.)
 * 2021-01-05
 	- Fix: Teams_GetMeetingWindow, Teams_GetMainWindow regexp escape |
 * 2020-12-04
