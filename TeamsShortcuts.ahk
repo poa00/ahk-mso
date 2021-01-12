@@ -75,8 +75,8 @@ Menu, Tray, Tip, %sTooltip%
 ; -------------------------------------------------------------------------------------------------------------------
 Menu, TeamsShortcutsMenu, add, Smart &Reply (Alt+R), Teams_SmartReply
 Menu, TeamsShortcutsMenu, add, &Quote Conversation (Alt+Q), QuoteConversation
+Menu, TeamsShortcutsMenu, add, &New Expanded Conversation (Alt+N), NewConversation
 Menu, TeamsShortcutsMenu, add, Create E&mail with link to current conversation (Win+M), ShareByMail
-Menu, TeamsShortcutsMenu, add, &New Expanded Conversation (Win+N), NewConversation
 Menu, TeamsShortcutsMenu, add, Send Mentions (Win+Q), SendMentions
 Menu, TeamsShortcutsMenu, add, Personalize &Mention (Win+1), PersonalizeMention
 Menu, TeamsShortcutsMenu, add, View &Unread (Win+U), ViewUnread
@@ -97,8 +97,8 @@ Teams_PersonalizeMention()
 return
 
 ;--- Compose in Expand mode
-; Win + N
-#n::  ; <--- New Expanded Conversation
+; Alt + N
+!n::  ; <--- New Expanded Conversation
 NewConversation:
 	SendInput ^{f6}
     SendInput !+c ;  compose box alt+shift+c: necessary to get second hotkey working (regression with new conversation button)

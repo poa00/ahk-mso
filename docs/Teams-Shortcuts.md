@@ -29,13 +29,19 @@ You can also [create an issue in GitHub](https://github.com/tdalon/ahk/issues).
 
 You can start the Teams Shortcuts menu by pressing the **Windows+T** Hotkey when a Teams window is active.
 
-![TeamsShortcuts Menu](/img/teams_shortcuts_menu.png)
+![TeamsShortcuts Menu](/img/TeamsShortcuts_MainMenu.png)
 
 In the menu you can also see which hotkeys directly run the features e.g. Alt+R for Smart Reply.
 
 You can access some settings via the Teams Shortcuts System Tray Icon Context Menu. Right-Mouse-Click on the icon to open it.
 
 ## Feature Highlights
+
+### New Conversation (Alt+N)
+
+It will open a new conversation with the expanded compose box and move back the cursor right on the subject line - within one hotkey.
+![TeamsShortcuts Menu](/img/TeamsShortcuts_NewConversation.gif)
+See [main blog post](https://tdalon.blogspot.com/2020/10/teamsy-new-conversation.html)
 
 ### Smart reply (Alt+R)
 
