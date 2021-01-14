@@ -36,7 +36,7 @@ Menu,Tray,NoStandard
 Menu,Tray,Add,Add to Teams Favorites, Link2TeamsFavs
 
 Menu, SubMenuCustomBackgrounds, Add, Open Custom Backgrounds Folder, OpenCustomBackgrounds
-Menu, SubMenuCustomBackgrounds, Add, Open GUIDEs Shared Backgrounds, OpenGUIDEsCustomBackgrounds
+Menu, SubMenuCustomBackgrounds, Add, Open Backgrounds Library, OpenCustomBackgroundsLibrary
 
 Menu, Tray, Add, Custom Backgrounds, :SubMenuCustomBackgrounds
 
@@ -260,18 +260,29 @@ return
 ; ----------------------------------------------------------------------
 OpenCustomBackgrounds:
 If GetKeyState("Ctrl") {
-	Run, "https://connext.conti.de/blogs/tdalon/entry/teams_custom_background"
+	Run, "https://tdalon.blogspot.com/2021/01/teams-custom-backgrounds.html#openfolder"
 	return
 }
 Run, %A_AppData%\Microsoft\Teams\Backgrounds\Uploads
 return
 
-OpenGUIDEsCustomBackgrounds:
+OpenCustomBackgroundsLibrary:
 If GetKeyState("Ctrl") {
-	Run, "https://connext.conti.de/blogs/tdalon/entry/teams_custom_background"
+	Run, "https://tdalon.blogspot.com/2021/01/teams-custom-backgrounds.html#openlib"
 	return
 }
-Run, "https://continental.sharepoint.com/:f:/r/teams/team_10000035/Shared Documents/Collaborate/TEAMS Background Pictures"
+sIniFile = %A_ScriptDir%\PowerTools.ini
+If !FileExist(sIniFile) {
+	TrayTipAutoHide("Error!","PowerTools.ini file is missing!",2000,3)
+	return
+}
+IniRead, CustomBackgroundsLibrary, %sIniFile%, MicrosoftTeams, TeamsCustomBackgroundsLibrary
+If (CustomBackgroundsLibrary != "ERROR")
+	Run, "%CustomBackgroundsLibrary%"
+Else {
+    Run, notepad.exe %sIniFile%
+	TrayTipAutoHide("Background Library!","Background Library location is configured in PowerTools.ini TeamsCustomBackgroundsLibrary parameter.")
+}
 return
 ; ----------------------------------------------------------------------
 

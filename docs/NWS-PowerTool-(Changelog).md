@@ -1,5 +1,7 @@
 # [NWS PowerTool](NWS-PowerTool) Changelog
 
+* 2021-01-12
+	- Fix: Cisco VPN Connect
 * 2021-01-07
 	- IntelliPaste old SharePoint Librarey opened in file explorer with address e.g. \\aws3.conti.de without @SSL\\DavWWWRoot in it. Revert url to https and propose breadcrumb option
 * 2021-01-05
