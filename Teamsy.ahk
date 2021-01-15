@@ -51,7 +51,7 @@ Case "s","save":
     sKeyword = saved
 Case "d":
     sKeyword = dnd
-Case "cal":
+Case "cal","calendar":
     WinId := Teams_GetMainWindow()
     WinActivate, ahk_id %WinId%
     SendInput ^4; open calendar
