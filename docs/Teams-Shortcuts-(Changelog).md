@@ -1,5 +1,7 @@
 # [Teams Shortcuts](Teams-Shortcuts) Changelog
 
+* 2021-01-15
+	- Extended keyword cal -> calendar
 * 2021-01-14
 	- Added Custom Background Setting for Library. Now it can be [set in ini file](https://tdalon.blogspot.com/2021/01/teams-custom-backgrounds.html#openlib).
 * 2021-01-12

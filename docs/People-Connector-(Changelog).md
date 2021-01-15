@@ -1,5 +1,8 @@
 # [People Connector](People-Connector) Changelog
 
+* 2021-01-15
+	- Fix: Compiled Date format in SysTray icon tooltip
+	- Fix: Get Uid with Domain. Sometimes Uid was wrong/ empty.
 * 2020-12-08
 	- Extrat emails from Outlook Meeting Recipients
 	- Increased time for mention autocompletion 1300ms

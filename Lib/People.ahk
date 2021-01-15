@@ -73,9 +73,9 @@ People_Emails2DUids(sEmailList){
 Loop, parse, sEmailList, ";"
 {
     sDN := People_ADGetUserField("mail=" . A_LoopField, "distinguishedName")
-    RegExMatch(sDN,"\((.*)\)",sUid)
     RegExMatch(sDN,",DC=([^,]*)",sDC)
-    sUidList = %sUidList%, %sDC1%\%sUid1%
+    sUid := Email2Uid(A_LoopField)
+    sUidList = %sUidList%, %sDC1%\%sUid%
 }	
 
 return SubStr(sUidList,2) ; remove starting ,

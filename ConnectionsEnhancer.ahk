@@ -73,12 +73,10 @@ Else {
 Menu, SubMenuSettings, Add, TOC Style, Connections_SettingSetTocStyle
 
 ; -------------------------------------------------------------------------------------------------------------------
-
-If !a_iscompiled {
+If !a_iscompiled 
 	FileGetTime, LastMod , %A_ScriptFullPath%
-} Else {
+ Else 
 	LastMod := LastCompiled
-}
 FormatTime LastMod, %LastMod% D1 R
 sTooltip = Connections Enhancer %LastMod%`nUse 'Win+C' to open the Connections Enhancer Menu.`nRight-Click on icon to access Help.
 sTrayTip = Use 'Win+C' to open the Connections Enhancer Menu from a ConNext Page in the Browser.`nRight-Click on icon to access Help.

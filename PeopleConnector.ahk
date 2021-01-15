@@ -3,7 +3,7 @@
 ; See help/homepage: https://tdalon.github.io/ahk/People-Connector
 
 ; Calls: ExtractEmails, TrayTipAutoHide, ToStartup
-LastCompiled = 20201209152432
+LastCompiled = 20210115164515
 
 #SingleInstance force ; for running from editor
 
@@ -44,12 +44,13 @@ Else
 
 
 ; -------------------------------------------------------------------------------------------------------------------
-If !a_iscompiled {
+If !a_iscompiled 
 	FileGetTime, LastMod , %A_ScriptFullPath%
-	FormatTime LastMod, %LastMod% D1 R
-} Else {
+ Else 
 	LastMod := LastCompiled
-}
+FormatTime LastMod, %LastMod% D1 R
+
+
 sTextMenuTip = Double Tap 'Shift' to open menu.`nRight-Click on icon to access Help.
 Menu, Tray, Tip, People Connector - %LastMod%`n%sTextMenuTip%
 sText = Double Tap 'Shift' to open menu after selection.`nRight-Click on icon to access Help/ Support/ Check for Updates.
