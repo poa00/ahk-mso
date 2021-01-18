@@ -37,6 +37,9 @@ Case "w": ; Web App
 Case "h","-h","help":
     Run, https://tdalon.github.io/ahk/Teamsy
     return
+Case "news":
+    PowerTools_News(A_ScriptName)
+    return
 Case "u":
     sKeyword = unread
 Case "p":
@@ -117,14 +120,7 @@ Case "r","restart": ; restart
 Case "n","new","x": ; new expanded conversation 
     WinId := Teams_GetMainWindow()
     WinActivate, ahk_id %WinId%
-    SendInput ^{f6} ; Activate posts tab https://support.microsoft.com/en-us/office/use-a-screen-reader-to-explore-and-navigate-microsoft-teams-47614fb0-a583-49f6-84da-6872223e74a0#picktab=windows
-    ; workaround will flash the search bar if posts/content panel already selected but works now even if you have just selected the channel on the left navigation panel
-    ;SendInput {Esc} ; in case expand box is already opened
-    SendInput !+c ;  compose box alt+shift+c: necessary to get second hotkey working (regression with new conversation button)
-    sleep, 300
-    SendInput ^+x ; expand compose box ctrl+shift+x (does not work anymore immediately)
-    sleep, 800
-    SendInput +{Tab} ; move cursor back to subject line via shift+tab
+    Teams_NewConversation()
     return
 Case "v","vi": ; Toggle video with background
     WinId := Teams_GetMeetingWindow()

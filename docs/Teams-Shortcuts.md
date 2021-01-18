@@ -55,7 +55,7 @@ See [main blog post](https://tdalon.blogspot.com/2020/11/teams-shortcuts-smart-r
 
 See [main blog post](https://tdalon.blogspot.com/2020/11/teams-shortcuts-send-mentions.html)
 
-![TeamsShortcuts Smart Reply Gif](/img/TeamsShortcuts_SendMentions.gif)
+![TeamsShortcuts Send Mentions Gif](/img/TeamsShortcuts_SendMentions.gif)
 
 ## Source code
 

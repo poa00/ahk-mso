@@ -1,5 +1,7 @@
 # [NWS PowerTool](NWS-PowerTool) Changelog
 
+* 2021-01-14
+	- fix: IntelliPaste Title Case Url only if all lower
 * 2021-01-12
 	- Fix: Cisco VPN Connect
 * 2021-01-07

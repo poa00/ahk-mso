@@ -19,7 +19,7 @@ SetWorkingDir %A_ScriptDir%
 #Include <Explorer>
 #Include <People>
 
-LastCompiled = 20201214084652
+LastCompiled = 20210105093149
 
 ; AutoExecute Section must be on the top of the script
 ;#NoEnv
@@ -109,11 +109,10 @@ If (IntelliPasteHotkey == "Insert") {
 
 ; -------------------------------------------------------------------------------------------------------------------
 ; Tooltip
-If !a_iscompiled {
+If !a_iscompiled 
 	FileGetTime, LastMod , %A_ScriptFullPath%
-} Else {
+ Else 
 	LastMod := LastCompiled
-}
 FormatTime LastMod, %LastMod% D1 R
 sTooltip = NWS PowerTool %LastMod%.`nRight-Click on icon to access Help and Settings.
 sTrayTip = Right-Click on icon to access Help.
@@ -217,7 +216,7 @@ return
 #If (PowerTools_ConnectionsRootUrl != "")
 CapsLock & c:: ;  <--- ConNext Global Search
 sSelection:= GetSelection()
-Run, https://connext.conti.de/search/web/search?query=%sSelection%     ; Launch with contents of clipboard
+Run, https://%PowerTools_ConnectionsRootUrl%/search/web/search?query=%sSelection%     ; Launch with contents of clipboard
 Return
 
 #If

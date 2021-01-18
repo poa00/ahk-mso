@@ -96,7 +96,9 @@ If (Config="Conti"){
 If doOpen
     Run, %sUrl%
 return sUrl
-}
+} ; eofun
+
+; ---------------------------------------------------------------------- 
 
 PowerTools_Changelog(ScriptName,doOpen := True){
 Switch ScriptName 
@@ -144,6 +146,27 @@ If !A_IsCompiled {
     sUrl = https://tdalon.github.io/ahk/%sFileName%
     Run, %sUrl%
 }
+} ; eofun
+
+; ---------------------------------------------------------------------- 
+
+PowerTools_News(ScriptName){
+If (ScriptName ="NWS")
+    ScriptName = NWSPowerTool
+sUrl := "https://twitter.com/search?q=(from%3Atdalon)%23" . ScriptName
+Switch ScriptName 
+{
+Case "ConnectionsEnhancer":
+    sUrl := sUrl . "%20%23Connections"
+Case "TeamsShortcuts":
+    sUrl := sUrl . "%20%23MicrosoftTeams"
+Case "OutlookShortcuts":
+    sUrl := sUrl . "%20%23MicrosoftOutlook"
+Case "Teamsy":
+    sUrl := sUrl . "%20%23MicrosoftTeams"
+}
+Run, %sUrl%
+
 } ; eofun
 
 ; ---------------------------------------------------------------------- 
@@ -208,7 +231,7 @@ Default:
     sUrl = %PT_DocRootUrl%/%key% 
 }
 Run,  "%sUrl%"
-}
+} ; eofun
 
 
 
@@ -371,6 +394,8 @@ If (Config="Conti")
 Menu, Tray, Add, Tweet for support, MenuCb_PowerTools_Tweet
 Menu, Tray, Add, Check for update, MenuCb_PTCheckForUpdate
 Menu, Tray, Add, Changelog, MenuCb_PTChangelog
+Menu, Tray, Add, News, MenuCb_PTNews
+
 
 If !a_iscompiled {
 	IcoFile := RegExReplace(A_ScriptFullPath,"\..*",".ico")
@@ -417,6 +442,11 @@ PowerTools_Help(ScriptName)
 MenuCb_PTChangelog(ItemName, ItemPos, MenuName){
 ScriptName := RegExReplace(A_ScriptName,"\..*","") 
 PowerTools_Changelog(ScriptName)   
+}
+
+MenuCb_PTNews(ItemName, ItemPos, MenuName){
+ScriptName := RegExReplace(A_ScriptName,"\..*","") 
+PowerTools_News(ScriptName)   
 }
 
 MenuCb_PowerTools_Support(ItemName, ItemPos, MenuName){

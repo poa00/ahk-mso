@@ -32,6 +32,5 @@ sSelection := Trim(sSelection,"`n`r`t`s")
 If (doRestoreClip = True) ; Restore Clipboard
   Clipboard := OldClipboard 
 
-
 return sSelection
 } 

@@ -5,7 +5,7 @@
 ; Source : https://github.com/tdalon/ahk/blob/master/TeamsShortcuts.ahk
 ;
 
-LastCompiled = 20210111131721
+LastCompiled = 20210114064703
 
 #Include <Teams>
 #Include <PowerTools>
@@ -62,11 +62,10 @@ Menu, Tray,Add
 Menu, Tray,Standard
 
 ; Tooltip
-If !a_iscompiled {
+If !a_iscompiled 
 	FileGetTime, LastMod , %A_ScriptFullPath%
-} Else {
+ Else 
 	LastMod := LastCompiled
-}
 FormatTime LastMod, %LastMod% D1 R
 
 sTooltip = Teams Shortcuts %LastMod%`nUse 'Win+T' to open main menu in Teams.`nRight-Click on icon to access other functionalities.
@@ -100,12 +99,7 @@ return
 ; Alt + N
 !n::  ; <--- New Expanded Conversation
 NewConversation:
-	SendInput ^{f6}
-    SendInput !+c ;  compose box alt+shift+c: necessary to get second hotkey working (regression with new conversation button)
-    sleep, 300
-    SendInput ^+x ; expand compose box ctrl+shift+x (does not work anymore immediately)
-    sleep, 800
-    SendInput +{Tab} ; move cursor back to subject line via shift+tab
+Teams_NewConversation()
 return
 
 

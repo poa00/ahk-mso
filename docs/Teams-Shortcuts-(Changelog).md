@@ -1,5 +1,7 @@
 # [Teams Shortcuts](Teams-Shortcuts) Changelog
 
+* 2021-01-18
+	- New conversation: adjusted timing for expanding the compose box
 * 2021-01-15
 	- Extended keyword cal -> calendar
 * 2021-01-14

@@ -1,5 +1,8 @@
 # [Teamsy](Teamsy) Changelog
 
+* 2021-01-18
+	- New conversation: adjusted timing for expanding the compose box
+	- Added keyword for news
 * 2021-01-11
 	- Added keyword to open help/ documentation.
 * 2021-01-08

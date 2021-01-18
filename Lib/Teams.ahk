@@ -1060,14 +1060,17 @@ Teams_GetMainWindow(){
 
 WinGet, WinCount, Count, ahk_exe Teams.exe
 
-If (WinCount > 0) { ; fall-back if wrong exe found: close Teams
-    TeamsMainWinId := PowerTools_RegRead("TeamsMainWinId")
-    If WinExist("ahk_id " . TeamsMainWinId) {
-        WinGet AhkExe, ProcessName, ahk_id %TeamsMainWinId% ; safe-check hWnd belongs to Teams.exe
-        If (AhkExe = "Teams.exe")
-            return TeamsMainWinId  
-    }
+If (WinCount = 0)
+    GoTo, StartTeams
+
+ ; fall-back if wrong exe found: close Teams
+TeamsMainWinId := PowerTools_RegRead("TeamsMainWinId")
+If WinExist("ahk_id " . TeamsMainWinId) {
+    WinGet AhkExe, ProcessName, ahk_id %TeamsMainWinId% ; safe-check hWnd belongs to Teams.exe
+    If (AhkExe = "Teams.exe")
+        return TeamsMainWinId  
 }
+
 If (WinCount = 1) {
     TeamsMainWinId := WinExist("ahk_exe Teams.exe")
     PowerTools_RegWrite("TeamsMainWinId",TeamsMainWinId)
@@ -1088,16 +1091,18 @@ Loop, %id%
 }
 
 ; Fallback solution with minimize all window and run exe
-TeamsExe = C:\Users\%A_UserName%\AppData\Local\Microsoft\Teams\current\Teams.exe
-If !FileExist(TeamsExe) {
-    return
-}
 If WinActive("ahk_exe Teams.exe") {
     GroupAdd, TeamsGroup, ahk_exe Teams.exe
     WinMinimize, ahk_group  TeamsGroup
 } 
-    
-Run, %TeamsExe%
+
+StartTeams: 
+fTeamsExe = C:\Users\%A_UserName%\AppData\Local\Microsoft\Teams\current\Teams.exe
+If !FileExist(fTeamsExe) {
+    return
+}
+ 
+Run, %fTeamsExe%
 WinWaitActive, ahk_exe Teams.exe
 TeamsMainWinId := WinExist("A")
 PowerTools_RegWrite("TeamsMainWinId",TeamsMainWinId)
@@ -1106,7 +1111,17 @@ return TeamsMainWinId
 } ; eofun
 
 ; -------------------------------------------------------------------------------------------------------------------
-
+Teams_NewConversation(){
+SendInput ^{f6} ; Activate posts tab https://support.microsoft.com/en-us/office/use-a-screen-reader-to-explore-and-navigate-microsoft-teams-47614fb0-a583-49f6-84da-6872223e74a0#picktab=windows
+    ; workaround will flash the search bar if posts/content panel already selected but works now even if you have just selected the channel on the left navigation panel
+    ;SendInput {Esc} ; in case expand box is already opened
+    SendInput !+c ;  compose box alt+shift+c: necessary to get second hotkey working (regression with new conversation button)
+    sleep, 500
+    SendInput ^+x ; expand compose box ctrl+shift+x (does not work anymore immediately)
+    sleep, 500
+    SendInput +{Tab} ; move cursor back to subject line via shift+tab
+} ; eofun
+; -------------------------------------------------------------------------------------------------------------------
 
 Teams_Pop(sInput){
 ; Pop-out chat via Teams command bar

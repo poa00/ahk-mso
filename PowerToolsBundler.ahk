@@ -65,6 +65,7 @@ Menu, ActionsMenu, Add, &Run`tCtrl+R, Run
 Menu, ActionsMenu, Add, E&xit`tCtrl+X, Exit
 Menu, ActionsMenu, Add, Open Help`tCtrl+H, OpenHelp
 Menu, ActionsMenu, Add, Open Change&log`tCtrl+L, OpenChangelog
+Menu, ActionsMenu, Add, Open &News`tCtrl+N, OpenNews
 
 Menu, SettingsMenu, Add, Set Config, PowerTools_SetConfig
 Menu, SettingsMenu, Add, Load Config, PowerTools_LoadConfig
@@ -181,6 +182,18 @@ Loop {
 	    break
 	LV_GetText(ItemName, RowNumber, 1)
 	PowerTools_Changelog(ItemName)
+}
+return
+
+; -------------------------------------------------------------------------------------------------------------------
+OpenNews: 
+RowNumber = 0
+Loop {
+    RowNumber := LV_GetNext(RowNumber, "Checked")
+    if not RowNumber 
+	    break
+	LV_GetText(ItemName, RowNumber, 1)
+	PowerTools_News(ItemName)
 }
 return
 ; -------------------------------------------------------------------------------------------------------------------
