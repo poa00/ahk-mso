@@ -5,7 +5,7 @@
 #Include <Login>
 ; Calls: Lib/ToStartup
 
-LastCompiled = 20201209153522
+LastCompiled = 20210119162113
 
 IcoFile := RegExReplace(A_ScriptFullPath,"\..*",".ico")
 If (FileExist(IcoFile)) 
@@ -67,8 +67,7 @@ Menu, ActionsMenu, Add, Open Help`tCtrl+H, OpenHelp
 Menu, ActionsMenu, Add, Open Change&log`tCtrl+L, OpenChangelog
 Menu, ActionsMenu, Add, Open &News`tCtrl+N, OpenNews
 
-Menu, SettingsMenu, Add, Set Config, PowerTools_SetConfig
-Menu, SettingsMenu, Add, Load Config, PowerTools_LoadConfig
+Menu, SettingsMenu, Add, Load Config, LoadConfig
 Menu, SettingsMenu, Add, Open ini file, OpenIni
 
 Menu, SettingsMenu, Add,Set Password, Login_SetPassword
@@ -104,6 +103,10 @@ If FileExist(sIniFile)
     Run, notepad.exe %sIniFile%
 Return
 ; -------------------------------------------------------------------------------------------------------------------
+
+LoadConfig:
+PowerTools_LoadConfig()
+return
 
 SelectAll:
 LV_Modify(0, "Check")  ; Uncheck all the checkboxes.
@@ -268,6 +271,8 @@ Loop % LV_GetCount()
     IsChecked := (ErrorLevel >> 12) - 1  ; This sets IsChecked to true if RowNumber is checked or false otherwise.
     LV_GetText(ItemName, RowNumber, 1)
 
+    If (ItemName = "Teamsy") ; Exclude Teamsy from Startup
+        continue
     If a_iscompiled 
 	    ScriptFullPath = %A_ScriptDir%\%ItemName%.exe
     Else
