@@ -3,6 +3,7 @@
 
 #Include <Teams>
 #Include <Connections>
+; Super global-variables
 global PowerTools_ConnectionsRootUrl
 global PowerTools_ADCommand
 global PowerTools_ADConnection
@@ -18,7 +19,6 @@ People_GetEmailList(sInput){
 ; List is separated with a ;
 ; Syntax: sEmailList := People_GetEmailList(sInput)
 
-global PowerTools_ConnectionsRootUrl
 sInput := StrReplace(sInput,"%40","@") ; for connext profile links - decode @
 
 sPat = ([0-9a-zA-Z\.\-]+@[0-9a-zA-Z\-\.]*\.[a-z]{2,4})[^a-z\.]{0,1}
@@ -157,7 +157,7 @@ Try {
     strTxt = ERROR: AD Command failed.
     return strTxt
 }
-; Get the record set to be returned later
+
 If (objRecordSet.RecordCount == 0){
     strTxt :=  "No Data"  ; no records returned
 } Else {
@@ -166,10 +166,6 @@ If (objRecordSet.RecordCount == 0){
 
 ; Cleanup
 ObjRelease(objRecordSet)
-;ObjRelease(objCommand)
-;ObjRelease(objConnection)
-
-; And return the record set
 return strTxt
 }
 
