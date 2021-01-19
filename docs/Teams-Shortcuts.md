@@ -49,7 +49,7 @@ See [main blog post](https://tdalon.blogspot.com/2020/10/teamsy-new-conversation
 
 See [main blog post](https://tdalon.blogspot.com/2020/11/teams-shortcuts-smart-reply.html)
 
-![TeamsShortcuts Smart Reply Gif](/img/TeamsShortcuts_SmartReply.gif)
+<div style="text-align:center"><img src="/ahk/img/TeamsShortcuts_SmartReply.gif" alt="Teams Shortcuts Smart Reply"></div>
 
 ### Send Mentions
 

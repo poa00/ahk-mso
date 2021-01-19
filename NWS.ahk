@@ -61,7 +61,7 @@ Config := PowerTools_GetConfig() ; check also if defined
 PowerTools_ConnectionsRootUrl := PowerTools_RegRead("ConnectionsRootUrl")
 
 SubMenuSettings := PowerTools_MenuTray()
-Menu,Tray,Insert,Settings,Power Tools Bundler, PowerTools_RunBundler
+Menu,Tray,Insert,Settings,PowerTools Bundler, PowerTools_RunBundler
 
 ; -------------------------------------------------------------------------------------------------------------------
 ; SETTINGS
