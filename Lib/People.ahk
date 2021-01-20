@@ -320,6 +320,7 @@ If InStr(sName,"`n") {
 If (InStr(sName,",")) {
     LastName := RegexReplace(sName,",.*","")
     FirstName := RegexReplace(sName,".*, ","")
+    FirstName := Trim(FirstName) ; for name selection by triple click in teams, remove ending spaces
     FirstName := RegExReplace(FirstName," \(.*\)","") ; Remove (uid) in firstname
     sName = %FirstName% %LastName%
 }
@@ -398,6 +399,11 @@ People_ConnectionsOpenProfile(sSelection){
 global PowerTools_ConnectionsRootUrl
 sEmailList := People_GetEmailList(sSelection)
 If (sEmailList = "") {
+    If InStr(sSelection,"<html>") { ; convert html code to plain text
+        If RegExMatch(sSelection,"s)<html>(.*)</html>",sMatch) ; remove StartFragment
+            sSelection := sMatch1
+        sSelection := UnHtml(sSelection)
+    }
     sName := SwitchName(sSelection)
     Run, https://%PowerTools_ConnectionsRootUrl%/profiles/html/simpleSearch.do?searchBy=name&searchFor=%sName%
 } Else {
@@ -465,3 +471,15 @@ RunWait, PowerShell.exe -NoExit -ExecutionPolicy Bypass -Command %PsFile% ;,, Hi
 
 
 } ; eofun
+
+
+
+UnHtml(html) {	
+   ; original name: ComUnHTML() by 'Guest' from
+   ; https://autohotkey.com/board/topic/47356-unhtm-remove-html-formatting-from-a-string-updated/page-2 
+   ;html := RegExReplace(html, "\r?\n|\r", "<br>") ; added this because original strips line breaks
+   oHTML := ComObjCreate("HtmlFile") 
+   oHTML.write(html)
+   return % oHTML.documentElement.innerText 
+}
+

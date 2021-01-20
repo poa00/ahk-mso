@@ -3,7 +3,7 @@
 ; See help/homepage: https://tdalon.github.io/ahk/People-Connector
 
 ; Calls: ExtractEmails, TrayTipAutoHide, ToStartup
-LastCompiled = 20210115164515
+LastCompiled = 20210120085424
 
 #SingleInstance force ; for running from editor
 
@@ -251,7 +251,7 @@ If InStr(sEmailList,";") { ; multiple Emails
     Run tel:%sEmailList%
 }
 return
-
+; ------------------------------------------------------------------
 Im:
 sEmailList := People_GetEmailList(sSelection)
 If !sEmailList { ; empty    
@@ -260,7 +260,6 @@ If !sEmailList { ; empty
 sEmailList := StrReplace(sEmailList, ";",",")
 ;MsgBox %sEmailList%
 Run im:%sEmailList%
-
 return
 
 CNEmail2Mention:
@@ -379,7 +378,6 @@ If (sEmailList = "") {
     return
 }
 Teams_Emails2Users(sEmailList)
-
 return
 ; ------------------------------------------------------------------
 

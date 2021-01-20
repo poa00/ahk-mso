@@ -1,5 +1,7 @@
 # [People Connector](People-Connector) Changelog
 
+* 2021-01-20
+	- Fix: Open Connections profile from Teams on name selection. Convert HTML selection to text
 * 2021-01-15
 	- Fix: Compiled Date format in SysTray icon tooltip
 	- Fix: Get Uid with Domain. Sometimes Uid was wrong/ empty.
