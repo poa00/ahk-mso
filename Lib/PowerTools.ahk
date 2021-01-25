@@ -257,14 +257,14 @@ return Setting
 PowerTools_GetConfig(){
 RegRead, Config, HKEY_CURRENT_USER\Software\PowerTools, Config
 If (Config=""){
-    Config := PowerTools_SetConfig()
+    Config := PowerTools_LoadConfig()
 }
 return Config
 }
 ; ----------------------------------------------------------------------
 PowerTools_SetConfig(){
 RegRead, Config, HKEY_CURRENT_USER\Software\PowerTools, Config
-DefListConfig := "Conti|Vitesco|Public"
+DefListConfig := "Conti|Vitesco|Public|Ini"
 Select := 0
 Loop, parse, DefListConfig, | 
 {
@@ -308,38 +308,68 @@ return Value
 ; ----------------------------------------------------------------------
 PowerTools_LoadConfig(Config :=""){
 If (Config=""){
-    Config := PowerTools_GetConfig()
+    Config := PowerTools_SetConfig()
 }
 
+IniFile = %A_ScriptDir%\PowerTools.ini
 Switch Config
 {
     Case "Conti":
         PowerTools_RegWrite("Domain","contiwan.com")
+        IniWrite, contiwan.com, %IniFile%, Main, Domain
         PowerTools_RegWrite("TenantName","continental")
+        IniWrite, continental, %IniFile%, Main, TenantName
         PowerTools_RegWrite("ConnectionsRootUrl","connext.conti.de")
+        IniWrite, connext.conti.de, %IniFile%, Connections, ConnectionsRootUrl
+
+        
         PowerTools_RegWrite("ConnectionsName","ConNext")
+        IniWrite, ConNext, %IniFile%, Connections, ConnectionsName
+
         PowerTools_RegWrite("TeamsOnly",1)
+        IniWrite, 1, %IniFile%, MicrosoftTeams, TeamsOnly
+
+
         PowerTools_RegWrite("DocRootUrl","https://connext.conti.de/blogs/tdalon/entry/")
+        IniWrite, https://connext.conti.de/blogs/tdalon/entry/, %IniFile%, Main, DocRootUrl
+
     Case "Vitesco":
-         PowerTools_RegWrite("ConnectionsName","inVite")
-         PowerTools_RegWrite("ConnectionsRootUrl","invite.vitesco-technologies.net/")
+        ;IniWrite, vit.com, %IniFile%, Main, Domain
+        PowerTools_RegWrite("ConnectionsName","inVite")
+        IniWrite, inVite, %IniFile%, Connections, ConnectionsName
+        PowerTools_RegWrite("ConnectionsRootUrl","invite.vitesco-technologies.net")
+        IniWrite, invite.vitesco-technologies.net, %IniFile%, Connections, ConnectionsRootUrl
+
     Case "Public":
+        sEmpty=
         PowerTools_RegWrite("Domain","")
+        IniWrite,%sEmpty% , %IniFile%, Main, Domain
+
         PowerTools_RegWrite("TenantName","")
+        IniWrite, %sEmpty%, %IniFile%, Main, TenantName
+
         PowerTools_RegWrite("ConnectionsRootUrl","")
-        PowerTools_RegWrite("TeamsOnly",0)
+        IniWrite, %sEmpty%, %IniFile%, Connections, ConnectionsRootUrl
+
+        PowerTools_RegWrite("TeamsOnly",1)
+        IniWrite, 1, %IniFile%, MicrosoftTeams, TeamsOnly
+
         PowerTools_RegWrite("DocRootUrl","https://tdalon.blogspot.com/")
+        IniWrite, https://tdalon.blogspot.com/, %IniFile%, Main, DocRootUrl
+
     Case "Ini":
-        If FileExist("PowerTools.ini") {
+        If FileExist(IniFile) {
             IniRead, IniVal, PowerTools.ini, Main, Domain
             PowerTools_RegWrite("Domain",IniVal)
-            IniRead, IniVal, PowerTools.ini, Main, TeamsOnly
+            IniRead, IniVal, PowerTools.ini, MicrosoftTeams, TeamsOnly
             PowerTools_RegWrite("TeamsOnly",IniVal)
             IniRead, IniVal, PowerTools.ini, Main, DocRootUrl
             PowerTools_RegWrite("DocRootUrl",IniVal)
             IniRead, IniVal, PowerTools.ini, Connections, ConnectionsRootUrl
             If (IniVal != "ERROR")
                 PowerTools_RegWrite("ConnectionsRootUrl",IniVal)
+            Else
+                PowerTools_RegWrite("ConnectionsRootUrl","")
         } Else {
             MSgBox 0x10, PowerTools: Error, PowerTools.ini can not be found!
             return

@@ -12,7 +12,6 @@ global PowerTools_ADPath
 ; ----------------------------------------------------------------------
 
 ; ----------------------------------------------------------------------
-
 People_GetEmailList(sInput){
 ; Get EmailList from input string
 ; Extract Emails from String e.g. copied to clipboard Outlook addresses or Html source
@@ -33,18 +32,14 @@ While Pos := RegExMatch(sInput,sPat,sMatch,Pos+StrLen(sMatch)){
     sEmailList := sEmailList . sMatch1 . ";"
 }
 
-sPat = https?://%PowerTools_ConnectionsRootUrl%/profiles/html/profileView.do\?userid=([0-9A-Z]*)
+sPat = https?://%PowerTools_ConnectionsRootUrl%/profiles/html/profileView.do\?(userid|key)=[0-9A-Za-z\-]*
 sPat := StrReplace(sPat,".","\.")
 Pos = 1 
 While Pos := RegExMatch(sInput,sPat,sMatch,Pos+StrLen(sMatch)){
-    sUid := sMatch1
-    If InStr(sUidList,sUid . ";")
-        continue
-    sEmail := CNUid2Email(sUid)
+    sEmail := Connections_Profile2Email(sMatch)
     If InStr(sEmailList,sEmail . ";")
         continue
     sEmailList := sEmailList . sEmail . ";"
-    sUidList := sUidList . sUid . ";"
 }
 return SubStr(sEmailList,1,-1) ; remove ending ;
 } ; eof

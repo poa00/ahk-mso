@@ -69,7 +69,24 @@ return sResponse
 
 
 ; ----------------------------------------------------------------------
-CNUid2Email(sUid){
+Connections_Profile2Email(sUrl){
+; Requires Password - DownloadToString(sUrl) ; does not work/ returns empty
+; With VPN does not work via HttpGet
+	If RegExMatch(sUrl,"\?userid=(.*)",sMatch)
+		sUrl = https://%PowerTools_ConnectionsRootUrl%/profiles/atom/profile.do?userid=%sMatch1%
+	Else If RegExMatch(sUrl,"\?key=(.*)",sMatch)
+		sUrl = https://%PowerTools_ConnectionsRootUrl%/profiles/atom/profile.do?key=%sMatch1%
+		
+    sSource := CNGet(sUrl)
+    If (sSource ~= "Error.*") 
+        return
+	
+    If RegExMatch(sSource,"<email>(.*?)</email>",sEmail) 
+         return sEmail1
+}
+
+; ----------------------------------------------------------------------
+Connections_Uid2Email(sUid){
     ; Requires Password - DownloadToString(sUrl) ; does not work/ returns empty
     ; With VPN does not work via HttpGet
     sUrl = https://%PowerTools_ConnectionsRootUrl%/profiles/atom/profile.do?userid=%sUid%
@@ -179,14 +196,14 @@ CNMentions2Emails(sHtml){
 ; Extract list of Email from Mentions in Html source
 ; Syntax:
 ;   sEmailList := CNMentions2Emails(sHtml)
-; Calls: CNUid2Email
+; Calls: Connections_Uid2Email
 sPat = \?userid=([0-9A-Z]*?)"
 Pos = 1 
 While Pos := RegExMatch(sHtml,sPat,sUid,Pos+StrLen(sUid)){
     If InStr(sUidList,sUid1 . ";") ; skip duplicates
         continue
     
-    sEmail := CNUid2Email(sUid1)
+    sEmail := Connections_Uid2Email(sUid1)
     If (sEmail = "") ; Inactive user
         continue
     sEmailList := sEmailList . ";" . sEmail
@@ -921,7 +938,7 @@ While Pos :=    RegExMatch(sHtml, sPat, sSearch,Pos+StrLen(sSearch)) {
 	sPicUrl = https://%PowerTools_ConnectionsRootUrl%/profiles/photo.do?userid=%sUid%
 	If InStr(sHtmlNew,sPicUrl) ; Picture already inserted (by uid) ->skip
 		Continue
-	sEMail := CNUid2Email(sUid)
+	sEMail := Connections_Uid2Email(sUid)
 	sPicUrl = https://%PowerTools_ConnectionsRootUrl%/profiles/photo.do?email=%sEmail%
 	If InStr(sHtmlNew,sPicUrl) ; Picture already inserted (by email)->skip
 		Continue
@@ -1001,7 +1018,7 @@ CNUid2FirstName(sUid){
 If (sUid = "0687B1B0935023B9852577B70002F94D")
 	sName := "Edson"
 Else {
-	sEMail := CNUid2Email(sUid)
+	sEMail := Connections_Uid2Email(sUid)
 	sName := RegExReplace(sEmail,"\..*" ,"")
 	StringUpper, sName, sName , T
 }

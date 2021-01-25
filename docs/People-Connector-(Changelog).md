@@ -1,5 +1,7 @@
 # [People Connector](People-Connector) Changelog
 
+* 2021-01-25
+	- Fix: from Connections Name. Support profile links with ?key= (besides ?userid=)
 * 2021-01-20
 	- Fix: Open Connections profile from Teams on name selection. Convert HTML selection to text
 * 2021-01-15
