@@ -39,8 +39,8 @@ Menu, SubMenuCustomBackgrounds, Add, Open Custom Backgrounds Folder, OpenCustomB
 Menu, SubMenuCustomBackgrounds, Add, Open Backgrounds Library, OpenCustomBackgroundsLibrary
 
 Menu, Tray, Add, Custom Backgrounds, :SubMenuCustomBackgrounds
-
 Menu, Tray,Add,Start Second Instance, Teams_OpenSecondInstance
+Menu, Tray,Add,Clear Cache, Teams_ClearCache
 Menu, Tray,Add,Open Web App, Teams_OpenWebApp
 Menu, Tray,Add
 Menu, Tray,Add,Export Team Members, Users2Excel

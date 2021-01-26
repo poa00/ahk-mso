@@ -1,5 +1,7 @@
 # [Teams Shortcuts](Teams-Shortcuts) Changelog
 
+* 2021-01-26
+	- Added menu in systray [Clear cache](https://tdalon.blogspot.com/2021/01/teams-clear-cache.html)
 * 2021-01-18
 	- New conversation: adjusted timing for expanding the compose box
 * 2021-01-15

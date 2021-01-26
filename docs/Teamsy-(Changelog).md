@@ -1,5 +1,12 @@
 # [Teamsy](Teamsy) Changelog
 
+* 2021-01-26
+	- Added [Clear cache and Clean restart](https://tdalon.blogspot.com/2021/01/teams-clear-cache.html)
+* 2021-01-22
+	- Revert TeamsFavs: replace https to msteams to open directly in app (better multiple window handling.)
+* 2021-01-21
+	- Teams_GetMeetingWindow: Exclude Call in progress windows
+	- Share: put back the meeting window if on the front and multiple monitors
 * 2021-01-18
 	- New conversation: adjusted timing for expanding the compose box
 	- Added keyword for news

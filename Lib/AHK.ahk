@@ -1,12 +1,12 @@
 ; AHK Library
 ; Includes Startup, Compile
-AHKClose(ScriptFullPath){
+AHK_Close(ScriptFullPath){
 DetectHiddenWindows, On
 WinClose, %ScriptFullPath% ahk_class AutoHotkey
 }
 
 ; ---------------------------------------------------------------------- 
-AHKIsRunning(ScriptFullPath){
+AHK_IsRunning(ScriptFullPath){
 DetectHiddenWindows, On
 IfWinExist, %ScriptFullPath%
     return True

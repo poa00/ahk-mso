@@ -1,5 +1,6 @@
 ; You can compile it via running the Ahk2Exe command e.g. D:\Programs\AutoHotkey\Compiler\Ahk2Exe.exe /in "Teamsy.ahk" /icon "icons\Teams.ico"
-;#Include <Teams>
+#Include <Teams>
+#Include <Monitor>
 ;#SingleInstance force ; for running from editor
 
 Teamsy(A_Args[1])
@@ -73,26 +74,29 @@ Case "m","meet": ; create a meeting
     }
     SendInput !+n ; schedule a meeting alt+shift+n
     return
-Case "l","leave": ; leave meeting
+Case "l","le","leave": ; leave meeting
     WinId := Teams_GetMeetingWindow()
     If !WinId ; empty
         return
     WinActivate, ahk_id %WinId%
     SendInput ^+b ; ctrl+shift+b
     return
-Case "sh","share":  
+Case "raise","hand","ha":  
     WinId := Teams_GetMeetingWindow()
-    
     If !WinId ; empty
         return
-    
     WinActivate, ahk_id %WinId%
-    SendInput ^+e ; ctrl+shift+e 
+    SendInput ^+m ; ctrl+shift+m 
     sleep, 1000
-    SendInput {Tab}{Enter} ; Select first screen
+    SendInput ^+m ; ctrl+shift+m 
+    sleep, 1000
+    SendInput {Left}{3}{Enter} ; Select first screen
+    return
+Case "sh","share":  
+    Teams_Share()
     return
 Case "mu","mute":  
-    WinId := Teams_GetMainWindow()
+    WinId := Teams_GetMeetingWindow() ; mute can be run from Main window
     If !WinId ; empty
         return
     WinActivate, ahk_id %WinId%
@@ -110,12 +114,13 @@ Case "q","quit": ; quit
     Run %sCmd%,,Hide 
     return
 Case "r","restart": ; restart
-    WinId := Teams_GetMainWindow()
-    sCmd = taskkill /f /im "Teams.exe"
-    Run %sCmd%,,Hide 
-    While WinActive("ahk_id " . WinId)
-        Sleep 500
-    Teams_GetMainWindow()
+    Teams_Restart()
+    return
+Case "clean": ; clean restart
+    Teams_CleanRestart()
+    return
+Case "clear","cache","cl": ; clear cache
+    Teams_ClearCache()
     return
 Case "n","new","x": ; new expanded conversation 
     WinId := Teams_GetMainWindow()
