@@ -1,5 +1,7 @@
 # [People Connector](People-Connector) Changelog
 
+*2021-01-26
+	- Fix: Uid with domain returned OfficeId instead of Windows Id
 * 2021-01-25
 	- Fix: from Connections Name. Support profile links with ?key= (besides ?userid=)
 * 2021-01-20

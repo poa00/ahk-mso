@@ -45,7 +45,7 @@ return SubStr(sEmailList,1,-1) ; remove ending ;
 } ; eof
 ; ----------------------------------------------------------------------
 
-Email2Uid(sEmail,FieldName:="mailNickname"){
+Email2Uid(sEmail,FieldName:="sAMAccountName"){
     sUid := People_ADGetUserField("mail=" . sEmail, FieldName) ; mailNickname - office uid 
     ;sWinUid := People_ADGetUserField("mail=" . sEmail, "sAMAccountName")  ;- login uid
     ;sOfficeUid := People_ADGetUserField("mail=" . sEmail, "mailNickname")  ;- Office uid
@@ -69,7 +69,7 @@ Loop, parse, sEmailList, ";"
 {
     sDN := People_ADGetUserField("mail=" . A_LoopField, "distinguishedName")
     RegExMatch(sDN,",DC=([^,]*)",sDC)
-    sUid := Email2Uid(A_LoopField)
+    sUid := Email2Uid(A_LoopField,"sAMAccountName") ; Windows Id
     sUidList = %sUidList%, %sDC1%\%sUid%
 }	
 
