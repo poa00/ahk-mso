@@ -1,5 +1,7 @@
 # [People Connector](People-Connector) Changelog
 
+* 2021-01-27
+	- Added open Delve as default to D accelerator key, besides open Delve Profile
 *2021-01-26
 	- Fix: Uid with domain returned OfficeId instead of Windows Id
 * 2021-01-25

@@ -3,7 +3,7 @@
 ; See help/homepage: https://tdalon.github.io/ahk/People-Connector
 
 ; Calls: ExtractEmails, TrayTipAutoHide, ToStartup
-LastCompiled = 20210120085424
+LastCompiled = 20210127064201
 
 #SingleInstance force ; for running from editor
 
@@ -83,7 +83,9 @@ If (PowerTools_ConnectionsRootUrl != "") {
 }
 
 Menu, MainMenu,Add ; Separator
-Menu, MainMenu, add, Open o365/&Delve Profile, DelveProfile
+Menu, MainMenu, add, Open &Delve, Delve
+Menu, MainMenu, add, Open Delve Profile, DelveProfile
+
 Menu, MainMenu, add, &Bing Search, BingSearch
 Menu, MainMenu, add, &LinkedIn Search By Name, LinkedInSearch
 Menu, MainMenu, add, Stream Profile, StreamProfile
@@ -443,6 +445,18 @@ If (sEmailList = "") {
 Loop, parse, sEmailList, ";"
 {
    Run,  https://continental-my.sharepoint.com/person.aspx?user=%A_LoopField%&v=profiledetails
+}	
+return
+; ------------------------------------------------------------------
+Delve:
+sEmailList := People_GetEmailList(sSelection)
+If (sEmailList = "") { 
+    TrayTipAutoHide("People Connector warning!","No email could be found!")   
+    return
+}
+Loop, parse, sEmailList, ";"
+{
+   Run,  https://continental-my.sharepoint.com/person.aspx?user=%A_LoopField%
 }	
 return
 
