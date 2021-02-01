@@ -31,6 +31,7 @@ Else
   Menu,SubMenuSettings,UnCheck, Teams Personalize Mentions
 
 Menu, SubMenuSettings, Add, Update Personal Information, GetMe
+Menu, SubMenuSettings, Add, &Mute Hotkey, Teams_MuteHotkeySet
 
 Menu,Tray,NoStandard
 Menu,Tray,Add,Add to Teams Favorites, Link2TeamsFavs
@@ -48,9 +49,10 @@ Menu, Tray,Add,Refresh Teams List, Teams_ExportTeams
 Menu, Tray,Add
 
 Menu, SubMenuMeeting, Add, Open Teams Web Calendar, Teams_OpenWebCal
-
 ; Add Cursor Highlighter
 Menu, SubMenuMeeting, Add, Cursor Highlighter, PowerTools_CursorHighlighter
+Menu, SubMenuMeeting, Add, Toggle Mute (Middle Click on Tray Icon), Teams_Mute
+Menu, SubMenuMeeting, Add, Toggle Video (Right Click on Tray Icon), Teams_Video
 
 Menu, SubMenuVLC, Add, Start VLC, VLCStart
 Menu, SubMenuVLC, Add, Set Play Mode, VLCPlayMode
@@ -68,7 +70,7 @@ If !a_iscompiled
 	LastMod := LastCompiled
 FormatTime LastMod, %LastMod% D1 R
 
-sTooltip = Teams Shortcuts %LastMod%`nUse 'Win+T' to open main menu in Teams.`nRight-Click on icon to access other functionalities.
+sTooltip = Teams Shortcuts %LastMod%`nUse 'Win+T' to open main menu in Teams.`nClick on icon to access other functionalities.
 Menu, Tray, Tip, %sTooltip%
 
 ; -------------------------------------------------------------------------------------------------------------------
@@ -87,8 +89,22 @@ Menu, TeamsShortcutsMenu, add, Add to &Favorites, Link2TeamsFavs
 ; Reset Main WinId at startup because of some possible hwnd collision
 PowerTools_RegWrite("TeamsMainWinId","")
 
-#IfWinActive,ahk_exe Teams.exe
+; -------------------------------------------------------------------------------------------------------------------
+; Setting - TeamsMuteHotkey
+RegRead, TeamsMuteHotkey, HKEY_CURRENT_USER\Software\PowerTools, TeamsMuteHotkey
+If (TeamsMuteHotkey != "") {
+	Teams_MuteHotkeyActivate(TeamsMuteHotkey)
+}
 
+Menu, TrayVideo, Add, Toggle Video..., DoNothing
+Menu, TrayMute, Add, Toggle Mute..., DoNothing
+
+return
+
+
+
+; ##########################   Hotkeys   ##########################################
+#IfWinActive,ahk_exe Teams.exe
 
 #1:: ; <--- Personalize Mention
 PersonalizeMention:
@@ -297,6 +313,9 @@ CursorHighliter:
 Run %CHFile%
 return
 
+DoNothing:
+return
+
 ; ######################################################################
 PersonalizeMentions:
 ; Does not work!
@@ -316,7 +335,26 @@ WinClip.Paste()
 
 return
 
-; ---------------------------------------------------------------------- SUBFUNCTIONS
+; ######################################################################
+NotifyTrayClick_208:   ; Middle click (Button up)
+Teams_Mute()
+Menu_Show(MenuGetHandle("TrayMute"), False, Menu_TrayParams()*)
+
+;Menu, Tray, Tip, Toggle Mute
+;SetTimer, ResetToolTip, 1000
+Return 
+
+NotifyTrayClick_202:   ; Left click (Button up)
+Menu_Show(MenuGetHandle("Tray"), False, Menu_TrayParams()*)
+Return
+
+NotifyTrayClick_205:   ; Right click (Button up)
+Teams_Video()
+Menu_Show(MenuGetHandle("TrayVideo"), False, Menu_TrayParams()*)
+
+Return 
+
+; ---------------------------- FUNCTIONS ------------------------------------------ 
 MeetingSetup(){
 ; Open Teams Calendar in the Browser
 Teams_OpenWebCal()
@@ -367,3 +405,27 @@ WinSet, Style, -0xC00000, ahk_exe vlc.exe ; toggle title bar
 SendInput ^h ; Minimal Interface
 WinSet, AlwaysOnTop , Off, ahk_exe vlc.exe
 } ; eofun
+
+
+
+; ----------------------------------------------------------------------
+; https://www.autohotkey.com/boards/viewtopic.php?t=81157
+
+
+NotifyTrayClick(P*) {              ;  v0.41 by SKAN on D39E/D39N @ tiny.cc/notifytrayclick
+Static Msg, Fun:="NotifyTrayClick", NM:=OnMessage(0x404,Func(Fun),-1),  Chk,T:=-250,Clk:=1
+  If ( (NM := Format(Fun . "_{:03X}", Msg := P[2])) && P.Count()<4 )
+     Return ( T := Max(-5000, 0-(P[1] ? Abs(P[1]) : 250)) )
+  Critical
+  If ( ( Msg<0x201 || Msg>0x209 ) || ( IsFunc(NM) || Islabel(NM) )=0 )
+     Return
+  Chk := (Fun . "_" . (Msg<=0x203 ? "203" : Msg<=0x206 ? "206" : Msg<=0x209 ? "209" : ""))
+  SetTimer, %NM%,  %  (Msg==0x203        || Msg==0x206        || Msg==0x209)
+    ? (-1, Clk:=2) : ( Clk=2 ? ("Off", Clk:=1) : ( IsFunc(Chk) || IsLabel(Chk) ? T : -1) )
+Return True
+}
+
+
+
+
+

@@ -1,5 +1,10 @@
 # [Teamsy](Teamsy) Changelog
 
+* 2021-01-29
+	- Teamsy can be run at startup. 
+	- Added Icon with Help menu.
+* 2021-01-27
+	- Teams Mute: restore previously active window
 * 2021-01-26
 	- Added [Clear cache and Clean restart](https://tdalon.blogspot.com/2021/01/teams-clear-cache.html)
 * 2021-01-22
@@ -40,4 +45,4 @@
 * 2020-09-30
     * Integrate to PowerTools Bundle. Add SysTray with link to help/ changelog. Add to Bundler.
 * 2020-09-29
-    * add 'cal' keyword to open calendar
+    * add 'cal' keyword to open calendar

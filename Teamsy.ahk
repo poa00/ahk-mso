@@ -1,10 +1,30 @@
+; Homepage: 
 ; You can compile it via running the Ahk2Exe command e.g. D:\Programs\AutoHotkey\Compiler\Ahk2Exe.exe /in "Teamsy.ahk" /icon "icons\Teams.ico"
+LastCompiled = 20210114064703
 #Include <Teams>
 #Include <Monitor>
-;#SingleInstance force ; for running from editor
 
-Teamsy(A_Args[1])
-ExitApp
+#SingleInstance force ; for running from editor
+
+If (A_Args.Length() = 0) {
+PowerTools_MenuTray()
+
+; Tooltip
+If !a_iscompiled 
+	FileGetTime, LastMod , %A_ScriptFullPath%
+ Else 
+	LastMod := LastCompiled
+FormatTime LastMod, %LastMod% D1 R
+
+sTooltip = Teamsy %LastMod%`nClick on icon to access other functionalities.
+Menu, Tray, Tip, %sTooltip%
+
+; Run from command line
+} Else
+    Teamsy(A_Args[1])
+return
+
+; ------------------------------------------------------------------- functions --------------------------------------------
 
 Teamsy(sInput){
     
@@ -96,11 +116,7 @@ Case "sh","share":
     Teams_Share()
     return
 Case "mu","mute":  
-    WinId := Teams_GetMeetingWindow() ; mute can be run from Main window
-    If !WinId ; empty
-        return
-    WinActivate, ahk_id %WinId%
-    SendInput ^+m ;  ctrl+shift+m
+    Teams_Mute()
     return
 Case "de":  ; decline call
     WinId := Teams_GetMainWindow()
@@ -128,12 +144,7 @@ Case "n","new","x": ; new expanded conversation
     Teams_NewConversation()
     return
 Case "v","vi": ; Toggle video with background
-    WinId := Teams_GetMeetingWindow()
-    If !WinId ; empty
-        return
-    WinActivate, ahk_id %WinId%
-    SendInput ^+o ; toggle video Ctl+Shift+o
-    ;SendInput ^+p ; toggle background blur
+    Teams_Video()
     return
 } ; End Switch
 

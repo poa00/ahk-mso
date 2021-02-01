@@ -1,6 +1,8 @@
 # [NWS PowerTool](NWS-PowerTool) Changelog
 
-* 2021-01-14
+* 2021-01-28
+	- IntelliPaste SPO Office Link. Remove ending ?d= in linktext and fix wrong icon
+* 2021-01-27
 	- fix: IntelliPaste Title Case Url only if all lower
 * 2021-01-12
 	- Fix: Cisco VPN Connect

@@ -114,7 +114,7 @@ If !a_iscompiled
  Else 
 	LastMod := LastCompiled
 FormatTime LastMod, %LastMod% D1 R
-sTooltip = NWS PowerTool %LastMod%.`nRight-Click on icon to access Help and Settings.
+sTooltip = NWS PowerTool %LastMod%.`nClick on icon to access Help and Settings.
 sTrayTip = Right-Click on icon to access Help.
 Menu, Tray, Tip, %sTooltip%
 
@@ -191,6 +191,13 @@ If (Config = "Conti") {
 	If ! (Login_IsContiNet())
 		VPNConnect()
 }
+
+
+
+return
+
+; ####################################################################
+; Hotkeys
 
 ;================================================================================================
 ;  CapsLock processing.  Must double tap CapsLock to toggle CapsLock mode on or off.
@@ -727,6 +734,17 @@ Send {Enter}
 Send {Esc}
 return
 
+
+; ######################################################################
+NotifyTrayClick_202:   ; Left click (Button up)
+Menu_Show(MenuGetHandle("Tray"), False, Menu_TrayParams()*)
+Return
+
+NotifyTrayClick_205:   ; Right click (Button up)
+Menu, NWSMenu, Show
+Return 
+
+
 ; -------------------------------------------------------------------------------------------------------------------
 ; -------------------------------------------------------------------------------------------------------------------
 ; FUNCTIONS
@@ -1064,4 +1082,23 @@ If ODMPath {
 } Else {
 	TrayTipAutoHide("OneDrive Mapper Run","OneDriveMapper.ps1 wasn't selected! Set ODM Path.")
 }
+}
+
+
+
+; ----------------------------------------------------------------------
+; https://www.autohotkey.com/boards/viewtopic.php?t=81157
+
+
+NotifyTrayClick(P*) {              ;  v0.41 by SKAN on D39E/D39N @ tiny.cc/notifytrayclick
+Static Msg, Fun:="NotifyTrayClick", NM:=OnMessage(0x404,Func(Fun),-1),  Chk,T:=-250,Clk:=1
+  If ( (NM := Format(Fun . "_{:03X}", Msg := P[2])) && P.Count()<4 )
+     Return ( T := Max(-5000, 0-(P[1] ? Abs(P[1]) : 250)) )
+  Critical
+  If ( ( Msg<0x201 || Msg>0x209 ) || ( IsFunc(NM) || Islabel(NM) )=0 )
+     Return
+  Chk := (Fun . "_" . (Msg<=0x203 ? "203" : Msg<=0x206 ? "206" : Msg<=0x209 ? "209" : ""))
+  SetTimer, %NM%,  %  (Msg==0x203        || Msg==0x206        || Msg==0x209)
+    ? (-1, Clk:=2) : ( Clk=2 ? ("Off", Clk:=1) : ( IsFunc(Chk) || IsLabel(Chk) ? T : -1) )
+Return True
 }

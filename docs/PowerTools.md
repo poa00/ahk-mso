@@ -11,6 +11,7 @@ This includes:
 - [Teamsy](Teamsy)
 
 - [Chromy](Chromy)
+- [Mute Powertool](Mute-PowerTool)
 
 
 ## [How to setup the PowerTools](PowerTools-Setup)

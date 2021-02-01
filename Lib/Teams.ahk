@@ -76,7 +76,7 @@ If (sUrl="") or !(sUrl ~= "https://teams.microsoft.com/*") {
 		return
 }
 
-;sUrl:= StrReplace(sUrl,"https:","msteams:") ; prefer open in the browser for multiple window handling
+sUrl:= StrReplace(sUrl,"https:","msteams:") ; prefer open in the browser for multiple window handling
 ; folder does not end with filesep
 
 If !(FavsDir) {
@@ -555,7 +555,7 @@ If (RegExMatch(sHtmlThread,sPat,sMatch)) {
 If (sAuthor = "") { ; something went wrong
 ; TODO error handling
     MsgBox Something went wrong! Please retry.
-    MsgBox %sHtmlThread% ; DBG
+    ;MsgBox %sHtmlThread% ; DBG
     Clipboard := savedClipboard
     return
 }
@@ -973,7 +973,7 @@ oExcel.StatusBar := "READY"
 
 MenuCb_ToggleSettingTeamsPowerShell(ItemName, ItemPos, MenuName){
 If GetKeyState("Ctrl") {
-    sUrl := "https://connext.conti.de/wikis/home/wiki/Wc4f94c47297c_42c8_878f_525fd907cb68/page/Teams%20PowerShell%20Setup"
+    sUrl := "https://tdalon.blogspot.com/2020/08/teams-powershell-setup.html"
     Run, "%sUrl%"
 	return
 }
@@ -992,7 +992,7 @@ PowerTools_RegWrite("TeamsPowerShell",TeamsPowerShell)
 ; -------------------------------------------------------------------------------------------------------------------
 MenuCb_ToggleSettingTeamsMentionPersonalize(ItemName, ItemPos, MenuName){
 If GetKeyState("Ctrl") {
-    sUrl := "https://connext.conti.de/wikis/home/wiki/Wc4f94c47297c_42c8_878f_525fd907cb68/page/Teams%20PowerShell%20Setup"
+    sUrl := "https://tdalon.blogspot.com/2020/08/teams-powershell-setup.html"
     Run, "%sUrl%"
 	return
 }
@@ -1024,6 +1024,8 @@ Loop %Win% {
     IfEqual, Title,, Continue
     Title := StrReplace(Title," | Microsoft Teams","")
     If InStr(Title,",")  ; Exclude windows with , in the title (Popped-out 1-1 chat)
+        Continue
+    If RegExMatch(Title,"^Microsoft Teams Call in progress*")
         Continue
     WinList .= ( (WinList<>"") ? "|" : "" ) Title "  {" WinId "}"
     WinCount++
@@ -1057,6 +1059,7 @@ return TeamsMeetingWinId
 
 Teams_GetMainWindow(){
 ; See implementation explanations here: https://tdalon.blogspot.com/get-teams-window-ahk
+; Syntax: hWnd := Teams_GetMainWindow()
 
 WinGet, WinCount, Count, ahk_exe Teams.exe
 
@@ -1140,4 +1143,162 @@ SendInput %sInput%
 sleep, 800
 SendInput {enter}
 
+} ; eofun
+
+; -------------------------------------------------------------------------------------------------------------------
+Teams_Share(){
+WinId := Teams_GetMeetingWindow()
+If !WinId ; empty
+    return
+SysGet, MonitorCount, MonitorCount	; or try:    SysGet, var, 80
+If (MonitorCount > 1)
+    IsActive := WinActive("ahk_id " . WinId)
+Else 
+    IsActive := False ; Set to False if only one monitor is used
+WinActivate, ahk_id %WinId%
+SendInput ^+e ; ctrl+shift+e 
+sleep, 1000
+SendInput {Tab}{Enter} ; Select first screen
+
+If (IsActive) {
+; Bring back meeting window (multiple screen setup) - it is else minimized while sharing by Teams
+    WinWaitNotActive, ahk_id %WinId%
+    MonIndex := Monitor_GetMonitorIndex(WinId)
+    WinActivate, ahk_id %WinId% ; requires activate to move
+    If (MonIndex=1) {
+        SendInput #+{Left}; Win+Shift+Right Arrow
+        ;Monitor_WinMove(WinId)    
+    }   
+}
+} ; eofun
+; -------------------------------------------------------------------------------------------------------------------
+
+; -------------------------------------------------------------------------------------------------------------------
+Teams_ClearCache(){
+If GetKeyState("Ctrl") {
+    sUrl := "https://tdalon.blogspot.com/2021/01/teams-clear-cache.html"
+    Run, "%sUrl%"
+	return
+}
+If WinActive("ahk_exe Teams.exe") {
+    sCmd = taskkill /f /im "Teams.exe"
+    Run %sCmd%,,Hide 
+}
+
+While WinActive("ahk_exe Teams.exe")
+    Sleep 500
+
+TeamsDir = %A_AppData%\Microsoft\Teams
+FileRemoveDir, %TeamsDir%\application cache\cache, 1
+FileRemoveDir, %TeamsDir%\blob_storage, 1
+FileRemoveDir, %TeamsDir%\databases, 1
+FileRemoveDir, %TeamsDir%\cache, 1
+FileRemoveDir, %TeamsDir%\gpucache, 1
+FileRemoveDir, %TeamsDir%\Indexeddb, 1
+FileRemoveDir, %TeamsDir%\Local Storage, 1
+FileRemoveDir, %TeamsDir%\tmp, 1
+
+Teams_GetMainWindow()
+} ; eofun
+; -------------------------------------------------------------------------------------------------------------------
+
+; -------------------------------------------------------------------------------------------------------------------
+Teams_CleanRestart(){
+If GetKeyState("Ctrl") {
+    sUrl := "https://tdalon.blogspot.com/2021/01/teams-clear-cache.html"
+    Run, "%sUrl%"
+	return
+}
+; Warning all appdata will be deleted
+MsgBox, 0x114,Teams Clean Restart, Are you sure you want to delete all Teams Client local application data?
+IfMsgBox No
+   return
+If WinActive("ahk_exe Teams.exe") {
+    sCmd = taskkill /f /im "Teams.exe"
+    Run %sCmd%,,Hide 
+}
+While WinActive("ahk_exe Teams.exe")
+    Sleep 500
+
+TeamsDir = %A_AppData%\Microsoft\Teams
+FileRemoveDir, %TeamsDir%, 1
+
+Teams_GetMainWindow()
+} ; eofun
+
+; -------------------------------------------------------------------------------------------------------------------
+Teams_Restart(){
+; Warning all appdata will be deleted
+If WinActive("ahk_exe Teams.exe") {
+    sCmd = taskkill /f /im "Teams.exe"
+    Run %sCmd%,,Hide 
+}
+While WinActive("ahk_exe Teams.exe")
+    Sleep 500
+
+Teams_GetMainWindow()
+} ; eofun
+
+; -------------------------------------------------------------------------------------------------------------------
+
+Teams_Mute(){
+WinId := Teams_GetMeetingWindow() ; mute can be run from Main window
+If !WinId ; empty
+    return
+WinGet, curWinId, ID, A
+WinActivate, ahk_id %WinId%
+SendInput ^+m ;  ctrl+shift+m
+WinActivate, ahk_id %curWinId%
+} ; eofun
+; -------------------------------------------------------------------------------------------------------------------
+
+Teams_MuteHotkeySet(){
+; https://autohotkey.com/board/topic/47439-user-defined-dynamic-hotkeys/
+If GetKeyState("Ctrl")  { ; exclude ctrl if use in the hotkey
+	; TODO
+	return
+}
+
+RegRead, TeamsMuteHotkey, HKEY_CURRENT_USER\Software\PowerTools, TeamsMuteHotkey
+HK := HotkeyGUI(,TeamsMuteHotkey,,,"Teams Mute - Set Global Hotkey")
+
+If ErrorLevel ; Cancelled
+  return
+If (HK = TeamsMuteHotkey) ; no change
+  return
+PowerTools_RegWrite("TeamsMuteHotkey",HK)
+
+If (HK = "") { ; reset/ disable hotkey
+    ;Turn off the new hotkey.
+    Hotkey, %TeamsMuteHotkey%, Teams_Mute, Off 
+    TrayTip, Set Teams Mute Hotkey,% TeamsMuteHotkey " Hotkey off"
+    return
+}
+
+Teams_MuteHotkeyActivate(HK)
+
+} ; eofun
+
+Teams_MuteHotkeyActivate(HK) {
+;Turn on the new hotkey.
+If (HK="^+m") { ; Default Teams hotkey
+    Hotkey, IfWinNotActive, ahk_exe Teams.exe ; Exclue Teams.exe
+	Hotkey, %HK%, Teams_Mute, On 
+	Hotkey, IfWinNotActive,
+} Else {
+    Hotkey, IfWinActive, ; for all windows/ global hotkey
+    Hotkey, %HK%, Teams_Mute, On 
+}
+TrayTip, Set Teams Mute Hotkey,% HK " Hotkey on"
+}
+
+; -------------------------------------------------------------------------------------------------------------------
+Teams_Video(){
+; Toggle Video on/off
+WinId := Teams_GetMeetingWindow()
+If !WinId ; empty
+    return
+WinActivate, ahk_id %WinId%
+SendInput ^+o ; toggle video Ctl+Shift+o
+;SendInput ^+p ; toggle background blur
 } ; eofun

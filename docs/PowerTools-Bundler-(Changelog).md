@@ -1,5 +1,10 @@
 # [PowerTools Bundler](PowerTools-Bundler) Changelog
 
+* 2021-02-01
+  - Added Mute PowerTool
+  - Change Teamsy icon
+* 2021-01-29
+	- Restore: Add Teamsy to Startup
 * 2021-01-19
 	- Improved Config handling. Load config will update Ini file. Possibility to load from Ini File. Set&Load Config merged into 1 menu: Load Config.
 * 2021-01-19

@@ -11,7 +11,7 @@ IcoFile := RegExReplace(A_ScriptFullPath,"\..*",".ico")
 If (FileExist(IcoFile)) 
 	Menu,Tray,Icon, %IcoFile%
 
-AppList = ConnectionsEnhancer,NWS,OutlookShortcuts,PeopleConnector,TeamsShortcuts,Teamsy,Cursor Highlighter
+AppList = ConnectionsEnhancer,NWS,OutlookShortcuts,PeopleConnector,TeamsShortcuts,Teamsy,Mute,Cursor Highlighter
 Config := PowerTools_GetConfig()
 If (Config = "Conti") 
     AppList = MO,%AppList%
@@ -271,8 +271,6 @@ Loop % LV_GetCount()
     IsChecked := (ErrorLevel >> 12) - 1  ; This sets IsChecked to true if RowNumber is checked or false otherwise.
     LV_GetText(ItemName, RowNumber, 1)
 
-    If (ItemName = "Teamsy") ; Exclude Teamsy from Startup
-        continue
     If a_iscompiled 
 	    ScriptFullPath = %A_ScriptDir%\%ItemName%.exe
     Else
