@@ -59,6 +59,8 @@ If (Config="Conti"){
         sUrl = https://connext.conti.de/blogs/tdalon/entry/teamsy
     Case "NWS":
         sUrl := "https://connext.conti.de/wikis/home/wiki/Wc4f94c47297c_42c8_878f_525fd907cb68/page/NWS%20PowerTool"
+    Case "Mute":
+        sUrl := "https://tdalon.github.io/ahk/Mute-PowerTool"
     Case "Bundler":
         sUrl :="https://tdalon.github.io/ahk/PowerTools-Bundler"
     Case "Cursor Highlighter":
@@ -84,6 +86,8 @@ If (Config="Conti"){
         sUrl = https://tdalon.github.io/ahk/Teamsy
     Case "NWS":
         sUrl := "https://tdalon.github.io/ahk/NWS-PowerTool"
+    Case "Mute":
+        sUrl := "https://tdalon.github.io/ahk/Mute-PowerTool"
     Case "Bundler":
         sUrl :="https://tdalon.github.io/ahk/PowerTools-Bundler"
     Case "Cursor Highlighter":
@@ -115,6 +119,8 @@ Case "PeopleConnector":
     sFileName = People-Connector-(Changelog)
 Case "NWS":
     sFileName = NWS-PowerTool-(Changelog)
+Case "Mute":
+    sFileName = Mute-PowerTool-(Changelog)
 Case "Bundler":
     sFileName = PowerTools-Bundler-(Changelog)
 Case "OutlookShortcuts":
@@ -153,6 +159,8 @@ If !A_IsCompiled {
 PowerTools_News(ScriptName){
 If (ScriptName ="NWS")
     ScriptName = NWSPowerTool
+Else If (ScriptName ="Mute")
+    ScriptName = MutePowerTool
 sUrl := "https://twitter.com/search?q=(from%3Atdalon)%23" . ScriptName
 Switch ScriptName 
 {
@@ -242,14 +250,18 @@ If (Setting=""){
     Setting := PowerTools_SetSetting(SettingName)
 }
 return Setting
-}
+} ; eofun
 ; ----------------------------------------------------------------------
 PowerTools_SetSetting(SettingName){
-RegRead, Setting, HKEY_CURRENT_USER\Software\PowerTools, %SettingName%
-InputBox, Setting, PowerTools Setting, Enter Setting for %SettingName%,, 200, 125
+; for call from Menu with Name Set <Setting>
+SettingName := RegExReplace(SettingName,"^Set ","") 
+SettingProp := RegExReplace(SettingName," ","") ; Remove spaces 
+
+RegRead, Setting, HKEY_CURRENT_USER\Software\PowerTools, %SettingProp%
+InputBox, Setting, PowerTools Setting, Enter %SettingName%,, 250, 125
 If ErrorLevel
     return
-PowerTools_RegWrite(SettingName,Setting)
+PowerTools_RegWrite(SettingProp,Setting)
 return Setting
 } ; eofun
 
@@ -319,19 +331,21 @@ Switch Config
         IniWrite, contiwan.com, %IniFile%, Main, Domain
         PowerTools_RegWrite("TenantName","continental")
         IniWrite, continental, %IniFile%, Main, TenantName
-        PowerTools_RegWrite("ConnectionsRootUrl","connext.conti.de")
-        IniWrite, connext.conti.de, %IniFile%, Connections, ConnectionsRootUrl
 
-        
+        PowerTools_RegWrite("ProxyServer","http://ep.threatpulse.net:80")
+        IniWrite, http://ep.threatpulse.net:80, %IniFile%, Main, ProxyServer
+
+        PowerTools_RegWrite("ConnectionsRootUrl","connext.conti.de")
+        IniWrite, connext.conti.de, %IniFile%, Connections, ConnectionsRootUrl       
         PowerTools_RegWrite("ConnectionsName","ConNext")
         IniWrite, ConNext, %IniFile%, Connections, ConnectionsName
 
         PowerTools_RegWrite("TeamsOnly",1)
         IniWrite, 1, %IniFile%, MicrosoftTeams, TeamsOnly
 
-
         PowerTools_RegWrite("DocRootUrl","https://connext.conti.de/blogs/tdalon/entry/")
         IniWrite, https://connext.conti.de/blogs/tdalon/entry/, %IniFile%, Main, DocRootUrl
+
 
     Case "Vitesco":
         ;IniWrite, vit.com, %IniFile%, Main, Domain
@@ -347,6 +361,9 @@ Switch Config
 
         PowerTools_RegWrite("TenantName","")
         IniWrite, %sEmpty%, %IniFile%, Main, TenantName
+
+        PowerTools_RegWrite("ProxyServer","n/a")
+        IniWrite, n/a, %IniFile%, Main, ProxyServer
 
         PowerTools_RegWrite("ConnectionsRootUrl","")
         IniWrite, %sEmpty%, %IniFile%, Connections, ConnectionsRootUrl
