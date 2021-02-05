@@ -1,6 +1,6 @@
 # [Teams Shortcuts](Teams-Shortcuts) Changelog
 
-* 2021-01-27
+* [2021-01-27](https://tdalon.blogspot.com/2021/02/teams-shortcuts-new-features-202101.html)
 	- Added Setting to configure a Hotkey to toggle Mute
 	- Added SysTray Mouse Click: Right Mouse Click -> Toggle video. Middle Mouse Click -> Toggle Mute
 * 2021-01-26

@@ -1105,7 +1105,7 @@ If !FileExist(fTeamsExe) {
     return
 }
  
-Run, %fTeamsExe%
+Run, "%fTeamsExe%""
 WinWaitActive, ahk_exe Teams.exe
 TeamsMainWinId := WinExist("A")
 PowerTools_RegWrite("TeamsMainWinId",TeamsMainWinId)
@@ -1275,23 +1275,24 @@ If (HK = "") { ; reset/ disable hotkey
     return
 }
 
+; Turn off the old Hotkey
+If Not (TeamsMuteHotkey == "")
+	Hotkey, %TeamsMuteHotkey%, Teams_Mute, Off
+
 Teams_MuteHotkeyActivate(HK)
 
 } ; eofun
+; -------------------------------------------------------------------------------------------------------------------
 
 Teams_MuteHotkeyActivate(HK) {
 ;Turn on the new hotkey.
-If (HK="^+m") { ; Default Teams hotkey
-    Hotkey, IfWinNotActive, ahk_exe Teams.exe ; Exclue Teams.exe
-	Hotkey, %HK%, Teams_Mute, On 
-	Hotkey, IfWinNotActive,
-} Else {
-    Hotkey, IfWinActive, ; for all windows/ global hotkey
-    Hotkey, %HK%, Teams_Mute, On 
-}
-TrayTip, Set Teams Mute Hotkey,% HK " Hotkey on"
+Hotkey, IfWinActive, ; for all windows/ global hotkey
+Hotkey, $%HK%, Teams_Mute, On ; use $ to avoid self-referring hotkey if Ctrl+Shift+M is used
+TipText = Teams Mute Hotkey set to %HK%
+TrayTipAutoHide("Teams Mute Hotkey On",TipText,2000)
 }
 
+; -------------------------------------------------------------------------------------------------------------------
 ; -------------------------------------------------------------------------------------------------------------------
 Teams_Video(){
 ; Toggle Video on/off

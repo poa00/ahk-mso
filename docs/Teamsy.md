@@ -1,11 +1,18 @@
 # Teamsy
 
 Teamsy is a Microsoft Teams Plugin for a Launcher like Launchy or Executor.
-It also allows to command the Microsoft Teams Winddows Desktop Client from the command line.
+It also allows to command the Microsoft Teams Windows Desktop Client from the command line.
 
 ## [Main Blog Post](https://tdalon.blogspot.com/2020/07/teamsy.html)
 
 See [all blog posts tagged with #teamsy](https://tdalon.blogspot.com/search/label/teamsy).
+
+## Prerequisite
+
+You can run Teamsy from the command line.
+The main advantage is if you run Teamsy from an App launcher like Launcher or Executor.
+I [recommend](https://tdalon.blogspot.com/2020/08/executor-my-preferred-app-launcher.html) personally Executor.
+You can download it [here](http://executor.dk/).
 
 ## Feature Highlights
 
