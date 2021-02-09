@@ -2,7 +2,7 @@
 ; Used by PeopleConnector and ConNextEnhancer
 
 #Include <Teams>
-#Include <Connections>
+;#Include <Connections> ; remove Lib declaration because it prompts for ConnectionsRootUrl
 ; Super global-variables
 global PowerTools_ConnectionsRootUrl
 global PowerTools_ADCommand

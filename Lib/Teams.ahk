@@ -1,5 +1,6 @@
 #Include <People>
 #Include <UriDecode>
+#Include <Clip>
 ; -------------------------------------------------------------------------------------------------------------------
 Teams_Emails2ChatDeepLink(sEmailList, askOpen:= true){
 ; Copy Chat Link to Clipboard and ask to open
@@ -17,17 +18,11 @@ If InStr(sEmailList,";") { ; Group Chat
     sName := StrReplace(sName,"." ," ")
     StringUpper, sName, sName , T
     sLinkDisplayText = Chat with %sName%
-    sHtml = <a href="%sLink%">%sLinkDisplayText%</a>
-    WinClip.SetHtml(sHtml) 
-    WinClip.SetText(sLink) 
-    Run, %sLink%
     ;InputBox, sTopicName, Chat Link Display Name,,,,100,,,,, %sLinkDisplayText%
 }
 
 sHtml = <a href="%sLink%">%sLinkDisplayText%</a>
-WinClip.SetHtml(sHtml) 
-WinClip.SetText(sLink) 
-
+Clip_SetHtml(sHtml,sLink)
 If askOpen {
 	MsgBox 0x1034,People Connector, Teams link was copied to the clipboard. Do you want to open the Chat?
 	IfMsgBox Yes
@@ -607,11 +602,7 @@ If (TeamsReplyWithMention = True)
 Else
     sQuoteHtml = <blockquote>%sQuoteTitleHtml%<br>%sQuoteBodyHtml%</blockquote>
 
-
-WinClip.SetHTML(sQuoteHtml)
-WinClip.Paste() ; seems asynchronuous
-PasteDelay := PowerTools_GetParam("PasteDelay")
-Sleep %PasteDelay% 
+Clip_PasteHtml(sQuoteHtml,,False)
 
 ;MsgBox %sQuoteHtml% ; DBG
 
@@ -1258,7 +1249,6 @@ If GetKeyState("Ctrl")  { ; exclude ctrl if use in the hotkey
 	; TODO
 	return
 }
-
 RegRead, TeamsMuteHotkey, HKEY_CURRENT_USER\Software\PowerTools, TeamsMuteHotkey
 HK := HotkeyGUI(,TeamsMuteHotkey,,,"Teams Mute - Set Global Hotkey")
 
@@ -1271,7 +1261,8 @@ PowerTools_RegWrite("TeamsMuteHotkey",HK)
 If (HK = "") { ; reset/ disable hotkey
     ;Turn off the new hotkey.
     Hotkey, %TeamsMuteHotkey%, Teams_Mute, Off 
-    TrayTip, Set Teams Mute Hotkey,% TeamsMuteHotkey " Hotkey off"
+    TipText = Set Teams Toggle Mute Hotkey %TeamsMuteHotkey% off!
+    TrayTipAutoHide("Teams Toggle Mute Hotkey Off",TipText,2000)
     return
 }
 
@@ -1279,21 +1270,67 @@ If (HK = "") { ; reset/ disable hotkey
 If Not (TeamsMuteHotkey == "")
 	Hotkey, %TeamsMuteHotkey%, Teams_Mute, Off
 
-Teams_MuteHotkeyActivate(HK)
+Teams_MuteHotkeyActivate(HK, True)
 
 } ; eofun
 ; -------------------------------------------------------------------------------------------------------------------
 
-Teams_MuteHotkeyActivate(HK) {
+Teams_MuteHotkeyActivate(HK,showTrayTip := False) {
 ;Turn on the new hotkey.
 Hotkey, IfWinActive, ; for all windows/ global hotkey
 Hotkey, $%HK%, Teams_Mute, On ; use $ to avoid self-referring hotkey if Ctrl+Shift+M is used
-TipText = Teams Mute Hotkey set to %HK%
-TrayTipAutoHide("Teams Mute Hotkey On",TipText,2000)
+If (showTrayTip) {
+    TipText = Teams Mute Hotkey set to %HK%
+    TrayTipAutoHide("Teams Toggle Mute Hotkey On",TipText,2000)
 }
+} ; eofun
 
 ; -------------------------------------------------------------------------------------------------------------------
 ; -------------------------------------------------------------------------------------------------------------------
+Teams_VideoHotkeySet(){
+; https://autohotkey.com/board/topic/47439-user-defined-dynamic-hotkeys/
+If GetKeyState("Ctrl")  { ; exclude ctrl if use in the hotkey
+	; TODO
+	return
+}
+
+RegRead, TeamsVideoHotkey, HKEY_CURRENT_USER\Software\PowerTools, TeamsVideoHotkey
+HK := HotkeyGUI(,TeamsVideoHotkey,,,"Teams Toggle Video - Set Global Hotkey")
+
+If ErrorLevel ; Cancelled
+  return
+If (HK = TeamsVideoHotkey) ; no change
+  return
+PowerTools_RegWrite("TeamsVideoHotkey",HK)
+
+If (HK = "") { ; reset/ disable hotkey
+    ;Turn off the new hotkey.
+    Hotkey, %TeamsVideoHotkey%, Teams_Video, Off 
+    TipText = Set Teams Video Hotkey %TeamsVideoHotkey% off!
+    TrayTipAutoHide("Teams Toggle Video Hotkey Off",TipText,2000)
+    return
+}
+
+; Turn off the old Hotkey
+If Not (TeamsVideoHotkey == "")
+	Hotkey, %TeamsVideoHotkey%, Teams_Video, Off
+
+Teams_VideoHotkeyActivate(HK, True)
+
+} ; eofun
+; -------------------------------------------------------------------------------------------------------------------
+
+Teams_VideoHotkeyActivate(HK,showTrayTip:= False) {
+;Turn on the new hotkey.
+Hotkey, IfWinActive, ; for all windows/ global hotkey
+Hotkey, $%HK%, Teams_Video, On ; use $ to avoid self-referring hotkey if Ctrl+Shift+M is used
+If (showTrayTip) {
+    TipText = Teams Toggle Video Hotkey set to %HK%
+    TrayTipAutoHide("Teams Toggle Video Hotkey On",TipText,2000)
+}
+} ; eofun
+; -------------------------------------------------------------------------------------------------------------------
+
 Teams_Video(){
 ; Toggle Video on/off
 WinId := Teams_GetMeetingWindow()
@@ -1305,3 +1342,6 @@ SendInput ^+o ; toggle video Ctl+Shift+o
 ;SendInput ^+p ; toggle background blur
 WinActivate, ahk_id %curWinId%
 } ; eofun
+
+; -------------------------------------------------------------------------------------------------------------------
+; -------------------------------------------------------------------------------------------------------------------

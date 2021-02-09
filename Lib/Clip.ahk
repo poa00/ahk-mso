@@ -1,6 +1,33 @@
-Clip_SetHtml(sHtml,sText,HtmlHead := ""){
-; Syntax: Clip_SetHtml(sHtml,sText,HtmlHead := "")
+; -------------------------------------------------------------------------------------------------------------------
+Clip_Paste(sText,restore := True) {
+; Syntax: Clip_PasteHtml(sHtml,sText,restore := True)
+; If sHtml is a link (starts with http), the Html link will be wrapped around it i.e. sHtml = <a href="%sHtml%">%sText%</a>
+If (restore)
+    ClipBackup:= ClipboardAll
+Clipboard := sText
+; Paste
+SendInput ^v
+Sleep, 150
+while DllCall("user32\GetOpenClipboardWindow", "Ptr")
+    Sleep, 150
+If (restore)
+    Clipboard:= ClipBackup
+} ; eofun
+; -------------------------------------------------------------------------------------------------------------------
+Clip_Set(sText){
+Clipboard := sText
+Sleep, 150
+while DllCall("user32\GetOpenClipboardWindow", "Ptr")
+    Sleep, 150
+} ; eofun
+; -------------------------------------------------------------------------------------------------------------------
+
+Clip_SetHtml(sHtml,sText:="",HtmlHead := ""){
+; Syntax: Clip_SetHtml(sHtml,sText:="",HtmlHead := "")
 ; If sHtml is a link (starts with http), the Html link will be wrapped around it sHtml = <a href="%sHtml%">%sText%</a>
+; If no Text display is passed as argument sText := sHtml
+If (sText="")
+    sText := sHtml
 If RegExMatch(sHtml,"^http")
     sHtml = <a href="%sHtml%">%sText%</a>
 SetClipboardHTML(sHtml,HtmlHead,sText)
@@ -10,7 +37,7 @@ while DllCall("user32\GetOpenClipboardWindow", "Ptr")
 } ; eofun
 
 ; -------------------------------------------------------------------------------------------------------------------
-Clip_PasteHtml(sHtml,sText,restore := True) {
+Clip_PasteHtml(sHtml,sText:="",restore := True) {
 ; Syntax: Clip_PasteHtml(sHtml,sText,restore := True)
 ; If sHtml is a link (starts with http), the Html link will be wrapped around it i.e. sHtml = <a href="%sHtml%">%sText%</a>
 If (restore)
@@ -24,6 +51,41 @@ while DllCall("user32\GetOpenClipboardWindow", "Ptr")
 If (restore)
     Clipboard:= ClipBackup
 } ; eofun
+; -------------------------------------------------------------------------------------------------------------------
+
+Clip_GetSelection(type:="text",doRestoreClip:=True){
+; Syntax:
+; 	sSelection := GetSelection("text"*|"html",restore:= True)
+; Default "text"
+; Output is trimmed
+
+; Calls: WinClip.GetHTML
+
+If (doRestoreClip = True)
+  OldClipboard:= ClipboardAll                         ;Save existing clipboard.
+
+SendInput,^c    
+Sleep, 150
+while DllCall("user32\GetOpenClipboardWindow", "Ptr")
+    Sleep, 150                                      ;Copy selected text to clipboard
+
+
+If (type = "text") {
+  sSelection := clipboard
+  ;sSelection := WinClip.GetText()
+} Else If (type ="html") {
+  sSelection := WinClip.GetHTML()
+}
+
+sSelection := Trim(sSelection,"`n`r`t`s")
+
+If (doRestoreClip = True) ; Restore Clipboard
+  Clipboard := OldClipboard 
+
+return sSelection
+} 
+; -------------------------------------------------------------------------------------------------------------------
+
 
 ; -------------------------------------------------------------------------------------------------------------------
 ; https://www.autohotkey.com/boards/viewtopic.php?f=6&t=80706&sid=af626493fb4d8358c95469ef05c17563

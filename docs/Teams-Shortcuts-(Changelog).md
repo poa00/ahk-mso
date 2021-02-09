@@ -1,5 +1,9 @@
 # [Teams Shortcuts](Teams-Shortcuts) Changelog
 
+* 2021-02-09
+	- Bug fix. First start prompt for Connections Url
+	- Remove Meeting->VLC Menus
+	- Add global hotkey setting for Toggle Video
 * 2021-02-08
 	- [Fix](https://tdalon.blogspot.com/2021/02/ahk-tray-no-active-window.html). SysTray Actions will restore previous active window on Toggle mute and Video
 * [2021-01-27](https://tdalon.blogspot.com/2021/02/teams-shortcuts-new-features-202101.html)

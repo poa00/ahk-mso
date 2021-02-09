@@ -1,5 +1,7 @@
 # [Connections Enhancer](Connections-Enhancer) Changelog
 
+* 2021-02-08
+	- Insert TOC: cancel on TOC depth input exits without inserting TOC
 * 2020-12-11
 	- Fix: Ctrl+S opens Editor Help (missing return)
 * 2020-12-07

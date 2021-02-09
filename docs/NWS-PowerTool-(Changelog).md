@@ -1,5 +1,12 @@
 # [NWS PowerTool](NWS-PowerTool) Changelog
 
+* 2021-02-09
+	- IntelliPaste: Connections blog urls with sections: beautify sections. Long text with blog name at the end/ after the section instead of inbetween.
+	- IntelliPaste: timing issues fixed using Clip library instead of WinClip.
+* 2021-02-08
+	- IntelliPaste: Connections url: fixed for query wiki links (get wiki name) e.g. https://connext.conti.de/wikis/home/wiki/W354104eee9d6_4a63_9c48_32eb87112262/index?sort=mostpopular&tag=sync  and https://connext.conti.de/wikis/home#!/search?query=%20ms_teams%20meeting%20virtual&mode=this&wikiLabel=W354104eee9d6_4a63_9c48_32eb87112262
+	- IntelliPaste: better display name of general links: truncate to last url part
+	- Added Blogger Quick Search, Quick Edit
 * 2021-01-28
 	- IntelliPaste SPO Office Link. Remove ending ?d= in linktext and fix wrong icon
 * 2021-01-27

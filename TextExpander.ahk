@@ -5,11 +5,10 @@
 ; Code Project Documentation is available on ContiSource GitHub here: http://github.conti.de/ContiSource/ahk
 
 ; Source : http://github.conti.de/ContiSource/ahk/blob/master/TextExpander.ahk
-; Calls: Lib/WinClip
+; Calls: Lib/Clip
 
 #SingleInstance force ; for running from editor
-#Include <WinClipAPI>
-#Include <WinClip>
+#Include <Clip>
 #Include <Login>
 
 ; ##### Hotstrings ####
@@ -84,8 +83,7 @@ return
 ::mo_ty:: ; MO Thank you image
 sHtml := ConNext_Kudos2Html("thank_you")
 sHtml = <p style="text-align: center;">%sHtml%<p>
-WinClip.SetHTML(sHtml)
-WinClip.Paste()	
+Clip_PasteHtml(sHtml)
 return
 
 ; ################### PowerTools RTF Hotstrings ##########################

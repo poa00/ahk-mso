@@ -59,10 +59,10 @@ return sEmailList
 
 Outlook_Meeting2Excel(oItem :="") {
 
-olApp := ComObjActive("Outlook.Application")
-
-If (oItem ="")
+If (oItem ="") {
+    olApp := ComObjActive("Outlook.Application")
     oItem := Outlook_GetCurrentItem(olApp)
+}
 
 oExcel := ComObjCreate("Excel.Application") ;handle
 oExcel.Workbooks.Add ;add a new workbook
@@ -138,7 +138,38 @@ oTable.Name := "OutlookRecipientsExport"
 
 oTable.Range.Columns.AutoFit
 oExcel.StatusBar := "READY"
-
-
 } ; eofun
 ; ------------------------------------------------------------------
+Outlook_CopyLink(oItem:="") {
+If (oItem ="") {
+    olApp := ComObjActive("Outlook.Application")
+    oItem := Outlook_GetCurrentItem(olApp)
+}
+sEntryID := oItem.EntryID
+sLink = outlook:%sEntryID%
+sSubject := oItem.Subject
+sSenderName := oItem.SenderName
+sType := Item2Type(oItem)
+If (sType="")
+    sText = %sSubject%  (from %sSenderName%)
+Else
+    sText = %sSubject%  - %sType% from %sSenderName%
+sHtml = <a href="%sLink%">%sText%</a>
+Clip_SetHtml(sHtml,sText)
+TrayTipAutoHide("Outlook Shortcuts: Copy Link","Outlook link was copied to the clipboard.")
+} ; eofun
+; ------------------------------------------------------------------
+
+
+Item2Type(oItem){
+sClass := oItem.Class
+Switch sClass
+{
+Case "43":
+    return "Email"
+Case "26":
+    return "Appointment"
+Default:
+    return
+} ; end switch
+}

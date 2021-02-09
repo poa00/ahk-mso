@@ -1,7 +1,9 @@
 # [People Connector](People-Connector) Changelog
 
+* 2021-02-05
+	- Fix issue from Connections visit card selection from Status update. Source Url contains profile link of the SU poster.-> Limit email parsing to HTML body.
 * 2021-01-27
-	- Added open Delve as default to D accelerator key, besides open Delve Profile
+	- Added open Delve main page as default to D accelerator key, besides former open Delve Profile.
 *2021-01-26
 	- Fix: Uid with domain returned OfficeId instead of Windows Id
 * 2021-01-25
