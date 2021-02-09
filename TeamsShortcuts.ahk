@@ -5,7 +5,7 @@
 ; Source : https://github.com/tdalon/ahk/blob/master/TeamsShortcuts.ahk
 ;
 
-LastCompiled = 20210114064703
+LastCompiled = 20210205214839
 
 #Include <Teams>
 #Include <PowerTools>
@@ -337,11 +337,9 @@ return
 
 ; ######################################################################
 NotifyTrayClick_208:   ; Middle click (Button up)
+SendInput, !{Esc} ; for call from system tray - get active window
 Teams_Mute()
 Menu_Show(MenuGetHandle("TrayMute"), False, Menu_TrayParams()*)
-
-;Menu, Tray, Tip, Toggle Mute
-;SetTimer, ResetToolTip, 1000
 Return 
 
 NotifyTrayClick_202:   ; Left click (Button up)
@@ -349,9 +347,9 @@ Menu_Show(MenuGetHandle("Tray"), False, Menu_TrayParams()*)
 Return
 
 NotifyTrayClick_205:   ; Right click (Button up)
+SendInput, !{Esc} ; for call from system tray - get active window
 Teams_Video()
 Menu_Show(MenuGetHandle("TrayVideo"), False, Menu_TrayParams()*)
-
 Return 
 
 ; ---------------------------- FUNCTIONS ------------------------------------------ 

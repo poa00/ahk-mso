@@ -1299,7 +1299,9 @@ Teams_Video(){
 WinId := Teams_GetMeetingWindow()
 If !WinId ; empty
     return
+WinGet, curWinId, ID, A
 WinActivate, ahk_id %WinId%
 SendInput ^+o ; toggle video Ctl+Shift+o
 ;SendInput ^+p ; toggle background blur
+WinActivate, ahk_id %curWinId%
 } ; eofun

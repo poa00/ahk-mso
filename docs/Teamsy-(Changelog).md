@@ -1,5 +1,7 @@
 # [Teamsy](Teamsy) Changelog
 
+* 2021-02-08
+	- Video Toggle: restore last window focus.
 * 2021-01-29
 	- Teamsy can be run at startup. 
 	- Added Icon with Help menu.
