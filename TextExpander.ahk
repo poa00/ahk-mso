@@ -53,49 +53,32 @@ Thierry
 ::teamsme:: ; Teams Me Chat Link (rtf)
 sText = Chat with me in Teams
 sLink :=  "https://teams.microsoft.com/l/chat/0/0?users=Thierry.Dalon@continental-corporation.com"
-; remove % e.g. replace %20 by blank
-sHtml = <a href="%sLink%">%sText%</a>
-WinClip.SetHTML(sHtml)
-WinClip.SetText(sLink)
-WinClip.Paste()	
+Clip_PasteHtml(sLink,sText,True)	
 return
 
 ::tagging_rules:: ; ConNext Tagging Rules (RTF Link)
 sText = ConNext Tagging Rules
 sLink := "https://connext.conti.de/wikis/home/wiki/W10f67125ddc8_42e1_a6da_0a8e6a1cd541/page/ConNext%20Basics?section=tagging"
-sHtml = <a href="%sLink%">%sText%</a>
-WinClip.SetHTML(sHtml)
-WinClip.SetText(sLink)
-WinClip.Paste()	
+Clip_PasteHtml(sLink,sText,True)
 return
 
 
 ::nws_s:: ; NWS Search (RTF Link)
 sText = NWS Search
 sLink = http://links.conti.de/nws_search
-sHtml = <a href="%sLink%">%sText%</a>
-WinClip.SetHTML(sHtml)
-WinClip.SetText(sLink)
-WinClip.Paste()	
+Clip_PasteHtml(sLink,sText,True)	
 return
 
 ::nws_ss:: ; NWS Social Support (RTF Link)
 sText = NWS Social Support
 sLink = http://links.conti.de/nws_socialsupport
-sHtml = <a href="%sLink%">%sText%</a>
-WinClip.SetHTML(sHtml)
-WinClip.SetText(sLink)
-WinClip.Paste()	
+Clip_PasteHtml(sLink,sText,True)
 return
 
 ::nws_sh:: ; NWS Search Help Link (rtf)
 sText = NWS Search
 sLink := "https://connext.conti.de/wikis/home/wiki/W10f67125ddc8_42e1_a6da_0a8e6a1cd541/page/Help%20on%20Start%20Page%20with%20Search"
-; remove % e.g. replace %20 by blank
-sHtml = <a href="%sLink%">%sText%</a>
-WinClip.SetHTML(sHtml)
-WinClip.SetText(sLink)
-WinClip.Paste()	
+Clip_PasteHtml(sLink,sText,True)
 return
 
 ::mo_ty:: ; MO Thank you image
@@ -109,55 +92,37 @@ return
 ::Teams.ahk:: ; Teams.ahk (RTF Link)
 sText = ahk/Lib/Teams.ahk -> (function)
 sLink := "https://github.com/tdalon/ahk/blob/master/Lib/Teams.ahk"
-sHtml = <a href="%sLink%">%sText%</a>
-WinClip.SetHTML(sHtml)
-WinClip.SetText(sLink)
-WinClip.Paste()	
+Clip_PasteHtml(sLink,sText,True)
 return
 
 ::PT_TS:: ; TeamsShortcuts (RTF Link)
 sText = Teams Shortcuts
 sLink := "https://tdalon.github.io/ahk/Teams-Shortcuts"
-sHtml = <a href="%sLink%">%sText%</a>
-WinClip.SetHTML(sHtml)
-WinClip.SetText(sLink)
-WinClip.Paste()	
+Clip_PasteHtml(sLink,sText,True)
 return
 
 ::PT_T:: ; Teamsy (RTF Link)
 sText = Teamsy
 sLink := "https://tdalon.github.io/ahk/Teamsy"
-sHtml = <a href="%sLink%">%sText%</a>
-WinClip.SetHTML(sHtml)
-WinClip.SetText(sLink)
-WinClip.Paste()	
+Clip_PasteHtml(sLink,sText,True)
 return
 
 ::PT_CE:: ; Connections Enhancer (RTF Link)
 sText = Connections Enhancer
 sLink := "https://tdalon.github.io/ahk/Connections-Enhancer"
-sHtml = <a href="%sLink%">%sText%</a>
-WinClip.SetHTML(sHtml)
-WinClip.SetText(sLink)
-WinClip.Paste()	
+Clip_PasteHtml(sLink,sText,True)
 return
 
 ::PT_N:: ; NWS PowerTool (RTF Link)
 sText = NWS PowerTool
 sLink := "https://tdalon.github.io/ahk/NWS-PowerTool"
-sHtml = <a href="%sLink%">%sText%</a>
-WinClip.SetHTML(sHtml)
-WinClip.SetText(sLink)
-WinClip.Paste()	
+Clip_PasteHtml(sLink,sText,True)
 return
 
 ::PT_OS:: ; OutlookShortcuts (RTF Link)
 sText = Outlook Shortcuts
 sLink := "https://tdalon.github.io/ahk/Outlook-Shortcuts"
-sHtml = <a href="%sLink%">%sText%</a>
-WinClip.SetHTML(sHtml)
-WinClip.SetText(sLink)
-WinClip.Paste()	
+Clip_PasteHtml(sLink,sText,True)
 return
 
 
