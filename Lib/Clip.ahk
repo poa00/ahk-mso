@@ -53,39 +53,68 @@ If (restore)
 } ; eofun
 ; -------------------------------------------------------------------------------------------------------------------
 
-Clip_GetSelection(type:="text",doRestoreClip:=True){
+Clip_GetSel(type:="text", doTrim := True){
 ; Syntax:
 ; 	sSelection := GetSelection("text"*|"html",restore:= True)
 ; Default "text"
 ; Output is trimmed
+OldClipboard:= ClipboardAll                         ;Save existing clipboard.
 
-; Calls: WinClip.GetHTML
-
-If (doRestoreClip = True)
-  OldClipboard:= ClipboardAll                         ;Save existing clipboard.
-
+Clipboard=
+while(Clipboard){
+  Sleep,10
+}
 SendInput,^c    
 Sleep, 150
 while DllCall("user32\GetOpenClipboardWindow", "Ptr")
     Sleep, 150                                      ;Copy selected text to clipboard
 
-
 If (type = "text") {
   sSelection := clipboard
-  ;sSelection := WinClip.GetText()
 } Else If (type ="html") {
-  sSelection := WinClip.GetHTML()
+   Clip_GetHtml(sSelection)
 }
+If doTrim
+    sSelection := Trim(sSelection,"`n`r`t`s")
 
-sSelection := Trim(sSelection,"`n`r`t`s")
-
-If (doRestoreClip = True) ; Restore Clipboard
-  Clipboard := OldClipboard 
+Clipboard := OldClipboard 
 
 return sSelection
 } 
 ; -------------------------------------------------------------------------------------------------------------------
 
+
+Clip_GetSelectionHtml(){
+; Get selection in html format
+; Syntax:
+; 	sSelection := GetSelectionHtml(restore:= True)
+sSelection := Clip_GetSel("html",False)
+return sSelection
+} 
+; -------------------------------------------------------------------------------------------------------------------
+Clip_GetSelection(){
+; Get selection in plain text format
+; Syntax:
+; 	sSelection := GetSelection(restore:= True)
+sSelection := Clip_GetSel("text",False)
+return sSelection
+} 
+; -------------------------------------------------------------------------------------------------------------------
+
+Clip_GetHtml( byref Data ) { ; www.autohotkey.com/forum/viewtopic.php?p=392624#392624
+ If CBID := DllCall( "RegisterClipboardFormat", Str,"HTML Format", UInt )
+  If DllCall( "IsClipboardFormatAvailable", UInt,CBID ) <> 0
+   If DllCall( "OpenClipboard", UInt,0 ) <> 0
+    If hData := DllCall( "GetClipboardData", UInt,CBID, UInt )
+       DataL := DllCall( "GlobalSize", UInt,hData, UInt )
+     , pData := DllCall( "GlobalLock", UInt,hData, UInt )
+     , VarSetCapacity( data, dataL * ( A_IsUnicode ? 2 : 1 ) ), StrGet := "StrGet"
+     , A_IsUnicode ? Data := %StrGet%( pData, dataL, 0 )
+                   : DllCall( "lstrcpyn", Str,Data, UInt,pData, UInt,DataL )
+     , DllCall( "GlobalUnlock", UInt,hData )
+ DllCall( "CloseClipboard" )
+Return dataL ? dataL : 0
+}
 
 ; -------------------------------------------------------------------------------------------------------------------
 ; https://www.autohotkey.com/boards/viewtopic.php?f=6&t=80706&sid=af626493fb4d8358c95469ef05c17563
@@ -138,4 +167,6 @@ Static CF_UNICODETEXT:=13,   CFID:=DllCall("RegisterClipboardFormat", "Str","HTM
   hMemTXT := hMemTXT ? DllCall("GlobalFree", "Ptr",hMemTXT) : 0
 
 Return (Res1 & Res2)
-}
+} ; eofun
+; -------------------------------------------------------------------------------------------------------------------
+; -------------------------------------------------------------------------------------------------------------------
