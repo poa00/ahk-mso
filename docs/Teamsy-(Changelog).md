@@ -1,7 +1,7 @@
 # [Teamsy](Teamsy) Changelog
 
 * 2021-02-15
-	- fix: Get Meeting Window with , in title. Improved RegEx; only if Name, Firstname () format
+	- fix: [Get Meeting Window](https://tdalon.blogspot.com/2020/10/get-teams-window-ahk.html#getmeetingwindow) with , in title. Improved RegEx; only if Name, Firstname () format
 	- t m: activates meeting window. t n m: to create a new meeting
 	- improved WinListBox: double click in list box supported
 * 2021-02-08
