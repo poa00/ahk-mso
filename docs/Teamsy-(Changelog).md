@@ -1,5 +1,9 @@
 # [Teamsy](Teamsy) Changelog
 
+* 2021-02-15
+	- fix: Get Meeting Window with , in title. Improved RegEx; only if Name, Firstname () format
+	- t m: activates meeting window. t n m: to create a new meeting
+	- improved WinListBox: double click in list box supported
 * 2021-02-08
 	- Video Toggle: restore last window focus.
 * 2021-01-29
