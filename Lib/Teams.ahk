@@ -28,7 +28,6 @@ If askOpen {
 	IfMsgBox Yes
 		Run, %sLink% 
 }
-
 } ; eofun
 
 ; -------------------------------------------------------------------------------------------------------------------
@@ -100,7 +99,7 @@ IniWrite, 0, %sFile%, InternetShortcut, IconIndex
 ; Save FavsDir to Settings in registry
 SplitPath, sFile, sFileName, FavsDir
 PowerTools_RegWrite("TeamsFavsDir",FavsDir)
-} 
+} ; eofun
 
 ; -------------------------------------------------------------------------------------------------------------------
 TeamsFavsSetDir(){
@@ -112,7 +111,6 @@ If ErrorLevel
 PowerTools_RegWrite("TeamsFavsDir",sKeyValue)
 return sKeyValue
 } ; eofun
-
 
 ; ----------------------------------------------------------------------
 Teams_Emails2Favs(sEmailList){
@@ -476,7 +474,6 @@ RunWait, powershell.exe -ExecutionPolicy Bypass -Command %PsFile% > %tempFile%,,
 ; Read the temp file into a variable and then delete it.
 FileRead, sOutput, %tempFile%
 ;FileDelete, %tempFile%
-
 Run %tempFile% 
 }
 
@@ -615,7 +612,6 @@ If WinActive("ahk_exe Teams.exe") {
 
 ; Restore Clipboard
 Clipboard := savedClipboard
-
 } ; eofun
 
 
@@ -645,9 +641,6 @@ SendInput {Esc}
 sTeamLink := StrReplace(sMatch1,"&amp;amp;","&")
 return sTeamLink
 } ; eofun
-
-
-
 ; -------------------------------------------------------------------------------------------------------------------
 Teams_SendMention(sInput, doPerso := ""){
 ; See notes https://tdalon.blogspot.com/teams-shortcuts-send-mention
@@ -756,22 +749,27 @@ return linktext
 Teams_FileLinkBeautifier(sLink){
 ; sLink := Teams_FileLinkBeautifier(sLink)
 ; Test: https://teams.microsoft.com/l/file/FCBA4F79-460D-45B7-A5E5-51ADDB0D2FA6?tenantId=8d4b558f-7b2e-40ba-ad1f-e04d79e6265a&fileType=pptx&objectUrl=https%3A%2F%2Fcontinental.sharepoint.com%2Fteams%2Fteam_10026816-SYSWorkproductsRoles%2FShared%20Documents%2FSYS%20Workproducts%20Roles%2FWorkproducts%2FPOR%20template%2FTemplate_ProjectPresentation_Systems.pptx&baseUrl=https%3A%2F%2Fcontinental.sharepoint.com%2Fteams%2Fteam_10026816-SYSWorkproductsRoles&serviceName=teams&threadId=19:c9051eb142d742cf98c02aef366975f7@thread.skype&groupId=d9766a93-cc6f-46b6-9c5b-863e123b11f8
-If RegExMatch(sLink,"https://teams.microsoft.com/l/file/.*&objectUrl=(.*?)&",sMatch){
-    return uriDecode(sMatch1)
+sLink := uriDecode(sLink)
+If RegExMatch(sLink,"https://teams\.microsoft\.com(?:.*)/l/file/.*&objectUrl=(.*?)&",sMatch){
+    return sMatch1
 }
 ; Test: https://teams.microsoft.com/_#/files/Allgemein?threadId=19%3A05525c0725eb4dc58caf12183a2faf5b%40thread.skype&ctx=channel&context=01%2520-%2520Draft&rootfolder=%252Fteams%252Fteam_10026816%252FShared%2520Documents%252FGeneral%252FProcesses%2520and%2520Methods%252F00%2520-%2520System%2520Release%2520Note%252F01%2520-%2520Draft
-If RegExMatch(sLink,"https://teams\.microsoft\.com/_#/files/.*&rootfolder=(.*)",sMatch){
+If RegExMatch(sLink,"https://teams\.microsoft\.com(?:.*)/files/.*&rootfolder=(.*)",sMatch){
     TenantName := PowerTools_GetSetting("TenantName")
 	If (TenantName="") {
 		return sLink 
 	}
-    sLink = https://%TenantName%.sharepoint.com%sMatch1%
-    sLink :=uriDecode(sLink)    
+    sLink = https://%TenantName%.sharepoint.com%sMatch1% 
     return sLink
 }
-return sLink
 
-}
+; https://teams.microsoft.com/dl/launcher/launcher.html?url=%2F_%23%2Fl%2Ffile%2F6D3FDFDD-6F53-4B9F-9776-4C11B9E1F40D%3FtenantId%3D8d4b558f-7b2e-40ba-ad1f-e04d79e6265a%26fileType%3Dxlsx%26objectUrl%3Dhttps%253A%252F%252Fcontinental.sharepoint.com%252Fteams%252Fteam_10029833%252FShared%2520Documents%252FASpice%252FDeepDive%252FASPICE_Analysis.xlsx%26baseUrl%3Dhttps%253A%252F%252Fcontinental.sharepoint.com%252Fteams%252Fteam_10029833%26serviceName%3Dteams%26threadId%3D19%3Aaed37505f917482d996859c59f884752%40thread.skype%26groupId%3Dc87d5d3a-4f2b-4301-9766-b2470444bd04%26CT%3D1613020822878%26OR%3DOutlook-Body%26CID%3D599D4DEA-975D-4C1B-A788-2D672B411920&type=filedeeplinkId=13be2684-3cbb-4643-a539-5f5647ac5859&directDl=true&msLaunch=true&enableMobilePage=true&suppressPrompt=true
+
+; decoded:
+; https://teams.microsoft.com/dl/launcher/launcher.html?url=/_#/l/file/6D3FDFDD-6F53-4B9F-9776-4C11B9E1F40D?tenantId=8d4b558f-7b2e-40ba-ad1f-e04d79e6265a&fileType=xlsx&objectUrl=https://continental.sharepoint.com/teams/team_10029833/Shared Documents/ASpice/DeepDive/ASPICE_Analysis.xlsx&baseUrl=https://continental.sharepoint.com/teams/team_10029833&serviceName=teams&threadId=19:aed37505f917482d996859c59f884752@thread.skype&groupId=c87d5d3a-4f2b-4301-9766-b2470444bd04&CT=1613020822878&OR=Outlook-Body&CID=599D4DEA-975D-4C1B-A788-2D672B411920&type=file&deeplinkId=13be2684-3cbb-4643-a539-5f5647ac5859&directDl=true&msLaunch=true&enableMobilePage=true&suppressPrompt=true
+
+return sLink
+} ; eofun
 ; -------------------------------------------------------------------------------------------------------------------
 Teams_MessageLink2Html(sLink){
 sPat = https://teams.microsoft.com/[^>"]*
@@ -801,7 +799,6 @@ return sHtml
 }
 
 ; -------------------------------------------------------------------------------------------------------------------
-
 Teams_OpenSecondInstance(){
 If GetKeyState("Ctrl") {
 	Run, "https://tdalon.blogspot.com/2020/12/open-multiple-microsoft-teams-instances.html"
@@ -833,7 +830,6 @@ Run, https://teams.microsoft.com/_#/calendarv2
 }
 
 ; -------------------------------------------------------------------------------------------------------------------
-
 Teams_Users2Excel(TeamLink:=""){
 ; Input can be sGroupId or Team link
 If GetKeyState("Ctrl") {
@@ -855,13 +851,9 @@ If (TeamsPowerShell := !TeamsPowerShell) {
 	IfMsgBox No
 		return
     OfficeUid := People_GetMyOUid()
-
     ;sWinUid := People_ADGetUserField("mail=" . sEmail, "sAMAccountName")  ;- login uid
-
     PowerTools_RegWrite("TeamsPowerShell",TeamsPowerShell)
-
    ; Menu,SubMenuSettings,Check, Teams PowerShell
-
 }
 
 If (TeamLink=="") {
@@ -898,7 +890,6 @@ FileAppend, %sText%,%PsFile%
 ; Run it
 ;RunWait, PowerShell.exe -NoExit -ExecutionPolicy Bypass -Command %PsFile% ;,, Hide
 RunWait, PowerShell.exe -ExecutionPolicy Bypass -Command %PsFile% ,, Hide
-
 
 oExcel := ComObjCreate("Excel.Application") ;handle
 oExcel.Workbooks.Add ;add a new workbook
@@ -1014,8 +1005,9 @@ Loop %Win% {
     WinGetTitle, Title, % "ahk_id " WinId    
     IfEqual, Title,, Continue
     Title := StrReplace(Title," | Microsoft Teams","")
-    If InStr(Title,",")  ; Exclude windows with , in the title (Popped-out 1-1 chat)
+    If RegExMatch(Title,"^[^\s]*\s?[^\s]*,[^\s]*\s?[^\s]*$") or RegExMatch(Title,"^[^\s]*\s?[^\s]*,[^\s]*\s?[^\s]*\([^\s\(\)]*\)$") ; Exclude windows with , in the title (Popped-out 1-1 chat) and max two words before , Name, Firstname               
         Continue
+    
     If RegExMatch(Title,"^Microsoft Teams Call in progress*")
         Continue
     WinList .= ( (WinList<>"") ? "|" : "" ) Title "  {" WinId "}"
@@ -1024,8 +1016,6 @@ Loop %Win% {
     If WinId = %TeamsMeetingWinId% 
         Select := WinCount  
 } ; End Loop
-
-
 
 If (WinCount = 0)
     return
@@ -1104,16 +1094,33 @@ return TeamsMainWinId
 
 } ; eofun
 
+
+
+; -------------------------------------------------------------------------------------------------------------------
+Teams_NewMeeting(){
+WinId := Teams_GetMainWindow()
+WinActivate, ahk_id %WinId%
+WinGetTitle Title, A
+If ! (Title="Calendar | Microsoft Teams") {
+    SendInput ^4 ; open calendar
+    Sleep, 300
+    While ! (Title="Calendar | Microsoft Teams") { 
+        WinGetTitle Title, A
+        Sleep 500
+    }
+}
+SendInput !+n ; schedule a meeting alt+shift+n
+} ; eofun
 ; -------------------------------------------------------------------------------------------------------------------
 Teams_NewConversation(){
 SendInput ^{f6} ; Activate posts tab https://support.microsoft.com/en-us/office/use-a-screen-reader-to-explore-and-navigate-microsoft-teams-47614fb0-a583-49f6-84da-6872223e74a0#picktab=windows
-    ; workaround will flash the search bar if posts/content panel already selected but works now even if you have just selected the channel on the left navigation panel
-    ;SendInput {Esc} ; in case expand box is already opened
-    SendInput !+c ;  compose box alt+shift+c: necessary to get second hotkey working (regression with new conversation button)
-    sleep, 500
-    SendInput ^+x ; expand compose box ctrl+shift+x (does not work anymore immediately)
-    sleep, 500
-    SendInput +{Tab} ; move cursor back to subject line via shift+tab
+; workaround will flash the search bar if posts/content panel already selected but works now even if you have just selected the channel on the left navigation panel
+;SendInput {Esc} ; in case expand box is already opened
+SendInput !+c ;  compose box alt+shift+c: necessary to get second hotkey working (regression with new conversation button)
+sleep, 500
+SendInput ^+x ; expand compose box ctrl+shift+x (does not work anymore immediately)
+sleep, 500
+SendInput +{Tab} ; move cursor back to subject line via shift+tab
 } ; eofun
 ; -------------------------------------------------------------------------------------------------------------------
 
@@ -1150,7 +1157,6 @@ WinActivate, ahk_id %WinId%
 SendInput ^+e ; ctrl+shift+e 
 sleep, 1000
 SendInput {Tab}{Enter} ; Select first screen
-
 If (IsActive) {
 ; Bring back meeting window (multiple screen setup) - it is else minimized while sharing by Teams
     WinWaitNotActive, ahk_id %WinId%
