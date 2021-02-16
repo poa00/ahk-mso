@@ -1,7 +1,7 @@
 # [Teams Shortcuts](Teams-Shortcuts) Changelog
 
 * 2021-02-15
-	- fix: Get Meeting Window with , in title. Improved RegEx; only if Name, Firstname () format
+	- fix: [Get Meeting Window](https://tdalon.blogspot.com/2020/10/get-teams-window-ahk.html#getmeetingwindow) with , in title. Improved RegEx; only if Name, Firstname () format
 * 2021-02-09
 	- Bug fix. First start prompt for Connections Url
 	- Remove Meeting->VLC Menus
