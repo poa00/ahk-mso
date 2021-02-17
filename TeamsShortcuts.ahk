@@ -5,7 +5,7 @@
 ; Source : https://github.com/tdalon/ahk/blob/master/TeamsShortcuts.ahk
 ;
 
-LastCompiled = 20210205214839
+LastCompiled = 20210216084036
 
 #Include <Teams>
 #Include <PowerTools>
@@ -32,6 +32,7 @@ Else
 
 Menu, SubMenuSettings, Add, Update Personal Information, GetMe
 Menu, SubMenuSettings, Add, &Mute Hotkey, Teams_MuteHotkeySet
+Menu, SubMenuSettings, Add, &Video Hotkey, Teams_VideoHotkeySet
 
 Menu,Tray,NoStandard
 Menu,Tray,Add,Add to Teams Favorites, Link2TeamsFavs
@@ -48,17 +49,19 @@ Menu, Tray,Add,Export Team Members, Users2Excel
 Menu, Tray,Add,Refresh Teams List, Teams_ExportTeams
 Menu, Tray,Add
 
+; SubMenu Meeting
 Menu, SubMenuMeeting, Add, Open Teams Web Calendar, Teams_OpenWebCal
 ; Add Cursor Highlighter
 Menu, SubMenuMeeting, Add, Cursor Highlighter, PowerTools_CursorHighlighter
 Menu, SubMenuMeeting, Add, Toggle Mute (Middle Click on Tray Icon), Teams_Mute
 Menu, SubMenuMeeting, Add, Toggle Video (Right Click on Tray Icon), Teams_Video
 
-Menu, SubMenuVLC, Add, Start VLC, VLCStart
-Menu, SubMenuVLC, Add, Set Play Mode, VLCPlayMode
-Menu, SubMenuVLC, Add, Reset, VLCReset
+; VLC Menu: not used. replaced by SplitCam
+;Menu, SubMenuVLC, Add, Start VLC, VLCStart
+;Menu, SubMenuVLC, Add, Set Play Mode, VLCPlayMode
+;Menu, SubMenuVLC, Add, Reset, VLCReset
+;Menu, SubMenuMeeting, Add, VLC, :SubMenuVLC
 
-Menu, SubMenuMeeting, Add, VLC, :SubMenuVLC
 Menu, Tray, Add, Meeting, :SubMenuMeeting
 Menu, Tray,Add
 Menu, Tray,Standard
@@ -90,14 +93,16 @@ Menu, TeamsShortcutsMenu, add, Add to &Favorites, Link2TeamsFavs
 PowerTools_RegWrite("TeamsMainWinId","")
 
 ; -------------------------------------------------------------------------------------------------------------------
-; Setting - TeamsMuteHotkey
+; Setting - Teams Hotkeys
 RegRead, TeamsMuteHotkey, HKEY_CURRENT_USER\Software\PowerTools, TeamsMuteHotkey
 If (TeamsMuteHotkey != "") {
-	Teams_MuteHotkeyActivate(TeamsMuteHotkey)
+	Teams_MuteHotkeyActivate(TeamsMuteHotkey, False)
 }
 
-Menu, TrayVideo, Add, Toggle Video..., DoNothing
-Menu, TrayMute, Add, Toggle Mute..., DoNothing
+RegRead, TeamsVideoHotkey, HKEY_CURRENT_USER\Software\PowerTools, TeamsVideoHotkey
+If (TeamsVideoHotkey != "") {
+	Teams_VideoHotkeyActivate(TeamsVideoHotkey, False)
+}
 
 return
 
@@ -308,7 +313,6 @@ If (suc) {
 return
 
 ; ----------------------------------------------------------------------
-
 CursorHighliter:
 Run %CHFile%
 return
@@ -339,7 +343,6 @@ return
 NotifyTrayClick_208:   ; Middle click (Button up)
 SendInput, !{Esc} ; for call from system tray - get active window
 Teams_Mute()
-Menu_Show(MenuGetHandle("TrayMute"), False, Menu_TrayParams()*)
 Return 
 
 NotifyTrayClick_202:   ; Left click (Button up)
@@ -349,7 +352,6 @@ Return
 NotifyTrayClick_205:   ; Right click (Button up)
 SendInput, !{Esc} ; for call from system tray - get active window
 Teams_Video()
-Menu_Show(MenuGetHandle("TrayVideo"), False, Menu_TrayParams()*)
 Return 
 
 ; ---------------------------- FUNCTIONS ------------------------------------------ 

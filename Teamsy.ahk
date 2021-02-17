@@ -1,26 +1,26 @@
 ; Homepage: 
 ; You can compile it via running the Ahk2Exe command e.g. D:\Programs\AutoHotkey\Compiler\Ahk2Exe.exe /in "Teamsy.ahk" /icon "icons\Teams.ico"
-LastCompiled = 20210114064703
+LastCompiled = 20210216084038
 #Include <Teams>
 #Include <Monitor>
 
 #SingleInstance force ; for running from editor
 
-If (A_Args.Length() = 0) {
-PowerTools_MenuTray()
+If (A_Args.Length() = 0)  {
+    PowerTools_MenuTray()
 
-; Tooltip
-If !a_iscompiled 
-	FileGetTime, LastMod , %A_ScriptFullPath%
- Else 
-	LastMod := LastCompiled
-FormatTime LastMod, %LastMod% D1 R
+    ; Tooltip
+    If !a_iscompiled 
+        FileGetTime, LastMod , %A_ScriptFullPath%
+    Else 
+        LastMod := LastCompiled
+    FormatTime LastMod, %LastMod% D1 R
 
-sTooltip = Teamsy %LastMod%`nClick on icon to access other functionalities.
-Menu, Tray, Tip, %sTooltip%
+    sTooltip = Teamsy %LastMod%`nClick on icon to access other functionalities.
+    Menu, Tray, Tip, %sTooltip%
+} ; end icon tray
 
-; Run from command line
-} Else
+If (A_Args.Length() > 0)
     Teamsy(A_Args[1])
 return
 
@@ -49,8 +49,9 @@ Switch sKeyword
 Case "w": ; Web App
     Switch sInput
     {
-    Case "c","cal":
+    Case "c","cal","ca":
         Teams_OpenWebCal()
+        return
     Default:
         Teams_OpenWebApp()
     }
@@ -71,7 +72,7 @@ Case "f":
     sKeyword = find
 Case "free","a":
     sKeyword = available
-Case "s","save":
+Case "sa","save":
     sKeyword = saved
 Case "d":
     sKeyword = dnd
@@ -80,19 +81,12 @@ Case "cal","calendar":
     WinActivate, ahk_id %WinId%
     SendInput ^4; open calendar
     return
-Case "m","meet": ; create a meeting
-    WinId := Teams_GetMainWindow()
+Case "m","me","meet": ; get meeting window
+    WinId := Teams_GetMeetingWindow()
+    If !WinId ; empty
+        return
     WinActivate, ahk_id %WinId%
-    WinGetTitle Title, A
-    If ! (Title="Calendar | Microsoft Teams") {
-            SendInput ^4 ; open calendar
-            Sleep, 300
-            While ! (Title="Calendar | Microsoft Teams") { 
-                WinGetTitle Title, A
-                Sleep 500
-            }
-    }
-    SendInput !+n ; schedule a meeting alt+shift+n
+    ;Teams_NewMeeting()
     return
 Case "l","le","leave": ; leave meeting
     WinId := Teams_GetMeetingWindow()
@@ -116,6 +110,13 @@ Case "sh","share":
     Teams_Share()
     return
 Case "mu","mute":  
+    Switch sInput
+    {
+    Case "a","all","app":
+        Teams_MuteApp()
+        return
+    Default:
+    }
     Teams_Mute()
     return
 Case "de":  ; decline call
@@ -139,6 +140,14 @@ Case "clear","cache","cl": ; clear cache
     Teams_ClearCache()
     return
 Case "n","new","x": ; new expanded conversation 
+    Switch sInput
+    {
+    Case "m","me","meeting":
+        Teams_NewMeeting()
+        return
+    Default:
+    }
+    
     WinId := Teams_GetMainWindow()
     WinActivate, ahk_id %WinId%
     Teams_NewConversation()
