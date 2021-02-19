@@ -27,6 +27,8 @@
             {% endif %}
           {% endfor %}
         </table>
+		
+		{% include toc.html html=content %}
 
         {% if site.show_downloads %}
           <ul>

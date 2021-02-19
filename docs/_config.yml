@@ -1,8 +1,8 @@
 theme: jekyll-theme-minimal
 title: tdalon/ahk
-description: A collection of AutoHotkey-based tools and utilities - including the PowerTools suite.
+description: A collection of AutoHotkey-based tools and utilities - including the PowerTools suite enhancing Microsoft Office 365 and HCL Connections.
 logo: /assets/img/favicon.png
-show_downloads: True
+show_downloads: False
 google_analytics: UA-179982805-1
 navigation:
   - title: Home
