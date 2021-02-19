@@ -292,7 +292,10 @@ defaults:
       share: true
       related: true
       show_date: true
-    # _posts
+      toc: true
+      toc_sticky: true
+      #toc_icon: "cog"
+    # _pages
   - scope:
       path: ""
       type: pages
@@ -304,3 +307,8 @@ defaults:
       share: true
       related: true
       show_date: true
+      sidebar:
+        nav: pages
+      toc: true
+      toc_sticky: true
+      #toc_icon: "cog"
