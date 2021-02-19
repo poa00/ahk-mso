@@ -35,6 +35,9 @@ In the menu you can also see which hotkeys directly run the features e.g. Alt+R 
 
 You can access some settings and features via the Teams Shortcuts System Tray Icon Context Menu. Right-Mouse-Click on the icon to open it.
 
+## Global hotkeys
+
+
 ## Feature Highlights
 
 ### New Conversation (Alt+N)

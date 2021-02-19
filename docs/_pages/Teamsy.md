@@ -10,8 +10,8 @@ See [all blog posts tagged with #teamsy](https://tdalon.blogspot.com/search/labe
 ## Prerequisite
 
 You can run Teamsy from the command line.
-The main advantage is if you run Teamsy from an App launcher like Launcher or Executor.
-I [recommend](https://tdalon.blogspot.com/2020/08/executor-my-preferred-app-launcher.html) personally Executor.
+The main advantage is if you run Teamsy from an App launcher like [Launchy](http://launchy.net/) or [Executor](http://executor.dk/).
+I [recommend](https://tdalon.blogspot.com/2020/08/executor-my-preferred-app-launcher.html) personally [Executor](http://executor.dk/).
 You can download it [here](http://executor.dk/).
 
 ## Feature Highlights

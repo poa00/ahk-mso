@@ -1,3 +1,8 @@
+---
+layout: home
+author_profile: true
+---
+
 # Welcome to my ahk Homepage!
 
 This is the project homepage for my collection of AutoHotkey-based scripts and utilities located in [this GitHub repository](https://github.com/tdalon/ahk).
