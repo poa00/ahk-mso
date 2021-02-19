@@ -1,5 +1,10 @@
 # [NWS PowerTool](NWS-PowerTool) Changelog
 
+* 2021-02-11
+	- IntelliPaste: Teams File Links support teams.microsoft.com/dl/launcher/launcher.html? urls
+	- Paste Clean Url (Ctrl+Ins): fix. works for file links from old SharePoint opened in File Explorer
+* 2021-02-10
+	- Improved Connections Quick Edit. (do not close Tab but update current tab.)
 * 2021-02-09
 	- IntelliPaste: Connections blog urls with sections: beautify sections. Long text with blog name at the end/ after the section instead of inbetween.
 	- IntelliPaste: timing issues fixed using Clip library instead of WinClip.
