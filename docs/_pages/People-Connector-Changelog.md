@@ -1,4 +1,10 @@
-# [People Connector](People-Connector) Changelog
+---
+permalink: /people-connector-changelog/
+title: "People Connector Changelog"
+excerpt: "Release notes for People Connector PowerTool."
+---
+
+[People Connector](People-Connector) Changelog
 
 * 2021-02-05
 	- Fix issue from Connections visit card selection from Status update. Source Url contains profile link of the SU poster.-> Limit email parsing to HTML body.

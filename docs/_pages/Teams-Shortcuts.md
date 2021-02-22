@@ -16,7 +16,7 @@ See separate page here [PowerTools Setup](PowerTools-Setup).
 
 ## [Related Blog posts](https://tdalon.blogspot.com/search/label/teams-shortcuts)
 
-## [Changelog](Teams-Shortcuts-(Changelog))
+## [Changelog](Teams-Shortcuts-Changelog)
 
 ## [News](https://twitter.com/search?q=%23TeamsShortcuts%20%23MicrosoftTeams)
 
@@ -37,12 +37,11 @@ You can start the Teams Shortcuts main menu by pressing the **Windows+T** Hotkey
 
 In the menu you can also see which hotkeys directly run the features e.g. Alt+R for Smart Reply.
 
-You can access some settings and features via the Teams Shortcuts System Tray Icon Context Menu. Right-Mouse-Click on the icon to open it.
-
-## Global hotkeys
-
+You can access some settings and features via the Teams Shortcuts System Tray Icon Menu. 
 
 ## Feature Highlights
+
+### [Global hotkeys](Teams-Global-Hotkeys)
 
 ### New Conversation (Alt+N)
 

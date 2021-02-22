@@ -1,4 +1,10 @@
-# [Teamsy](Teamsy) Changelog
+---
+permalink: /teamsy-changelog/
+title: "Teamsy Changelog"
+excerpt: "Release notes for Teamsy PowerTool."
+---
+
+[Teamsy](Teamsy) Changelog
 
 * 2021-02-15
 	- fix: [Get Meeting Window](https://tdalon.blogspot.com/2020/10/get-teams-window-ahk.html#getmeetingwindow) with , in title. Improved RegEx; only if Name, Firstname () format
@@ -7,7 +13,7 @@
 * 2021-02-08
 	- Video Toggle: restore last window focus.
 * 2021-01-29
-	- Teamsy can be run at startup. 
+	- Teamsy can be run at startup.
 	- Added Icon with Help menu.
 * 2021-01-27
 	- Teams Mute: restore previously active window

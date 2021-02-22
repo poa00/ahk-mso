@@ -1,4 +1,8 @@
-# Mute PowerTool
+---
+permalink: /mute-powertool/
+title: "Mute PowerTool"
+excerpt: "The Mute PowerTool is a small utility implemented in AutoHotkey that allows to mute your microphone within the press of a hotkey or via command line."
+---
 
 ## Short Description
 

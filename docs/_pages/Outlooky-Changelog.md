@@ -1,4 +1,10 @@
-# [Outlooky](Outlooky) Changelog
+---
+permalink: /outlooky-changelog/
+title: "Outlooky Changelog"
+excerpt: "Changelog, Release Notes for the Outlooky PowerTool."
+---
+
+[Outlooky](Outlooky) Changelog
 
 * 2020-11-24
     - SysTray Menu:

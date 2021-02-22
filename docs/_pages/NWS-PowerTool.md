@@ -1,4 +1,8 @@
-# NWS PowerTool
+---
+permalink: /nws-powertool/
+title: "NWS PowerTool"
+excerpt: "The NWS PowerTool is a utility implemented in AutoHotkey that improve productivity and tools interconnectivity on Windows OS."
+---
 
 ## Short Description
 
@@ -10,7 +14,7 @@ Main script: [NWS.ahk](https://github.com/tdalon/ahk/blob/master/NWS.ahk) in thi
 
 See separate page here [PowerTools Setup](PowerTools-Setup).
 
-## [Changelog](NWS-PowerTool-(Changelog))
+## [Changelog](NWS-PowerTool-Changelog)
 
 ## Features Overview
 

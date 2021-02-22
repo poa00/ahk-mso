@@ -1,5 +1,5 @@
 ---
-permalink: /powertools-bundler-(changelog)/
+permalink: /powertools-bundler-changelog/
 title: "PowerTools Bundler Changelog"
 excerpt: "Changelog, Release Notes for the PowerTools Bundler."
 ---

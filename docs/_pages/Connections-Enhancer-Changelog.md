@@ -1,4 +1,10 @@
-# [Connections Enhancer](Connections-Enhancer) Changelog
+---
+permalink: /connections-enhancer-changelog/
+title: "Connections Enhancer Changelog"
+excerpt: "Release notes for Connections Enhancer PowerTool."
+---
+
+[Connections Enhancer](Connections-Enhancer) Changelog
 
 * 2021-02-08
 	- Insert TOC: cancel on TOC depth input exits without inserting TOC

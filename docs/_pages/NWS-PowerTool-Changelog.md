@@ -1,4 +1,10 @@
-# [NWS PowerTool](NWS-PowerTool) Changelog
+---
+permalink: /nws-powertool-changelog/
+title: "NWS PowerTool Changelog"
+excerpt: "Release notes for NWS PowerTool."
+---
+
+[NWS PowerTool](NWS-PowerTool) Changelog
 
 * 2021-02-11
 	- IntelliPaste: Teams File Links support teams.microsoft.com/dl/launcher/launcher.html? urls

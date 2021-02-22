@@ -1,4 +1,10 @@
-# [Outlook Shortcuts](Outlook-Shortcuts) Changelog
+---
+permalink: /outlook-shortcuts-changelog/
+title: "Outlook Shortcuts Changelog"
+excerpt: "Release notes for Outlook Shortcuts PowerTool."
+---
+
+[Outlook Shortcuts](Outlook-Shortcuts) Changelog
 
 * 2021-02-09
 	- Copy Link (Ctrl+Shift+C)

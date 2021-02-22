@@ -1,5 +1,14 @@
-# [Teams Shortcuts](Teams-Shortcuts) Changelog
+---
+permalink: /teams-shortcuts-changelog/
+title: "Teams Shortcuts Changelog"
+excerpt: "Release notes for Teams Shortcuts PowerTool."
+---
 
+[Teams Shortcuts](Teams-Shortcuts) Changelog
+
+* 2021-02-22
+	- add [global hotkey](https://tdalon.github.io/ahk/teams-global-hotkeys) for [Raise Your Hand](https://tdalon.blogspot.com/2021/02/teams-raise-hand-hotkey.html)
+	- add [global hotkey](https://tdalon.github.io/ahk/teams-global-hotkeys) for [Mute App](https://tdalon.blogspot.com/2021/02/teams-mute-app.html)
 * 2021-02-15
 	- fix: [Get Meeting Window](https://tdalon.blogspot.com/2020/10/get-teams-window-ahk.html#getmeetingwindow) with , in title. Improved RegEx; only if Name, Firstname () format
 * 2021-02-09
