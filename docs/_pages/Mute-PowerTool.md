@@ -21,7 +21,7 @@ It requires the SetVol utility by rlatour. See [https://rlatour.com/setvol/](htt
 The Mute PowerTool is included in the PowerTools suite. You can either install it with the PowerTools Bundler or download separately.
 See separate page here [PowerTools Setup](PowerTools-Setup).
 
-## [Changelog](Mute-PowerTool-(Changelog))
+## [Changelog](Mute-PowerTool-Changelog)
 
 # Features Overview
 
