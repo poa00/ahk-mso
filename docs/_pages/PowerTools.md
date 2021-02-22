@@ -7,7 +7,7 @@ excerpt: "Suite of Tools implemented with AutoHotkey that enables the use of Mic
 This repository provide several tools bundled together under the term "PowerTools".
 
 This includes:
-- [Connections Enhancer](Connections-Enhancer)
+- [Connections Enhancer](_pages/Connections-Enhancer)
 - [NWS PowerTool](/nws-powertool)
 - [Outlook Shortcuts](outlook-shortcuts)
 - [People Connector](people-connector)
