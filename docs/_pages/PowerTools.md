@@ -7,8 +7,8 @@ excerpt: "Suite of Tools implemented with AutoHotkey that enables the use of Mic
 This repository provide several tools bundled together under the term "PowerTools".
 
 This includes:
-- [Connections Enhancer](_pages/Connections-Enhancer)
-- [NWS PowerTool](/nws-powertool)
+- [Connections Enhancer](connections-enhancer)
+- [NWS PowerTool](nws-powertool)
 - [Outlook Shortcuts](outlook-shortcuts)
 - [People Connector](people-connector)
 - [Teams Shortcuts](teams-shortcuts)
@@ -27,7 +27,7 @@ The Exe versions are available in the [PowerTools subdirectory](https://github.c
 
 You can update to the latest version either one-by-one from each tool via its system tray icon context menu "Check for update".
 Or by running the [PowerTools Bundler](powertools-bundler), selecting which tools to update and choosing under the menu Actions->Check for update/ Download.
-![PowerTools Bundler Check for Update/Download](/img/powertools_bundler_checkforupdate.png)
+![PowerTools Bundler Check for Update/Download](img/powertools_bundler_checkforupdate.png)
 
 ## [Changelogs](PowerTools-Changelogs)
 
@@ -35,7 +35,7 @@ Or by running the [PowerTools Bundler](powertools-bundler), selecting which tool
 
 <div align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/videoseries?list=PLUSZfg60tAwLhlYPKTdbSo8biyrZM794o" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe><br><a href="https://www.youtube.com/playlist?list=PLUSZfg60tAwLhlYPKTdbSo8biyrZM794o">Direct Link to YouTube playlist</a></div>
 
-## Source
+## Source code
 
 These tools are implemented in [this repository](https://github.com/tdalon/ahk) using AutoHotkey.
 
