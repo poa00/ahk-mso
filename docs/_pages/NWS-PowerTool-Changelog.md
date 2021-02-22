@@ -1,5 +1,5 @@
 ---
-permalink: /nws-powertool-changelog/
+permalink: /NWS-PowerTool-Changelog
 title: "NWS PowerTool Changelog"
 excerpt: "Release notes for NWS PowerTool."
 ---

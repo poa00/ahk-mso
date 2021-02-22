@@ -1,5 +1,8 @@
 ---
+permalink: /Teamsy
 title: "Teamsy"
+redirect_from:
+  - /teamsy
 excerpt: "Microsoft Teams Application Launcher Plugin and Commander"
 ---
 

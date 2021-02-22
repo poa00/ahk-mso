@@ -1,5 +1,5 @@
 ---
-permalink: /outlook-shortcuts/
+permalink: /Outlook-Shortcuts
 title: "Outlook Shortcuts"
 excerpt: "Tool empowering Microsoft Outlook Client Desktop application with hotkeys and improved functionality."
 ---

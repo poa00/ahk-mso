@@ -1,7 +1,9 @@
 ---
-permalink: /chromy/
+permalink: /Chromy
 title: "Chromy"
 excerpt: "Chromy is a Chrome Plugin for an App Launcher like Launchy or Executor."
+redirect_from:
+  - /chromy
 ---
 
 Chromy is a Chrome Plugin for a Launcher like Launchy or Executor.

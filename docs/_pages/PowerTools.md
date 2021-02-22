@@ -1,5 +1,5 @@
 ---
-permalink: /powertools
+permalink: /PowerTools
 title: "PowerTools"
 excerpt: "Suite of Tools implemented with AutoHotkey that enables the use of Microsoft Office 365 tools like Microsoft Teams, SharePoint, OneDrive, HCL Connections and others and enhance your productivity on a Windows OS."
 ---

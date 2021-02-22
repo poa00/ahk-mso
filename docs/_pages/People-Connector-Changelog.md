@@ -1,5 +1,5 @@
 ---
-permalink: /people-connector-changelog/
+permalink: /People-Connector-Changelog
 title: "People Connector Changelog"
 excerpt: "Release notes for People Connector PowerTool."
 ---

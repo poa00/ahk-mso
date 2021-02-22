@@ -1,5 +1,5 @@
 ---
-permalink: /outlook-shortcuts-changelog/
+permalink: /Outlook-Shortcuts-Changelog
 title: "Outlook Shortcuts Changelog"
 excerpt: "Release notes for Outlook Shortcuts PowerTool."
 ---

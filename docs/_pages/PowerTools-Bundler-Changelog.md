@@ -1,7 +1,9 @@
 ---
-permalink: /powertools-bundler-changelog/
+permalink: /PowerTools-Bundler-Changelog
 title: "PowerTools Bundler Changelog"
 excerpt: "Changelog, Release Notes for the PowerTools Bundler."
+redirect_from:
+  - /powertools-bundler-changelog
 ---
 
 * 2021-02-01

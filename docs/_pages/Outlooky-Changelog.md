@@ -1,5 +1,5 @@
 ---
-permalink: /outlooky-changelog/
+permalink: /Outlooky-Changelog
 title: "Outlooky Changelog"
 excerpt: "Changelog, Release Notes for the Outlooky PowerTool."
 ---

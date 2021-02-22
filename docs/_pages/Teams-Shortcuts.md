@@ -1,5 +1,5 @@
 ---
-permalink: /teams-shortcuts/
+permalink: /Teams-Shortcuts
 title: "Teams Shortcuts"
 excerpt: "Tool empowering Microsoft Teams Windows Client Desktop application with hotkeys and improved functionality."
 ---
@@ -37,7 +37,7 @@ You can start the Teams Shortcuts main menu by pressing the **Windows+T** Hotkey
 
 In the menu you can also see which hotkeys directly run the features e.g. Alt+R for Smart Reply.
 
-You can access some settings and features via the Teams Shortcuts System Tray Icon Menu. 
+You can access some settings and features via the Teams Shortcuts System Tray Icon Menu.
 
 ## Feature Highlights
 

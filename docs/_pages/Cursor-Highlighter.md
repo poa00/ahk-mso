@@ -1,5 +1,5 @@
 ---
-permalink: /cursor-highlighter/
+permalink: /Cursor-Highlighter
 title: "Cursor Highlighter"
 excerpt: "Cursor Highlighter https://sites.google.com/site/boisvertlab/computer-stuff/online-teaching/cursor-highlighter-changelog."
 ---

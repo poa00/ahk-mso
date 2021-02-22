@@ -1,5 +1,5 @@
 ---
-permalink: /teamsy-changelog/
+permalink: /Teamsy-Changelog
 title: "Teamsy Changelog"
 excerpt: "Release notes for Teamsy PowerTool."
 ---

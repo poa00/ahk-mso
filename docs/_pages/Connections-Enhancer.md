@@ -1,7 +1,9 @@
 ---
-permalink: /connections-enhancer/
+permalink: /Connections-Enhancer
 title: "Connections Enhancer"
 excerpt: "Tool enhancing HCL Connections."
+redirect_from:
+  - /connections-enhancer
 ---
 
 This is an Add-on to [HCL Connections](https://www.hcltechsw.com/products/connections) Enterprise Social Platform.

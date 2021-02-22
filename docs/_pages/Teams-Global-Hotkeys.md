@@ -1,5 +1,5 @@
 ---
-permalink: /teams-global-hotkeys/
+permalink: /teams-global-hotkeys
 title: "Teams Global Hotkeys"
 excerpt: "How to defined Global Hotkeys for Microsoft Teams using Teams Shortcuts."
 ---

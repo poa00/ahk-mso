@@ -1,5 +1,5 @@
 ---
-permalink: /powertools-bundler/
+permalink: /PowerTools-Bundler
 title: "PowerTools Bundler"
 excerpt: "Bundler for the PowerTools."
 ---

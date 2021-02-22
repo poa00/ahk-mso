@@ -1,7 +1,7 @@
 ---
-permalink: /connections-enhancer-changelog/
+permalink: /connections-enhancer-changelog
 title: "Connections Enhancer Changelog"
-excerpt: "Release notes for Connections Enhancer PowerTool."
+excerpt: "Release notes for HCL Connections Enhancer PowerTool."
 ---
 
 [Connections Enhancer](Connections-Enhancer) Changelog

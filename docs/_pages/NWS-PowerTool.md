@@ -1,5 +1,5 @@
 ---
-permalink: /nws-powertool/
+permalink: /NWS-PowerTool
 title: "NWS PowerTool"
 excerpt: "The NWS PowerTool is a utility implemented in AutoHotkey that improve productivity and tools interconnectivity on Windows OS."
 ---

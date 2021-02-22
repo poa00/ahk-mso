@@ -1,5 +1,5 @@
 ---
-permalink: /teams-shortcuts-changelog/
+permalink: /Teams-Shortcuts-Changelog
 title: "Teams Shortcuts Changelog"
 excerpt: "Release notes for Teams Shortcuts PowerTool."
 ---
