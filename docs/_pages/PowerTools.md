@@ -8,25 +8,25 @@ This repository provide several tools bundled together under the term "PowerTool
 
 This includes:
 - [Connections Enhancer](Connections-Enhancer)
-- [NWS PowerTool](/nws-powertool/)
-- [Outlook Shortcuts](/outlook-shortcuts/)
-- [People Connector](/people-connector/)
-- [Teams Shortcuts](/teams-shortcuts/)
-- [Teamsy](/teamsy/)
+- [NWS PowerTool](nws-powertool)
+- [Outlook Shortcuts](outlook-shortcuts)
+- [People Connector](people-connector)
+- [Teams Shortcuts](teams-shortcuts)
+- [Teamsy](teamsy)
 
-- [Chromy](/chromy/)
-- [Mute Powertool](/mute-powertool/)
+- [Chromy](chromy)
+- [Mute Powertool](mute-powertool)
 
 
-## [How to setup the PowerTools](/powertools-setup/)
+## [How to setup the PowerTools](powertools-setup)
 
-See detailed explanation with video tutorial [here](/powertools-setup/).
+See detailed explanation with video tutorial [here](powertools-setup).
 The Exe versions are available in the [PowerTools subdirectory](https://github.com/tdalon/ahk/tree/master/PowerTools).
 
 ## How to update the PowerTools
 
 You can update to the latest version either one-by-one from each tool via its system tray icon context menu "Check for update".
-Or by running the [PowerTools Bundler](/powertools-bundler/), selecting which tools to update and choosing under the menu Actions->Check for update/ Download.
+Or by running the [PowerTools Bundler](powertools-bundler), selecting which tools to update and choosing under the menu Actions->Check for update/ Download.
 ![PowerTools Bundler Check for Update/Download](/img/powertools_bundler_checkforupdate.png)
 
 ## [Changelogs](PowerTools-Changelogs)
