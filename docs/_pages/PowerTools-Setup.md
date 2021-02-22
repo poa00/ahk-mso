@@ -1,4 +1,10 @@
-# [PowerTools](PowerTools) Setup
+---
+permalink: /PowerTools-Setup
+title: "PowerTools Setup"
+excerpt: "How to Setup the PowerTools"
+---
+
+## Screencast
 
 <p style="text-align: center;"><iframe width="560" height="315" src="https://www.youtube.com/embed/sN6NxN5cPmA" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe><br><a href="https://youtu.be/sN6NxN5cPmA">Direct Link to YouTube video</a></p>
 
