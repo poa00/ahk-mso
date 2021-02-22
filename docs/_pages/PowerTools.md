@@ -8,7 +8,7 @@ This repository provide several tools bundled together under the term "PowerTool
 
 This includes:
 - [Connections Enhancer](Connections-Enhancer)
-- [NWS PowerTool](nws-powertool)
+- [NWS PowerTool](/nws-powertool)
 - [Outlook Shortcuts](outlook-shortcuts)
 - [People Connector](people-connector)
 - [Teams Shortcuts](teams-shortcuts)
