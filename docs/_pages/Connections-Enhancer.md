@@ -1,4 +1,9 @@
-# Home Page for the Connections Enhancer
+---
+permalink: /connections-enhancer/
+title: "Connections Enhancer"
+excerpt: "Tool enhancing HCL Connections."
+---
+
 This is an Add-on to [HCL Connections](https://www.hcltechsw.com/products/connections) Enterprise Social Platform.
 
 See [related blog posts](https://tdalon.blogspot.com/search/label/connections-enhancer)

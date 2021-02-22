@@ -1,4 +1,8 @@
-# Teams Shortcuts
+---
+permalink: /teams-shortcuts/
+title: "Teams Shortcuts"
+excerpt: "Tool empowering Microsoft Teams Windows Client Desktop application with hotkeys and improved functionality."
+---
 
 This tool extends the Microsoft Teams Windows Client with additional hotkeys and functionality.
 

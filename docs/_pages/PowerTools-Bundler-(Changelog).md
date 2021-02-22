@@ -1,4 +1,8 @@
-# [PowerTools Bundler](PowerTools-Bundler) Changelog
+---
+permalink: /powertools-bundler-(changelog)/
+title: "PowerTools Bundler Changelog"
+excerpt: "Changelog, Release Notes for the PowerTools Bundler."
+---
 
 * 2021-02-01
   - Added Mute PowerTool

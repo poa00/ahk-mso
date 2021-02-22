@@ -1,4 +1,8 @@
-# PowerTools Bundler
+---
+permalink: /powertools-bundler/
+title: "PowerTools Bundler"
+excerpt: "Bundler for the PowerTools."
+---
 
 You can download the standalone version by clicking directly [here](https://github.com/tdalon/ahk/raw/master/PowerTools/PowerToolsBundler.exe).
 

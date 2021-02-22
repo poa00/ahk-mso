@@ -1,9 +1,10 @@
 ---
 layout: home
 author_profile: true
+title: "Welcome to my ahk Homepage!"
 ---
 
-# Welcome to my ahk Homepage!
+This page is currently being reworked (Theme change) so that some links might not work right now or some pages not look very nice. It will be fixed soon.
 
 This is the project homepage for my collection of AutoHotkey-based scripts and utilities located in [this GitHub repository](https://github.com/tdalon/ahk).
 
