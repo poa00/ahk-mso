@@ -1,6 +1,10 @@
-# Chromy
+---
+permalink: /chromy/
+title: "Chromy"
+excerpt: "Chromy is a Chrome Plugin for an App Launcher like Launchy or Executor."
+---
 
-Chromy is a Plugin for a Launcher like Launchy or Executor.
+Chromy is a Chrome Plugin for a Launcher like Launchy or Executor.
 
 ## [Main Blog Post](https://tdalon.blogspot.com/2020/12/chromy.html)
 
