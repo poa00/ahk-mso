@@ -6,12 +6,12 @@ main:
     url: /PowerTools
   - title: "Contact"
     url: /contact
-  # - title: "Sample Posts"
-  #   url: /year-archive/
+  - title: "Posts"
+    url: /year-archive-grid
   # - title: "Sample Collections"
   #   url: /collection-archive/
-  # - title: "Sitemap"
-  #   url: /sitemap/
+  - title: "Sitemap"
+    url: /sitemap
   
   
 pages:

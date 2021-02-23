@@ -26,8 +26,9 @@ The Exe versions are available in the [PowerTools subdirectory](https://github.c
 ## How to update the PowerTools
 
 You can update to the latest version either one-by-one from each tool via its system tray icon context menu "Check for update".
-Or by running the [PowerTools Bundler](powertools-bundler), selecting which tools to update and choosing under the menu Actions->Check for update/ Download.
-![PowerTools Bundler Check for Update/Download](img/powertools_bundler_checkforupdate.png)
+Or by running the [PowerTools Bundler](PowerTools-Bundler), selecting which tools to update and choosing under the menu Actions->Check for update/ Download.
+
+![PowerTools Bundler Check for Update/Download](assets/imaged/powertools_bundler_checkforupdate.png)
 
 ## [Changelogs](PowerTools-Changelogs)
 
