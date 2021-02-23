@@ -1,4 +1,8 @@
-# NWS PowerTool - Sync Feature
+---
+permalink: /Sync
+title: "Sync"
+excerpt: "PowerTool features around Microsoft SharePoint, OneDrive, Teams Sync feature."
+---
 
 This feature is implemented in the [NWS PowerTool](NWS-PowerTool)
 

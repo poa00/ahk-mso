@@ -21,20 +21,27 @@ pages:
     url: /PowerTools-Setup
   - title: "NWS PowerTool"
     url: /NWS-PowerTool
+    children:
+      - title: "Sync"
+        url: /Sync
+      - title: "IntelliPaste"
+        url: /IntelliPaste
   - title: "People Connector"
     url: /People-Connector
-  - title: "Microsoft Teams"
-    children:
-      - title: "Teamsy"
-        url: /Teamsy
-      - title: "Teams Shortcuts"
-        url: /Teams-Shortcuts
+  - title: "Teams Shortcuts"
+    url: /Teams-Shortcuts
+  - title: "Teamsy"
+    url: /Teamsy
   - title: "Connections Enhancer"
     url: /Connections-Enhancer
+  - title: "Outlook Shortcuts"
+    url: /Outlook-Shortcuts
   - title: Extras
     children:
       - title: "Mute PowerTool"
         url: /Mute-PowerTool
+      - title: "Outlooky"
+        url: /Outlooky
       - title: "Chromy"
         url: /Chromy
       - title: "Cursor Highlighter"

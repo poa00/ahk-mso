@@ -95,16 +95,8 @@ Case "l","le","leave": ; leave meeting
     WinActivate, ahk_id %WinId%
     SendInput ^+b ; ctrl+shift+b
     return
-Case "raise","hand","ha":  
-    WinId := Teams_GetMeetingWindow()
-    If !WinId ; empty
-        return
-    WinActivate, ahk_id %WinId%
-    SendInput ^+m ; ctrl+shift+m 
-    sleep, 1000
-    SendInput ^+m ; ctrl+shift+m 
-    sleep, 1000
-    SendInput {Left}{3}{Enter} ; Select first screen
+Case "raise","hand","ha","rh","ra":  
+    Teams_RaiseHand()
     return
 Case "sh","share":  
     Teams_Share()
