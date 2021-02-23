@@ -6,6 +6,9 @@ excerpt: "Release notes for Teamsy PowerTool."
 
 [Teamsy](Teamsy) Changelog
 
+* 2021-02-22
+	- add [Raise Your Hand](https://tdalon.blogspot.com/2021/02/teams-raise-hand.html)
+	- add [Mute App](https://tdalon.blogspot.com/2021/02/teams-mute-app.html)
 * 2021-02-15
 	- fix: [Get Meeting Window](https://tdalon.blogspot.com/2020/10/get-teams-window-ahk.html#getmeetingwindow) with , in title. Improved RegEx; only if Name, Firstname () format
 	- t m: activates meeting window. t n m: to create a new meeting

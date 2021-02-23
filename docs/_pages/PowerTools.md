@@ -7,20 +7,20 @@ excerpt: "Suite of Tools implemented with AutoHotkey that enables the use of Mic
 This repository provide several tools bundled together under the term "PowerTools".
 
 This includes:
-- [Connections Enhancer](connections-enhancer)
-- [NWS PowerTool](nws-powertool)
-- [Outlook Shortcuts](outlook-shortcuts)
-- [People Connector](people-connector)
-- [Teams Shortcuts](teams-shortcuts)
-- [Teamsy](teamsy)
+- [Connections Enhancer](Connections-Enhancer)
+- [NWS PowerTool](NWS-PowerTool)
+- [Outlook Shortcuts](Outlook-Shortcuts)
+- [People Connector](People-Connector)
+- [Teams Shortcuts](Teams-Shortcuts)
+- [Teamsy](Teamsy)
 
-- [Chromy](chromy)
-- [Mute Powertool](mute-powertool)
+- [Chromy](Chromy)
+- [Mute Powertool](Mute-PowerTool)
 
 
-## [How to setup the PowerTools](powertools-setup)
+## [How to setup the PowerTools](PowerTools-Setup)
 
-See detailed explanation with video tutorial [here](powertools-setup).
+See detailed explanation with video tutorial [here](PowerTools-Setup).
 The Exe versions are available in the [PowerTools subdirectory](https://github.com/tdalon/ahk/tree/master/PowerTools).
 
 ## How to update the PowerTools

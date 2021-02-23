@@ -1,6 +1,6 @@
 ; Homepage: 
 ; You can compile it via running the Ahk2Exe command e.g. D:\Programs\AutoHotkey\Compiler\Ahk2Exe.exe /in "Teamsy.ahk" /icon "icons\Teams.ico"
-LastCompiled = 20210216084038
+LastCompiled = 20210223133638
 #Include <Teams>
 #Include <Monitor>
 
