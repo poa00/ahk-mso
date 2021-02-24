@@ -20,9 +20,9 @@ header:
 
 # AutoHotkey code
 
-```ahk
+```AutoHotkey
 Teams_RaiseHand() {
-; Toggle Raise Hand on/off ; Default Hotkey Ctrl+Shift+K
+; Toggle Raise Hand on/off 
 WinId := Teams_GetMeetingWindow()
 If !WinId ; empty
     return
