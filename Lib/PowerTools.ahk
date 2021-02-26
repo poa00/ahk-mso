@@ -108,25 +108,25 @@ PowerTools_Changelog(ScriptName,doOpen := True){
 Switch ScriptName 
 {
 Case "ConnectionsEnhancer":
-    sFileName = Connections-Enhancer-(Changelog)
+    sFileName = Connections-Enhancer-Changelog
 Case "TeamsShortcuts":
-    sFileName = Teams-Shortcuts-(Changelog)
+    sFileName = Teams-Shortcuts-Changelog
 Case "MO":
     sUrl := "http://github.conti.de/ContiSource/ahk/wiki/MO-(Release-Notes)"
     Run, %sUrl%
     return
 Case "PeopleConnector":
-    sFileName = People-Connector-(Changelog)
+    sFileName = People-Connector-Changelog
 Case "NWS":
-    sFileName = NWS-PowerTool-(Changelog)
+    sFileName = NWS-PowerTool-Changelog
 Case "Mute":
-    sFileName = Mute-PowerTool-(Changelog)
+    sFileName = Mute-PowerTool-Changelog
 Case "Bundler":
-    sFileName = PowerTools-Bundler-(Changelog)
+    sFileName = PowerTools-Bundler-Changelog
 Case "OutlookShortcuts":
-    sFileName = Outlook-Shortcuts-(Changelog)
+    sFileName = Outlook-Shortcuts-Changelog
 Case "Teamsy":
-    sFileName = Teamsy-(Changelog)
+    sFileName = Teamsy-Changelog
 Case "Cursor Highlighter":
     Run, https://sites.google.com/site/boisvertlab/computer-stuff/online-teaching/cursor-highlighter-changelog
     return
@@ -142,7 +142,7 @@ If Not doOpen {
     
 
 If !A_IsCompiled {
-    sFile = %A_ScriptDir%\docs\%sFileName%.md
+    sFile = %A_ScriptDir%\docs\_pages\%sFileName%.md
     If FileExist(sFile) {
         ;Run, Open %sFile% ; does not open Atom
         Run notepad++.exe "%sFile%"
@@ -449,6 +449,9 @@ If !a_iscompiled {
 	If (FileExist(IcoFile)) 
 		Menu,Tray,Icon, %IcoFile%
 }
+
+If (A_ScriptName = "Teamsy.exe") or (A_ScriptName = "Teamsy.ahk")
+    return
 
 ; -------------------------------------------------------------------------------------------------------------------
 ; SETTINGS

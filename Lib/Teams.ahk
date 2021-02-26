@@ -1,6 +1,7 @@
 #Include <People>
 #Include <UriDecode>
 #Include <Clip>
+
 ; -------------------------------------------------------------------------------------------------------------------
 Teams_Emails2ChatDeepLink(sEmailList, askOpen:= true){
 ; Copy Chat Link to Clipboard and ask to open
@@ -92,7 +93,7 @@ sFile := FavsDir . "\" . sFileName . ".url"
 IniWrite, %sUrl%, %sFile%, InternetShortcut, URL
 
 ; Add icon file:
-TeamsExe = C:\Users\%A_UserName%\AppData\Local\Microsoft\Teams\current\Teams.exe
+TeamsExe = Teams_GetExe()
 IniWrite, %TeamsExe%, %sFile%, InternetShortcut, IconFile
 IniWrite, 0, %sFile%, InternetShortcut, IconIndex
 
@@ -140,16 +141,12 @@ StringUpper, sName, sName , T
 ; 1. Create Chat Shortcut
 sUrl = https://teams.microsoft.com/l/chat/0/0?users=%sEmail% 
 Link2TeamsFav(sUrl,FavsDir,"Chat " + sName)
-    
-; create shortcut
-;sLnk := RegExReplace(sFile,"\..*",".lnk")
-;FileCreateShortcut, %sFile%, %sLnk%,,,, %userprofile%\AppData\Local\Microsoft\Teams\current\Teams.exe 
 
 ; 2. Create Call shortcut
 sFile := FavsDir . "\Call " . sName . ".vbs"
 ; write code
-EnvGet userprofile, userprofile
-sText = CreateObject("Wscript.Shell").Run "%userprofile%\AppData\Local\Microsoft\Teams\current\Teams.exe callto:%sEmail%"
+TeamsExe := Teams_GetExe()
+sText = CreateObject("Wscript.Shell").Run "%TeamsExe% callto:%sEmail%"
 
 ; Create empty File
 FileDelete %sFile%
@@ -157,7 +154,7 @@ FileAppend , %sText%, %sFile%
 
 ; create shortcut
 sLnk := RegExReplace(sFile,"\..*",".lnk")
-FileCreateShortcut, %sFile%, %sLnk%,,,, %userprofile%\AppData\Local\Microsoft\Teams\current\Teams.exe
+FileCreateShortcut, %sFile%, %sLnk%,,,, %TeamsExe%
 
 } ; eofun
 
@@ -186,6 +183,11 @@ sLink := sLink . "&topicName=" . sName
 Link2TeamsFav(sUrl,FavsDir,"Group Chat -" . sName)
 } ; eofun
 ; ----------------------------------------------------------------------
+
+Teams_GetExe(){
+fExe = C:\Users\%A_UserName%\AppData\Local\Microsoft\Teams\current\Teams.exe
+return fExe
+} ;eofun
 
 Teams_Emails2Users(EmailList,TeamLink:=""){
 ; Syntax: 
@@ -989,54 +991,6 @@ PowerTools_RegWrite("TeamsMentionPersonalize",TeamsMentionPersonalize)
 }
 
 ; -------------------------------------------------------------------------------------------------------------------
-Teams_GetMeetingWindow(){
-; See implementation explanations here: https://tdalon.blogspot.com/get-teams-window-ahk
-
-WinGet, Win, List, ahk_exe Teams.exe
-TeamsMainWinId := Teams_GetMainWindow()
-TeamsMeetingWinId := PowerTools_RegRead("TeamsMeetingWinId")
-WinCount := 0
-Select := 0
-Loop %Win% {
-    WinId := Win%A_Index%
-
-    If (WinId = TeamsMainWinId) ; Exclude Main Teams Window
-        Continue
-    WinGetTitle, Title, % "ahk_id " WinId    
-    IfEqual, Title,, Continue
-    Title := StrReplace(Title," | Microsoft Teams","")
-    If RegExMatch(Title,"^[^\s]*\s?[^\s]*,[^\s]*\s?[^\s]*$") or RegExMatch(Title,"^[^\s]*\s?[^\s]*,[^\s]*\s?[^\s]*\([^\s\(\)]*\)$") ; Exclude windows with , in the title (Popped-out 1-1 chat) and max two words before , Name, Firstname               
-        Continue
-    
-    If RegExMatch(Title,"^Microsoft Teams Call in progress*")
-        Continue
-    WinList .= ( (WinList<>"") ? "|" : "" ) Title "  {" WinId "}"
-    WinCount++
-
-    If WinId = %TeamsMeetingWinId% 
-        Select := WinCount  
-} ; End Loop
-
-If (WinCount = 0)
-    return
-If (WinCount = 1) { ; only one other window
-    RegExMatch(WinList,"\{([^}]*)\}$",WinId)
-    TeamsMeetingWinId := WinId1
-    PowerTools_RegWrite("TeamsMeetingWinId",TeamsMeetingWinId)
-    return TeamsMeetingWinId
-}
-
-LB := WinListBox("Teams: Meeting Window", "Select your current Teams Meeting Window:" , WinList, Select)
-RegExMatch(LB,"\{([^}]*)\}$",WinId)
-TeamsMeetingWinId := WinId1
-PowerTools_RegWrite("TeamsMeetingWinId",TeamsMeetingWinId)
-return TeamsMeetingWinId
-
-} ; eofun
-; -------------------------------------------------------------------------------------------------------------------
-
-
-; -------------------------------------------------------------------------------------------------------------------
 
 Teams_GetMainWindow(){
 ; See implementation explanations here: https://tdalon.blogspot.com/get-teams-window-ahk
@@ -1049,13 +1003,17 @@ If (WinCount = 0)
 
  ; fall-back if wrong exe found: close Teams
 TeamsMainWinId := PowerTools_RegRead("TeamsMainWinId")
+
 If WinExist("ahk_id " . TeamsMainWinId) {
     WinGet AhkExe, ProcessName, ahk_id %TeamsMainWinId% ; safe-check hWnd belongs to Teams.exe
     If (AhkExe = "Teams.exe")
         return TeamsMainWinId  
 }
 
-If (WinCount = 1) {
+; when virtuawin is running Teams main window can be on another virtual desktop = hidden
+Process, Exist, VirtuaWin.exe
+VirtuaWinIsRunning := ErrorLevel
+If (WinCount = 1) and Not (VirtuaWinIsRunning) {
     TeamsMainWinId := WinExist("ahk_exe Teams.exe")
     PowerTools_RegWrite("TeamsMainWinId",TeamsMainWinId)
     return TeamsMainWinId
@@ -1094,6 +1052,55 @@ return TeamsMainWinId
 
 } ; eofun
 
+; -------------------------------------------------------------------------------------------------------------------
+Teams_GetMeetingWindow(){
+; See implementation explanations here: https://tdalon.blogspot.com/get-teams-window-ahk
+
+WinGet, Win, List, ahk_exe Teams.exe
+TeamsMainWinId := Teams_GetMainWindow()
+TeamsMeetingWinId := PowerTools_RegRead("TeamsMeetingWinId")
+WinCount := 0
+Select := 0
+Loop %Win% {
+    WinId := Win%A_Index%
+    If (WinId = TeamsMainWinId) { ; Exclude Main Teams Window 
+        ;WinGetTitle, Title, % "ahk_id " WinId
+        ;MsgBox %Title%
+        Continue
+    }
+    WinGetTitle, Title, % "ahk_id " WinId  
+    
+    IfEqual, Title,, Continue
+    Title := StrReplace(Title," | Microsoft Teams","")
+    If RegExMatch(Title,"^[^\s]*\s?[^\s]*,[^\s]*\s?[^\s]*$") or RegExMatch(Title,"^[^\s]*\s?[^\s]*,[^\s]*\s?[^\s]*\([^\s\(\)]*\)$") ; Exclude windows with , in the title (Popped-out 1-1 chat) and max two words before , Name, Firstname               
+        Continue
+    
+    If RegExMatch(Title,"^Microsoft Teams Call in progress*") or RegExMatch(Title,"^Microsoft Teams Notification*")
+        Continue
+    WinList .= ( (WinList<>"") ? "|" : "" ) Title "  {" WinId "}"
+    WinCount++
+
+    If WinId = %TeamsMeetingWinId% 
+        Select := WinCount  
+} ; End Loop
+
+If (WinCount = 0)
+    return
+If (WinCount = 1) { ; only one other window
+    RegExMatch(WinList,"\{([^}]*)\}$",WinId)
+    TeamsMeetingWinId := WinId1
+    PowerTools_RegWrite("TeamsMeetingWinId",TeamsMeetingWinId)
+    return TeamsMeetingWinId
+}
+
+LB := WinListBox("Teams: Meeting Window", "Select your current Teams Meeting Window:" , WinList, Select)
+RegExMatch(LB,"\{([^}]*)\}$",WinId)
+TeamsMeetingWinId := WinId1
+PowerTools_RegWrite("TeamsMeetingWinId",TeamsMeetingWinId)
+return TeamsMeetingWinId
+
+} ; eofun
+; -------------------------------------------------------------------------------------------------------------------
 
 
 ; -------------------------------------------------------------------------------------------------------------------
@@ -1177,12 +1184,13 @@ If GetKeyState("Ctrl") {
     Run, "%sUrl%"
 	return
 }
-If WinActive("ahk_exe Teams.exe") {
+Process, Exist, Teams.exe
+If (ErrorLevel) {
     sCmd = taskkill /f /im "Teams.exe"
     Run %sCmd%,,Hide 
 }
 
-While WinActive("ahk_exe Teams.exe")
+While WinExist("ahk_exe Teams.exe")
     Sleep 500
 
 TeamsDir = %A_AppData%\Microsoft\Teams
@@ -1210,11 +1218,12 @@ If GetKeyState("Ctrl") {
 MsgBox, 0x114,Teams Clean Restart, Are you sure you want to delete all Teams Client local application data?
 IfMsgBox No
    return
-If WinActive("ahk_exe Teams.exe") {
+Process, Exist, Teams.exe
+If (ErrorLevel) {
     sCmd = taskkill /f /im "Teams.exe"
     Run %sCmd%,,Hide 
 }
-While WinActive("ahk_exe Teams.exe")
+While WinExist("ahk_exe Teams.exe")
     Sleep 500
 
 TeamsDir = %A_AppData%\Microsoft\Teams
@@ -1226,18 +1235,18 @@ Teams_GetMainWindow()
 ; -------------------------------------------------------------------------------------------------------------------
 Teams_Restart(){
 ; Warning all appdata will be deleted
-If WinActive("ahk_exe Teams.exe") {
+Process, Exist, Teams.exe
+If (ErrorLevel) {
     sCmd = taskkill /f /im "Teams.exe"
     Run %sCmd%,,Hide 
 }
-While WinActive("ahk_exe Teams.exe")
+While WinExist("ahk_exe Teams.exe")
     Sleep 500
 
 Teams_GetMainWindow()
 } ; eofun
 
 ; -------------------------------------------------------------------------------------------------------------------
-
 Teams_Mute(){
 WinId := Teams_GetMeetingWindow() ; mute can be run from Main window
 If !WinId ; empty
@@ -1246,96 +1255,84 @@ WinGet, curWinId, ID, A
 WinActivate, ahk_id %WinId%
 SendInput ^+m ;  ctrl+shift+m
 WinActivate, ahk_id %curWinId%
+Tooltip("Teams Toggle Mute Mic...") 
 } ; eofun
+
 ; -------------------------------------------------------------------------------------------------------------------
-
-Teams_MuteHotkeySet(){
-; https://autohotkey.com/board/topic/47439-user-defined-dynamic-hotkeys/
-If GetKeyState("Ctrl")  { ; exclude ctrl if use in the hotkey
-	; TODO
-	return
-}
-RegRead, TeamsMuteHotkey, HKEY_CURRENT_USER\Software\PowerTools, TeamsMuteHotkey
-HK := HotkeyGUI(,TeamsMuteHotkey,,,"Teams Mute - Set Global Hotkey")
-
-If ErrorLevel ; Cancelled
-  return
-If (HK = TeamsMuteHotkey) ; no change
-  return
-PowerTools_RegWrite("TeamsMuteHotkey",HK)
-
-If (HK = "") { ; reset/ disable hotkey
-    ;Turn off the new hotkey.
-    Hotkey, %TeamsMuteHotkey%, Teams_Mute, Off 
-    TipText = Set Teams Toggle Mute Hotkey %TeamsMuteHotkey% off!
-    TrayTipAutoHide("Teams Toggle Mute Hotkey Off",TipText,2000)
+Teams_PushToTalk(){
+WinId := Teams_GetMeetingWindow() ; mute can be run from Main window
+If !WinId ; empty
+    return
+KeyName := A_PriorKey
+If (KeyName = "m") or (KeyName = "^") or or (KeyName = "!") {
+    MsgBox Error: hotkey conflict with native Ctrl+Shift+M. Choose another combination.
     return
 }
 
-; Turn off the old Hotkey
-If Not (TeamsMuteHotkey == "")
-	Hotkey, %TeamsMuteHotkey%, Teams_Mute, Off
+WinGet, curWinId, ID, A
+WinActivate, ahk_id %WinId%
 
-Teams_MuteHotkeyActivate(HK, True)
-
-} ; eofun
-; -------------------------------------------------------------------------------------------------------------------
-
-Teams_MuteHotkeyActivate(HK,showTrayTip := False) {
-;Turn on the new hotkey.
-Hotkey, IfWinActive, ; for all windows/ global hotkey
-Hotkey, $%HK%, Teams_Mute, On ; use $ to avoid self-referring hotkey if Ctrl+Shift+M is used
-If (showTrayTip) {
-    TipText = Teams Mute Hotkey set to %HK%
-    TrayTipAutoHide("Teams Toggle Mute Hotkey On",TipText,2000)
+Tooltip("Teams PushToTalk on...",2000) 
+SendInput ^+m ;  ctrl+shift+m
+while (GetKeyState(KeyName , "P"))
+{
+sleep, 100
 }
+WinActivate, ahk_id %WinId%
+SendInput ^+m ;  ctrl+shift+m
+WinActivate, ahk_id %curWinId%
+Tooltip("Teams PushToTalk off...",2000)  
 } ; eofun
+; -------------------------------------------------------------------------------------------------------------------
+; -------------------------------------------------------------------------------------------------------------------
+; -------------------------------------------------------------------------------------------------------------------
 
-; -------------------------------------------------------------------------------------------------------------------
-; -------------------------------------------------------------------------------------------------------------------
-Teams_VideoHotkeySet(){
-; https://autohotkey.com/board/topic/47439-user-defined-dynamic-hotkeys/
+Teams_HotkeySet(HKid){
 If GetKeyState("Ctrl")  { ; exclude ctrl if use in the hotkey
 	; TODO
 	return
 }
 
-RegRead, TeamsVideoHotkey, HKEY_CURRENT_USER\Software\PowerTools, TeamsVideoHotkey
-HK := HotkeyGUI(,TeamsVideoHotkey,,,"Teams Toggle Video - Set Global Hotkey")
+; For Menu callback, remove ending Hotkey
+HKid := RegExReplace(HKid," Hotkey$","")
+
+RegRead, prevHK, HKEY_CURRENT_USER\Software\PowerTools, Teams%HKid%Hotkey
+newHK := HotkeyGUI(,prevHK,,,"Teams " . HKid . " - Set Global Hotkey")
 
 If ErrorLevel ; Cancelled
+    return
+If (newHK = prevHK) ; no change
   return
-If (HK = TeamsVideoHotkey) ; no change
-  return
-PowerTools_RegWrite("TeamsVideoHotkey",HK)
+RegWrite, REG_SZ, HKEY_CURRENT_USER\Software\PowerTools, Teams%HKid%Hotkey, %newHK%
 
-If (HK = "") { ; reset/ disable hotkey
+If (newHK = "") { ; reset/ disable hotkey
     ;Turn off the new hotkey.
-    Hotkey, %TeamsVideoHotkey%, Teams_Video, Off 
-    TipText = Set Teams Video Hotkey %TeamsVideoHotkey% off!
-    TrayTipAutoHide("Teams Toggle Video Hotkey Off",TipText,2000)
+    Hotkey, %prevHK%, Teams_%HKid%, Off 
+    TipText = Set Teams %HKid% Hotkey off!
+    TrayTipAutoHide("Teams " . HKid . " Hotkey Off",TipText,2000)
     return
 }
 
 ; Turn off the old Hotkey
-If Not (TeamsVideoHotkey == "")
-	Hotkey, %TeamsVideoHotkey%, Teams_Video, Off
+If Not (prevHK == "")
+	Hotkey, %prevHK%, Teams_%HKid%, Off
 
-Teams_VideoHotkeyActivate(HK, True)
-
+Teams_HotkeyActivate(HKid,newHK, True)
 } ; eofun
 ; -------------------------------------------------------------------------------------------------------------------
-
-Teams_VideoHotkeyActivate(HK,showTrayTip:= False) {
+Teams_HotkeyActivate(HKid,HK,showTrayTip := False) {
 ;Turn on the new hotkey.
 Hotkey, IfWinActive, ; for all windows/ global hotkey
-Hotkey, $%HK%, Teams_Video, On ; use $ to avoid self-referring hotkey if Ctrl+Shift+M is used
+Hotkey, $%HK%, Teams_%HKid%, On ; use $ to avoid self-referring hotkey if Ctrl+Shift+M is used
 If (showTrayTip) {
-    TipText = Teams Toggle Video Hotkey set to %HK%
-    TrayTipAutoHide("Teams Toggle Video Hotkey On",TipText,2000)
+    TipText = Teams %HKid% Hotkey set to %HK%
+    TrayTipAutoHide("Teams " . HKid . " Hotkey On",TipText,2000)
 }
 } ; eofun
+
 ; -------------------------------------------------------------------------------------------------------------------
+; -------------------------------------------------------------------------------------------------------------------
+
 
 Teams_Video(){
 ; Toggle Video on/off
@@ -1347,7 +1344,62 @@ WinActivate, ahk_id %WinId%
 SendInput ^+o ; toggle video Ctl+Shift+o
 ;SendInput ^+p ; toggle background blur
 WinActivate, ahk_id %curWinId%
+Tooltip("Teams Toggle Video...") 
 } ; eofun
 
 ; -------------------------------------------------------------------------------------------------------------------
 ; -------------------------------------------------------------------------------------------------------------------
+Teams_MuteApp(sCmd:= ""){
+Switch sCmd
+{
+    Case "s","sw","switch":
+        sCmd = /Switch
+    Case "on","1":
+        sCmd = /Mute
+    Case "off","0":
+        sCmd = /Unmute
+    Default :
+        sCmd = /Switch ; works even if used as menu callback
+} ; end switch
+SVVExe := GetSoundVolumneViewExe()
+If (SVVExe = "") {
+    return
+}
+    
+;TeamsExe := Teams_GetExe()
+sCmd = "%SVVExe%" %sCmd% "Teams.exe"
+Run, %sCmd%
+} ; eofun
+; -------------------------------------------------------------------------------------------------------------------
+
+SetSoundVolumeViewExe(){
+FileSelectFile, SVVExe , 1, SoundVolumeView.exe, Select the location of SoundVolumeView.exe, SoundVolumeView.exe
+If ErrorLevel
+    return
+PowerTools_RegWrite("SoundVolumeViewExe",SVVExe)
+return SVVExe
+} ; eofun
+; -------------------------------------------------------------------------------------------------------------------
+
+GetSoundVolumneViewExe(){
+; SVVExe := Mute_GetSoundVolumneViewExe()
+SVVExe := PowerTools_RegRead("SoundVolumeViewExe")  
+If (SVVExe="") {
+    Run, "https://www.nirsoft.net/utils/sound_volume_view.html"
+    SVVExe := SetSoundVolumeViewExe()
+}
+return SVVExe    
+} ; eofun
+
+; -------------------------------------------------------------------------------------------------------------------
+Teams_RaiseHand() {
+; Toggle Raise Hand on/off ; Default Hotkey Ctrl+Shift+K
+WinId := Teams_GetMeetingWindow()
+If !WinId ; empty
+    return
+Tooltip("Teams Toggle Raise Hand...") 
+WinGet, curWinId, ID, A
+WinActivate, ahk_id %WinId%
+SendInput ^+k ; toggle video Ctl+Shift+k
+WinActivate, ahk_id %curWinId%
+} ; eofun
