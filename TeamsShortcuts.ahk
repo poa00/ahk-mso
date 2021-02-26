@@ -5,7 +5,7 @@
 ; Source : https://github.com/tdalon/ahk/blob/master/TeamsShortcuts.ahk
 ;
 
-LastCompiled = 20210216084036
+LastCompiled = 20210226114306
 
 #Include <Teams>
 #Include <PowerTools>
@@ -31,8 +31,29 @@ Else
   Menu,SubMenuSettings,UnCheck, Teams Personalize Mentions
 
 Menu, SubMenuSettings, Add, Update Personal Information, GetMe
-Menu, SubMenuSettings, Add, &Mute Hotkey, Teams_MuteHotkeySet
-Menu, SubMenuSettings, Add, &Video Hotkey, Teams_VideoHotkeySet
+
+
+HotkeyIDList = Mute Video MuteApp Share RaiseHand PushToTalk 
+
+; Hotkeys: Activate, Meeting Action Menus and Settings Menus
+Loop, Parse, HotkeyIDList, %A_Space%
+{
+	HKid := A_LoopField
+	Menu, SubMenuHotkeys, Add, %HKid%, Teams_HotkeySet
+	RegRead, HK, HKEY_CURRENT_USER\Software\PowerTools, Teams%HKid%Hotkey
+	If (HK != "") {
+		Teams_HotkeyActivate(HKid,HK, False)
+	}
+	label = Teams_%HKid%Cb
+	If IsLabel(label)
+		Menu, SubMenuMeeting, Add, Toggle %HKid%, %label% ; Requires Cb Label for not loosing active window
+	Else
+		Menu, SubMenuMeeting, Add, Toggle %HKid%, Teams_%HKid% ; Requires Cb Label for not loosing active window
+
+}
+Menu, SubMenuSettings, Add, Global Hotkeys, :SubMenuHotkeys
+Menu, SubMenuMeeting, Add ; Separator
+
 
 Menu,Tray,NoStandard
 Menu,Tray,Add,Add to Teams Favorites, Link2TeamsFavs
@@ -41,20 +62,19 @@ Menu, SubMenuCustomBackgrounds, Add, Open Custom Backgrounds Folder, OpenCustomB
 Menu, SubMenuCustomBackgrounds, Add, Open Backgrounds Library, OpenCustomBackgroundsLibrary
 
 Menu, Tray, Add, Custom Backgrounds, :SubMenuCustomBackgrounds
-Menu, Tray,Add,Start Second Instance, Teams_OpenSecondInstance
-Menu, Tray,Add,Clear Cache, Teams_ClearCache
-Menu, Tray,Add,Open Web App, Teams_OpenWebApp
-Menu, Tray,Add
-Menu, Tray,Add,Export Team Members, Users2Excel
-Menu, Tray,Add,Refresh Teams List, Teams_ExportTeams
-Menu, Tray,Add
+Menu, Tray, Add,Start Second Instance, Teams_OpenSecondInstance
+Menu, Tray, Add,Clear Cache, Teams_ClearCache
+Menu, Tray, Add,Open Web App, Teams_OpenWebApp
+Menu, Tray, Add
+Menu, Tray, Add,Export Team Members, Users2Excel
+Menu, Tray, Add,Refresh Teams List, Teams_ExportTeams
+Menu, Tray, Add
 
 ; SubMenu Meeting
 Menu, SubMenuMeeting, Add, Open Teams Web Calendar, Teams_OpenWebCal
 ; Add Cursor Highlighter
 Menu, SubMenuMeeting, Add, Cursor Highlighter, PowerTools_CursorHighlighter
-Menu, SubMenuMeeting, Add, Toggle Mute (Middle Click on Tray Icon), Teams_Mute
-Menu, SubMenuMeeting, Add, Toggle Video (Right Click on Tray Icon), Teams_Video
+
 
 ; VLC Menu: not used. replaced by SplitCam
 ;Menu, SubMenuVLC, Add, Start VLC, VLCStart
@@ -92,17 +112,7 @@ Menu, TeamsShortcutsMenu, add, Add to &Favorites, Link2TeamsFavs
 ; Reset Main WinId at startup because of some possible hwnd collision
 PowerTools_RegWrite("TeamsMainWinId","")
 
-; -------------------------------------------------------------------------------------------------------------------
-; Setting - Teams Hotkeys
-RegRead, TeamsMuteHotkey, HKEY_CURRENT_USER\Software\PowerTools, TeamsMuteHotkey
-If (TeamsMuteHotkey != "") {
-	Teams_MuteHotkeyActivate(TeamsMuteHotkey, False)
-}
 
-RegRead, TeamsVideoHotkey, HKEY_CURRENT_USER\Software\PowerTools, TeamsVideoHotkey
-If (TeamsVideoHotkey != "") {
-	Teams_VideoHotkeyActivate(TeamsVideoHotkey, False)
-}
 
 return
 
@@ -341,6 +351,7 @@ return
 
 ; ######################################################################
 NotifyTrayClick_208:   ; Middle click (Button up)
+Teams_MuteCb:
 SendInput, !{Esc} ; for call from system tray - get active window
 Teams_Mute()
 Return 
@@ -350,8 +361,14 @@ Menu_Show(MenuGetHandle("Tray"), False, Menu_TrayParams()*)
 Return
 
 NotifyTrayClick_205:   ; Right click (Button up)
+Teams_VideoCb:
 SendInput, !{Esc} ; for call from system tray - get active window
 Teams_Video()
+Return 
+
+Teams_RaiseHandCb:
+SendInput, !{Esc} ; for call from system tray - get active window
+Teams_RaiseHand()
 Return 
 
 ; ---------------------------- FUNCTIONS ------------------------------------------ 

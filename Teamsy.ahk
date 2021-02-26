@@ -1,6 +1,6 @@
 ; Homepage: 
 ; You can compile it via running the Ahk2Exe command e.g. D:\Programs\AutoHotkey\Compiler\Ahk2Exe.exe /in "Teamsy.ahk" /icon "icons\Teams.ico"
-LastCompiled = 20210223133638
+LastCompiled = 20210226114307
 #Include <Teams>
 #Include <Monitor>
 
@@ -122,7 +122,7 @@ Case "q","quit": ; quit
     sCmd = taskkill /f /im "Teams.exe"
     Run %sCmd%,,Hide 
     return
-Case "r","restart": ; restart
+Case "re","restart": ; restart
     Teams_Restart()
     return
 Case "clean": ; clean restart
