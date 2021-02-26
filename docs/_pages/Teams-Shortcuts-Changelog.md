@@ -6,6 +6,10 @@ excerpt: "Release notes for Teams Shortcuts PowerTool."
 
 [Teams Shortcuts](Teams-Shortcuts) Changelog
 
+* 2021-02-24
+  - PushToTalk Feature
+* 2021-02-23
+  - fix Teams_GetMeetingWindow and Teams_GetMainWindow if VirtuaWin is used. (Main Window might be hidden, on another virtual desktop)
 * 2021-02-22
 	- add [global hotkey](https://tdalon.github.io/ahk/teams-global-hotkeys) for [Raise Your Hand](https://tdalon.blogspot.com/2021/02/teams-raise-hand.html)
 	- add [global hotkey](https://tdalon.github.io/ahk/teams-global-hotkeys) for [Mute App](https://tdalon.blogspot.com/2021/02/teams-mute-app.html)

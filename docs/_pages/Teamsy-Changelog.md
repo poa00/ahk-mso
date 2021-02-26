@@ -6,6 +6,10 @@ excerpt: "Release notes for Teamsy PowerTool."
 
 [Teamsy](Teamsy) Changelog
 
+* 2021-02-24
+  - fix: Restart, ClearCache, CleanRestart: replace WinActive by WinExist and Process, Exist
+* 2021-02-23
+  - fix Teams_GetMeetingWindow and Teams_GetMainWindow if VirtuaWin is used. (Main Window might be hidden, on another virtual desktop)
 * 2021-02-22
 	- add [Raise Your Hand](https://tdalon.blogspot.com/2021/02/teams-raise-hand.html)
 	- add [Mute App](https://tdalon.blogspot.com/2021/02/teams-mute-app.html)
