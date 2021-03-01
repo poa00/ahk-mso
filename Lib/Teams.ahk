@@ -1,8 +1,25 @@
 #Include <People>
 #Include <UriDecode>
 #Include <Clip>
+#Include <Teamsy>
 
+
+Teams_Launcher(){
+Teamsy("-g")
+} ; eofun
 ; -------------------------------------------------------------------------------------------------------------------
+
+Teams_OpenBackgroundFolder(){
+If GetKeyState("Ctrl") {
+	Run, "https://tdalon.blogspot.com/2021/01/teams-custom-backgrounds.html#openfolder"
+	return
+}
+Run, %A_AppData%\Microsoft\Teams\Backgrounds\Uploads
+} ; eofun
+; -------------------------------------------------------------------------------------------------------------------
+
+
+
 Teams_Emails2ChatDeepLink(sEmailList, askOpen:= true){
 ; Copy Chat Link to Clipboard and ask to open
 sLink := "https://teams.microsoft.com/l/chat/0/0?users=" . StrReplace(sEmailList, ";",",") ; msteams:

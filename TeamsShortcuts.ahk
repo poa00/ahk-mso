@@ -33,12 +33,13 @@ Else
 Menu, SubMenuSettings, Add, Update Personal Information, GetMe
 
 
-HotkeyIDList = Mute Video MuteApp Share RaiseHand PushToTalk 
+HotkeyIDList = Launcher,Mute,Video,Mute App,Share,Raise Hand,Push To Talk 
 
 ; Hotkeys: Activate, Meeting Action Menus and Settings Menus
-Loop, Parse, HotkeyIDList, %A_Space%
+Loop, Parse, HotkeyIDList, `,
 {
 	HKid := A_LoopField
+	HKid := StrReplace(HKid," ","")
 	Menu, SubMenuHotkeys, Add, %HKid%, Teams_HotkeySet
 	RegRead, HK, HKEY_CURRENT_USER\Software\PowerTools, Teams%HKid%Hotkey
 	If (HK != "") {
@@ -111,8 +112,6 @@ Menu, TeamsShortcutsMenu, add, Add to &Favorites, Link2TeamsFavs
 
 ; Reset Main WinId at startup because of some possible hwnd collision
 PowerTools_RegWrite("TeamsMainWinId","")
-
-
 
 return
 
@@ -264,7 +263,7 @@ return
 ; ----------------------------------------------------------------------
 Link2TeamsFavs:
 If GetKeyState("Ctrl") {
-	Run, "https://connext.conti.de/blogs/tdalon/entry/teams_shortcuts_favorites"
+	Run, "https://connext.conti.de/blogs/tdalon/entry/teams_shortcuts_favorites" ; TODO
 	return
 }
 sUrl := clipboard
@@ -284,11 +283,7 @@ return
 
 ; ----------------------------------------------------------------------
 OpenCustomBackgrounds:
-If GetKeyState("Ctrl") {
-	Run, "https://tdalon.blogspot.com/2021/01/teams-custom-backgrounds.html#openfolder"
-	return
-}
-Run, %A_AppData%\Microsoft\Teams\Backgrounds\Uploads
+Teams_OpenBackgroundFolder()
 return
 
 OpenCustomBackgroundsLibrary:

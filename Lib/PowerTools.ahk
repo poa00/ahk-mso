@@ -13,9 +13,9 @@ If !a_iscompiled {
 
 ; warning if connected via VPN
 If (Login_IsVPN()) {
-    MsgBox, 0x1011, CheckForUpdate with VPN?,It seems you are connected with VPN.`nCheck for update might not work. Consider disconnecting VPN.`nContinue now?
-    IfMsgBox Cancel
-        return
+MsgBox, 0x1011, CheckForUpdate with VPN?,It seems you are connected with VPN.`nCheck for update might not work. Consider disconnecting VPN.`nContinue now?
+IfMsgBox Cancel
+    return
 }
 
 If !ToolName    
@@ -42,61 +42,50 @@ RunWait, %sCmd%,,Hide
 
 ; ---------------------------------------------------------------------- 
 PowerTools_Help(ScriptName,doOpen := True){
+
+Switch ScriptName 
+{
+Case "ConnectionsEnhancer":
+    sUrl = https://tdalon.github.io/ahk/Connections-Enhancer
+Case "TeamsShortcuts":
+    sUrl = https://tdalon.github.io/ahk/Teams-Shortcuts
+Case "MO":
+    sUrl := "https://connext.conti.de/wikis/home/wiki/Wc4f94c47297c_42c8_878f_525fd907cb68/page/MO%20PowerTool"
+Case "PeopleConnector":
+    sUrl = https://tdalon.github.io/ahk/People-Connector
+Case "OutlookShortcuts":
+    sUrl = https://tdalon.github.io/ahk/Outlook-Shortcuts
+Case "Teamsy":
+    sUrl = https://tdalon.github.io/ahk/Teamsy
+Case "TeamsyLauncher":
+    sUrl = https://tdalon.github.io/ahk/Teamsy-Launcher
+Case "NWS":
+    sUrl := "https://tdalon.github.io/ahk/NWS-PowerTool"
+Case "Mute":
+    sUrl := "https://tdalon.github.io/ahk/Mute-PowerTool"
+Case "Bundler":
+    sUrl :="https://tdalon.github.io/ahk/PowerTools-Bundler"
+Case "Cursor Highlighter":
+    sUrl = https://tdalon.github.io/ahk/Cursor-Highlighter
+Case "all":
+Default:
+    sUrl := "https://tdalon.github.io/ahk/PowerTools"	
+}
+
 If (Config="Conti"){
     Switch ScriptName 
     {
     Case "ConnectionsEnhancer":
         sUrl = https://connext.conti.de/blogs/tdalon/entry/connext_enhancer
-    Case "TeamsShortcuts":
-        sUrl = https://connext.conti.de/blogs/tdalon/entry/teams_shortcuts_ahk
-    Case "MO":
-        sUrl := "https://connext.conti.de/wikis/home/wiki/Wc4f94c47297c_42c8_878f_525fd907cb68/page/MO%20PowerTool"
     Case "PeopleConnector":
         sUrl = https://connext.conti.de/blogs/tdalon/entry/people_connector
     Case "OutlookShortcuts":
         sUrl = https://connext.conti.de/blogs/tdalon/entry/outlook_autohotkey_script
-    Case "Teamsy":
-        sUrl = https://connext.conti.de/blogs/tdalon/entry/teamsy
     Case "NWS":
         sUrl := "https://connext.conti.de/wikis/home/wiki/Wc4f94c47297c_42c8_878f_525fd907cb68/page/NWS%20PowerTool"
-    Case "Mute":
-        sUrl := "https://tdalon.github.io/ahk/Mute-PowerTool"
-    Case "Bundler":
-        sUrl :="https://tdalon.github.io/ahk/PowerTools-Bundler"
-    Case "Cursor Highlighter":
-        sUrl = https://tdalon.github.io/ahk/Cursor-Highlighter
-    Case "all":
-    Default:
-        sUrl := "https://connext.conti.de/wikis/home/wiki/Wc4f94c47297c_42c8_878f_525fd907cb68/page/GUIDEs%20Power%20Tools"	
-    }
-} Else {
-    Switch ScriptName 
-    {
-    Case "ConnectionsEnhancer":
-        sUrl = https://tdalon.github.io/ahk/Connections-Enhancer
-    Case "TeamsShortcuts":
-        sUrl = https://tdalon.github.io/ahk/Teams-Shortcuts
-    Case "MO":
-        sUrl := "https://connext.conti.de/wikis/home/wiki/Wc4f94c47297c_42c8_878f_525fd907cb68/page/MO%20PowerTool"
-    Case "PeopleConnector":
-        sUrl = https://tdalon.github.io/ahk/People-Connector
-    Case "OutlookShortcuts":
-        sUrl = https://tdalon.github.io/ahk/Outlook-Shortcuts
-    Case "Teamsy":
-        sUrl = https://tdalon.github.io/ahk/Teamsy
-    Case "NWS":
-        sUrl := "https://tdalon.github.io/ahk/NWS-PowerTool"
-    Case "Mute":
-        sUrl := "https://tdalon.github.io/ahk/Mute-PowerTool"
-    Case "Bundler":
-        sUrl :="https://tdalon.github.io/ahk/PowerTools-Bundler"
-    Case "Cursor Highlighter":
-        sUrl = https://tdalon.github.io/ahk/Cursor-Highlighter
-    Case "all":
-    Default:
-        sUrl := "https://tdalon.github.io/ahk/PowerTools"	
-    }
+    }  
 }
+
 If doOpen
     Run, %sUrl%
 return sUrl
