@@ -36,8 +36,6 @@ Or by running the [PowerTools Bundler](PowerTools-Bundler), selecting which tool
 
 ![PowerTools Bundler Check for Update/Download](/ahk/assets/images/powertools_bundler_checkforupdate.png)
 
-{% include figure image_path="/assets/images/powertools_bundler_checkforupdate.png" alt="PowerTools Bundler Check for Update/Download" caption="PowerTools Bundler - Check for Update" %}
-
 
 ## [Changelogs](PowerTools-Changelogs)
 
