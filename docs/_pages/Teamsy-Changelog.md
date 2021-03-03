@@ -1,11 +1,14 @@
 ---
 permalink: /Teamsy-Changelog
 title: "Teamsy Changelog"
-excerpt: "Release notes for Teamsy PowerTool."
+excerpt: "Release notes for Teamsy and Teamsy Launcher PowerTools."
 ---
 
 [Teamsy](Teamsy) Changelog
 
+* 2021-03-01
+  - [Teamsy Launcher](Teamsy-Launcher)
+  - Added bg|background keyword to open background folder
 * 2021-02-24
   - fix: Restart, ClearCache, CleanRestart: replace WinActive by WinExist and Process, Exist
 * 2021-02-23

@@ -9,8 +9,11 @@ excerpt: "Microsoft Teams Application Launcher Plugin and Commander"
 ## About
 
 Teamsy is a Microsoft Teams Plugin for an Application Launcher like [Launchy](http://launchy.net/) or [Executor](http://executor.dk/).
-It is also as a Microsoft Teams "Commander" i.e. you can run it from the command line to send commands to Microsoft Teams.
-It can be used in that sense as bridge between, for example, a StreamDeck and Microsoft Teams.
+
+It can also be used from the command line to send commands to Microsoft Teams.
+For example, as bridge between a StreamDeck and Microsoft Teams.
+
+Its main advantage is that it works even if your Teams window isn't active (contrary to built-in hotkeys) both for main window and meeting window actions.
 
 ## [Main Blog Post](https://tdalon.blogspot.com/2020/07/teamsy.html)
 
@@ -28,6 +31,18 @@ I personally use Teamsy from an App launcher e.g. [Launchy](http://launchy.net/)
 I [recommend](https://tdalon.blogspot.com/2020/08/executor-my-preferred-app-launcher.html) [Executor](http://executor.dk/).
 You can download it [here](http://executor.dk/).
 
+### Alternative without application launcher
+
+If you want to run Teamsy without using an application launcher, have a look at [Teams Launcher](Teamsy-Launcher)
+
+## List of supported commands/ Keywords
+
+This is implemented in the main associated library [Lib/Teamsy.ahk](https://github.com/tdalon/ahk/blob/master/Lib/Teamsy.ahk)
+Here you can find the syntax for keywords and command. (I hope the code is clear enough.)
+<script src="http://gist-it.appspot.com/https://github.com/tdalon/ahk/raw/master/Lib/Teamsy.ahk"></script>
+
+<hr>
+
 ## Feature Highlights
 
 ### Status Change
@@ -41,6 +56,8 @@ You can download it [here](http://executor.dk/).
 ## Source Code
 
 The main ahk file is [Teamsy.ahk](https://github.com/tdalon/ahk/blob/master/Teamsy.ahk)
+
+The main associated library is [Lib/Teamsy.ahk](https://github.com/tdalon/ahk/blob/master/Lib/Teamsy.ahk)
 
 The main associated library is [Lib/Teams.ahk](https://github.com/tdalon/ahk/blob/master/Lib/Teams.ahk)
 

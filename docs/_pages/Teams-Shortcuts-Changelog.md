@@ -6,8 +6,10 @@ excerpt: "Release notes for Teams Shortcuts PowerTool."
 
 [Teams Shortcuts](Teams-Shortcuts) Changelog
 
+* 2021-03-01
+  - Add [Teamsy Launcher](Teamsy-Launcher)
 * 2021-02-24
-  - PushToTalk Feature
+  - [PushToTalk Feature](https://tdalon.blogspot.com/2021/02/teams-push-to-talk.html)
 * 2021-02-23
   - fix Teams_GetMeetingWindow and Teams_GetMainWindow if VirtuaWin is used. (Main Window might be hidden, on another virtual desktop)
 * 2021-02-22
