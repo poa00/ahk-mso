@@ -7,8 +7,8 @@
 #Include <WinActiveBrowser>
 
 ; ----------------------------------------------------------------------
-JiraGet(sUrl){
-; Syntax: sResponse .= JiraGet(sUrl)
+Jira_Get(sUrl){
+; Syntax: sResponse .= Jira_Get(sUrl)
 ; Calls: b64Encode
 
 sPassword := Login_GetPassword()

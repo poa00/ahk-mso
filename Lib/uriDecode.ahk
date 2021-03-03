@@ -1,23 +1,23 @@
 ; -------------------------------------------------------------------------------------------------------------------
-; https://autohotkey.com/board/topic/17367-url-encoding-and-decoding-of-special-characters/?p=112822
-uriDecode(str) {	
-    doc := ComObjCreate("HTMLfile")
-    doc.write("<body><script>document.write(decodeURIComponent(""" . str . """));</script>")
-    sleep 500
-	strout := doc.body.innerText
-
-    ; sometimes does not work - timing issue -> backup solution
-    If (strout=""), {
-        strout := str
-    }
-        
-    ; Example %2520 -> %20%
-    Loop
-	If RegExMatch(strout, "i)(?<=%)[\da-f]{1,2}", hex)
-		StringReplace, strout, strout, `%%hex%, % Chr("0x" . hex), All
-	Else Break
-    Return, strout
+; https://www.autohotkey.com/boards/viewtopic.php?t=5520
+uriDecode(Uri, Encoding := "UTF-8") { ; Encoding must be either "UTF-16" or "CP0"
+   If (Encoding <> "UTF-8") && (Encoding <> "CP0")
+      Encoding := "UTF-8"
+   Split := StrSplit(Uri)
+   Length := Split.MaxIndex()
+   VarSetCapacity(AStr, Length, 0)
+   Index := 1
+   Addr := &AStr
+   While (Index <= Length) {
+      If (Split[Index] <> "%")
+         Addr := NumPut(Asc(Split[Index]), Addr + 0, "UChar")
+      Else
+         Addr := NumPut("0x" . Split[++Index] . Split[++Index], Addr + 0, "UChar")
+      Index++
+   }
+   Return StrGet(&AStr, Encoding)
 }
+
 
 ; Test 
 ; https://continental.sharepoint.com/:p:/r/teams/team_10000778/Shared%20Documents/Explore/New%20Work%20Style%20%E2%80%93%20O365%20-%20Why%20using%20Teams.pptx?d=we1a512b97ed844fc92dd5a1d028ef827&csf=1&e=crdehv
