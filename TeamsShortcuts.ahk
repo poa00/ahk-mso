@@ -40,7 +40,7 @@ Loop, Parse, HotkeyIDList, `,
 {
 	HKid := A_LoopField
 	HKid := StrReplace(HKid," ","")
-	Menu, SubMenuHotkeys, Add, %HKid%, Teams_HotkeySet
+	Menu, SubMenuHotkeys, Add, %A_LoopField%, Teams_HotkeySet
 	RegRead, HK, HKEY_CURRENT_USER\Software\PowerTools, Teams%HKid%Hotkey
 	If (HK != "") {
 		Teams_HotkeyActivate(HKid,HK, False)
@@ -57,6 +57,7 @@ Menu, SubMenuMeeting, Add ; Separator
 
 
 Menu,Tray,NoStandard
+Menu,Tray,Add,Launcher, Teams_Launcher
 Menu,Tray,Add,Add to Teams Favorites, Link2TeamsFavs
 
 Menu, SubMenuCustomBackgrounds, Add, Open Custom Backgrounds Folder, OpenCustomBackgrounds
