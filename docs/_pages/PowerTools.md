@@ -34,7 +34,7 @@ The Exe versions are available in the [PowerTools subdirectory](https://github.c
 You can update to the latest version either one-by-one from each tool via its system tray icon context menu "Check for update".
 Or by running the [PowerTools Bundler](PowerTools-Bundler), selecting which tools to update and choosing under the menu Actions->Check for update/ Download.
 
-![PowerTools Bundler Check for Update/Download](/assets/images/powertools_bundler_checkforupdate.png)
+![PowerTools Bundler Check for Update/Download](/ahk/assets/images/powertools_bundler_checkforupdate.png)
 
 {% include figure image_path="/assets/images/powertools_bundler_checkforupdate.png" alt="PowerTools Bundler Check for Update/Download" caption="PowerTools Bundler - Check for Update" %}
 
