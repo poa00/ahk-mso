@@ -107,9 +107,6 @@ author:
     - label: "Email"
       icon: "fab fa-fw fa-envelope-square"
       # url: "mailto:thierry.dalon+powertools@gmail.com"
-    - label: "Website"
-      icon: "fas fa-fw fa-link"
-      # url: "https://tdalon.blogspot.com/"
     - label: "Blogger"
       icon: "fab fa-fw fa-blogger"
       url: "https://tdalon.blogspot.com/"
@@ -122,15 +119,9 @@ author:
     - label: "LinkedIn"
       icon: "fab fa-fw fa-linkedin-square"
       # url: "https://www.linkedin.com/in/tdalon/"
-    - label: "Facebook"
-      icon: "fab fa-fw fa-facebook-square"
-      # url: "https://facebook.com/"
     - label: "GitHub"
       icon: "fab fa-fw fa-github"
       url: "https://github.com/tdalon/ahk"
-    - label: "Instagram"
-      icon: "fab fa-fw fa-instagram"
-      # url: "https://instagram.com/"
 
 # Site Footer
 footer:
