@@ -1310,8 +1310,9 @@ If GetKeyState("Ctrl")  { ; exclude ctrl if use in the hotkey
 	return
 }
 
-; For Menu callback, remove ending Hotkey
+; For Menu callback, remove ending Hotkey and blanks
 HKid := RegExReplace(HKid," Hotkey$","")
+HKid := StrReplace(HKid," ","")
 
 RegRead, prevHK, HKEY_CURRENT_USER\Software\PowerTools, Teams%HKid%Hotkey
 newHK := HotkeyGUI(,prevHK,,,"Teams " . HKid . " - Set Global Hotkey")

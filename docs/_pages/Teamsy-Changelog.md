@@ -6,6 +6,8 @@ excerpt: "Release notes for Teamsy and Teamsy Launcher PowerTools."
 
 [Teamsy](Teamsy) Changelog
 
+* 2021-03-04
+  - Add keyword 'wn' for whatsnew
 * 2021-03-01
   - [Teamsy Launcher](Teamsy-Launcher)
   - Added bg|background keyword to open background folder

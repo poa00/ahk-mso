@@ -5,7 +5,7 @@
 ; Source : https://github.com/tdalon/ahk/blob/master/TeamsShortcuts.ahk
 ;
 
-LastCompiled = 20210303205201
+LastCompiled = 20210304133358
 
 #Include <Teams>
 #Include <PowerTools>
@@ -45,6 +45,7 @@ Loop, Parse, HotkeyIDList, `,
 	If (HK != "") {
 		Teams_HotkeyActivate(HKid,HK, False)
 	}
+
 	label = Teams_%HKid%Cb
 	If IsLabel(label)
 		Menu, SubMenuMeeting, Add, Toggle %HKid%, %label% ; Requires Cb Label for not loosing active window

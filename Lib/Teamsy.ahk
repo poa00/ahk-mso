@@ -41,18 +41,20 @@ Case "h","-h","help":
 Case "bg","background":
     Teams_OpenBackgroundFolder()
     return
-Case "news":
+Case "news","-n":
     PowerTools_News(A_ScriptName)
     return
-Case "u":
+Case "wn":
+    sKeyword = whatsnew
+Case "u","ur":
     sKeyword = unread
 Case "p":
     sKeyword = pop
 Case "c":
     sKeyword = call
-Case "f":
+Case "f","fi":
     sKeyword = find
-Case "free","a":
+Case "free","a","av":
     sKeyword = available
 Case "sa","save":
     sKeyword = saved
