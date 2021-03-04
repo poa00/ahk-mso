@@ -8,10 +8,9 @@ excerpt: "Microsoft Teams Application Launcher Plugin and Commander"
 
 ## About
 
-Teamsy is a Microsoft Teams Plugin for an Application Launcher like [Launchy](http://launchy.net/) or [Executor](http://executor.dk/).
+Teamsy is a Microsoft Teams *Plugin for an Application Launcher* like [Launchy](http://launchy.net/) or [Executor](http://executor.dk/) as well as a *Teams Commander* i.e. it can also be used from the command line to send commands to Microsoft Teams. For example, as bridge between a StreamDeck and Microsoft Teams.
 
-It can also be used from the command line to send commands to Microsoft Teams.
-For example, as bridge between a StreamDeck and Microsoft Teams.
+You can also run Teamsy from the [Teamsy Launcher](Teamsy-Launcher) or the [Teams Shortcuts](Teams-Shortcuts) PowerTool.
 
 Its main advantage is that it works even if your Teams window isn't active (contrary to built-in hotkeys) both for main window and meeting window actions.
 
@@ -47,7 +46,7 @@ Here you can find the syntax for keywords and command. (I hope the code is clear
 
 ### Status Change
 
-<div style="text-align:center"><img src="/img/Teamsy_StatusChange.gif" alt="Teamsy Status Change"></div>
+<div style="text-align:center"><img src="/ahk/assets/images/Teamsy_StatusChange.gif" alt="Teamsy Status Change"></div>
 
 ## YouTube Playlist
 
