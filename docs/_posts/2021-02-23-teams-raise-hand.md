@@ -22,7 +22,7 @@ header:
 
 ```AutoHotkey
 Teams_RaiseHand() {
-; Toggle Raise Hand on/off 
+; Toggle Raise Hand on/off
 WinId := Teams_GetMeetingWindow()
 If !WinId ; empty
     return

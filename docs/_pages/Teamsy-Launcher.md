@@ -9,10 +9,11 @@ excerpt: "Microsoft Teams Application Launcher"
 ## About
 
 Teamsy Launcher is a standalone Launcher for Microsoft Teams.
-It has the same functionality as [Teamsy](Teamsy) but does not require to use an Application Launcher like [Launchy](http://launchy.net/) or [Executor](http://executor.dk/).
+It has the same functionality as [Teamsy](Teamsy) but does not require to use an external Application Launcher like [Launchy](http://launchy.net/) or [Executor](http://executor.dk/).
 
-Note the Launcher feature is also included in [Teams Shortcuts](Teams-Shortcuts). If you don't want to use the other features included in [Teams Shortcuts](Teams-Shortcuts) but use the Teams Launcher only, then you shall use it.
-If you already use [Teams Shortcuts](Teams-Shortcuts), you don't need Teamsy Launcher.
+Note: the Launcher feature is also included in [Teams Shortcuts](Teams-Shortcuts). So, if you already use [Teams Shortcuts](Teams-Shortcuts), you don't need Teamsy Launcher.
+But if you don't want to use the other features included in [Teams Shortcuts](Teams-Shortcuts), you can use Teamsy Launcher.
+
 
 ## [Main Blog Post](https://tdalon.blogspot.com/2020/07/teamsy.html)
 
