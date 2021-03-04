@@ -26,9 +26,8 @@ Teamsy is a available as standalone .exe application. [Download link](https://gi
 You can also run it from its AutoHotkey source [Teamsy.ahk](https://github.com/tdalon/ahk/blob/master/Teamsy.ahk) provided you take all the dependencies/ downlad the [full repository](https://github.com/tdalon/ahk).
 
 You can run Teamsy from the command line.
-I personally use Teamsy from an App launcher e.g. [Launchy](http://launchy.net/) or [Executor](http://executor.dk/).
+I personally use Teamsy from an Application launcher e.g. [Launchy](http://launchy.net/) or [Executor](http://executor.dk/).
 I [recommend](https://tdalon.blogspot.com/2020/08/executor-my-preferred-app-launcher.html) [Executor](http://executor.dk/).
-You can download it [here](http://executor.dk/).
 
 ### Alternative without application launcher
 

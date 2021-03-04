@@ -19,7 +19,8 @@ If FoundPos {
 Switch sKeyword
 {
 Case "-g": ; gui/ launcher
-    InputBox, sCmd , Teamsy, Enter keywords or commands (-h for help):,,300,125
+    Gui +LastFound +OwnDialogs +AlwaysOnTop ; set window modal
+    InputBox, sCmd , Teamsy, Enter keywords or commands (-h for help):,,300,125,,,,5
 	if ErrorLevel
 		return
 	sCmd := Trim(sCmd) 
@@ -60,7 +61,7 @@ Case "sa","save":
     sKeyword = saved
 Case "d":
     sKeyword = dnd
-Case "cal","calendar":
+Case "ca","cal","calendar":
     WinId := Teams_GetMainWindow()
     WinActivate, ahk_id %WinId%
     SendInput ^4; open calendar
@@ -115,7 +116,10 @@ Case "clean": ; clean restart
 Case "clear","cache","cl": ; clear cache
     Teams_ClearCache()
     return
-Case "n","new","x": ; new expanded conversation 
+Case "nm": ; new meeting
+    Teams_NewMeeting()
+    return
+Case "n","new","x","nc": ; new expanded conversation 
     Switch sInput
     {
     Case "m","me","meeting":
@@ -163,5 +167,3 @@ sleep, 800
 If !doBreak
     SendInput {enter}
 } ; End function     
-
-

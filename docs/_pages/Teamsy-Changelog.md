@@ -7,7 +7,8 @@ excerpt: "Release notes for Teamsy and Teamsy Launcher PowerTools."
 [Teamsy](Teamsy) Changelog
 
 * 2021-03-04
-  - Add keyword 'wn' for whatsnew
+  - Teamsy Launcher: added timeout and make inputbox modal/ always on top
+  - New keywords 'wn' for whatsnew, 'nc' for new conversation
 * 2021-03-01
   - [Teamsy Launcher](Teamsy-Launcher)
   - Added bg|background keyword to open background folder
