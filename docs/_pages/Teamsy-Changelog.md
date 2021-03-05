@@ -6,6 +6,8 @@ excerpt: "Release notes for Teamsy and Teamsy Launcher PowerTools."
 
 [Teamsy](Teamsy) Changelog
 
+* 2021-03-05
+  - New keywords for [favorites](https://tdalon.blogspot.com/2021/03/teams-shortcuts-favorites.html). of|fav: open favorites folder. 2f|2fav: add link to favorites
 * 2021-03-04
   - Teamsy Launcher: added timeout and make inputbox modal/ always on top
   - New keywords 'wn' for whatsnew, 'nc' for new conversation

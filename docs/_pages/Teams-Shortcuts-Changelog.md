@@ -6,6 +6,8 @@ excerpt: "Release notes for Teams Shortcuts PowerTool."
 
 [Teams Shortcuts](Teams-Shortcuts) Changelog
 
+* 2021-03-05
+  - Added Menu Settings-> Open Favorites Directory and Set Favorites Directory
 * 2021-03-01
   - Add [Teamsy Launcher](Teamsy-Launcher)
 * 2021-02-24

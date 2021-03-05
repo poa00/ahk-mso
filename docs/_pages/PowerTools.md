@@ -4,7 +4,7 @@ title: "PowerTools"
 excerpt: "Suite of Tools implemented with AutoHotkey that enables the use of Microsoft Office 365 tools like Microsoft Teams, SharePoint, OneDrive, HCL Connections and others and enhance your productivity on a Windows OS."
 ---
 
-This repository provide several tools bundled together under the term "PowerTools".
+This repository provides several tools bundled together under the term "PowerTools".
 
 This includes:
 - [Connections Enhancer](Connections-Enhancer)

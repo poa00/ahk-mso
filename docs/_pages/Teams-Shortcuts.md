@@ -33,7 +33,7 @@ You can also [create an issue in GitHub](https://github.com/tdalon/ahk/issues).
 
 You can start the Teams Shortcuts main menu by pressing the **Windows+T** Hotkey when a Teams window is active.
 
-![TeamsShortcuts Menu](/img/TeamsShortcuts_MainMenu.png)
+![TeamsShortcuts Menu](/ahk/assets/images/TeamsShortcuts_MainMenu.png)
 
 In the menu you can also see which hotkeys directly run the features e.g. Alt+R for Smart Reply.
 
@@ -41,13 +41,17 @@ You can access some settings and features via the Teams Shortcuts System Tray Ic
 
 ## Feature Highlights
 
+### Integrated Teams launcher
+
+You can make use of the Teamsy functionality from Teams Shortcuts. See this [blog post](https://tdalon.blogspot.com/2021/03/teamsy-launcher.html).
+
 ### [Global hotkeys](Teams-Global-Hotkeys)
 
 ### New Conversation (Alt+N)
 
 It will open a new conversation with the expanded compose box and move back the cursor right on the subject line - within one hotkey.
 
-<div style="text-align:center"><img src="/ahk/img/TeamsShortcuts_NewConversation.gif" alt="Teams Shortcuts New Conversation"></div>
+<div style="text-align:center"><img src="/ahk/assets/images/TeamsShortcuts_NewConversation.gif" alt="Teams Shortcuts New Conversation"></div>
 
 See [main blog post](https://tdalon.blogspot.com/2020/10/teamsy-new-conversation.html)
 
@@ -55,13 +59,13 @@ See [main blog post](https://tdalon.blogspot.com/2020/10/teamsy-new-conversation
 
 See [main blog post](https://tdalon.blogspot.com/2020/11/teams-shortcuts-smart-reply.html)
 
-<div style="text-align:center"><img src="/ahk/img/TeamsShortcuts_SmartReply.gif" alt="Teams Shortcuts Smart Reply"></div>
+<div style="text-align:center"><img src="/ahk/assets/images/TeamsShortcuts_SmartReply.gif" alt="Teams Shortcuts Smart Reply"></div>
 
 ### Send Mentions
 
 See [main blog post](https://tdalon.blogspot.com/2020/11/teams-shortcuts-send-mentions.html)
 
-![TeamsShortcuts Send Mentions Gif](/img/TeamsShortcuts_SendMentions.gif)
+![TeamsShortcuts Send Mentions Gif](/ahk/assets/images/TeamsShortcuts_SendMentions.gif)
 
 ## Source code
 
