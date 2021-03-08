@@ -3,12 +3,11 @@
 ; See help/homepage: https://tdalon.github.io/ahk/People-Connector
 
 ; Calls: ExtractEmails, TrayTipAutoHide, ToStartup
-LastCompiled = 20210127064201
+LastCompiled = 20210308194552
 
 #SingleInstance force ; for running from editor
 
-#Include <WinClipAPI>
-#Include <WinClip>
+#Include <Clip>
 #Include <People>
 #Include <Connections>
 #Include <Teams>
@@ -51,7 +50,7 @@ If !a_iscompiled
 FormatTime LastMod, %LastMod% D1 R
 
 
-sTextMenuTip = Double Tap 'Shift' to open menu.`nRight-Click on icon to access Help.
+sTextMenuTip = Double Tap 'Shift' to open menu.`nClick on icon to access Help.
 Menu, Tray, Tip, People Connector - %LastMod%`n%sTextMenuTip%
 sText = Double Tap 'Shift' to open menu after selection.`nClick on icon to access Help/ Support/ Check for Updates/ Settings.
 
@@ -109,22 +108,7 @@ return
 
 Shift:: ; (Double Press) <--- Open People Connector Menu
 If (A_PriorHotKey = A_ThisHotKey and A_TimeSincePriorHotkey < 500) {
-    
-    If WinActive("ahk_exe Excel.exe") {
-        sSelection := GetSelection()
-    } Else {
-        sSelection := GetSelection("html")
-        If !(sSelection) ; empty
-            sSelection := GetSelection()
-    }
-    ; MsgBox %sSelection% ; DBG
-
-    If !(sSelection) { ; empty
-        sSelection := Clipboard
-        ;TrayTipAutoHide("People Connector warning!","You need first to select something!")   
-        ;return
-    } 
-    
+    sSelection := People_GetSelection()
     If (PowerTools_ConnectionsRootUrl != "") {
         If WinActiveBrowser()
             Menu, MainMenu, Enable, (Connections) Mentions to
@@ -155,6 +139,7 @@ Return
 ; ----------------------------  Menu Callbacks -------------------------------------
 TeamsChat: 
 sEmailList := People_GetEmailList(sSelection)
+;MsgBox % sEmailList ; DBG
 If (sEmailList = "") { 
     TrayTipAutoHide("People Connector warning!","No email could be found!")   
     return
@@ -277,7 +262,7 @@ If (sEmailList = "") {
     return
 }
 sHtmlMentions := Connections_Emails2Mentions(sEmailList)
-WinClip.SetHtml(sHtmlMentions)
+Clip_SetHtml(sHtmlMentions)
 TrayTipAutoHide("People Connector","Mentions were copied to clipboard in RTF!")   
 return
 
@@ -285,7 +270,7 @@ return
 ConNextMentions2Mentions:
 ;sHtml := GetSelection("html")
 sHtml := CNMentions2Mentions(sSelection)
-WinClip.SetHtml(sHtml)
+Clip_SetHtml(sHtml)
 TrayTipAutoHide("Copy Mentions", "Mentions were copied to the clipboard in RTF!")
 return
 
@@ -296,7 +281,7 @@ return
 
 ConNextMentions2Emails:
 sEmailList := CNMentions2Emails(sSelection)
-WinClip.SetText(sEmailList)
+Clip_Set(sEmailList)
 TrayTipAutoHide("Copy Emails", "Emails were copied to the clipboard!")
 return
 
@@ -307,7 +292,7 @@ If (sEmailList = "") {
     TrayTipAutoHide("People Connector warning!","No email could be found!")   
     return
 }
-WinClip.SetText(sEmailList)
+Clip_Set(sEmailList)
 TrayTipAutoHide("Copy Emails", "Emails were copied to the clipboard!")
 return
 
@@ -366,10 +351,7 @@ return
 
 ; ------------------------------------------------------------------
 Emails2TeamsFavs:
-If GetKeyState("Ctrl") {
-	Run, "https://connext.conti.de/blogs/tdalon/entry/people_connector_teams_favorites"
-	return
-}
+
 sEmailList := People_GetEmailList(sSelection)
 If (sEmailList = "") { 
     TrayTipAutoHide("People Connector warning!","No email could be found!")   
@@ -434,7 +416,7 @@ return
 Meeting2Emails:
 oItem := Outlook_GetCurrentItem()
 sEMailList := Outlook_Recipients2Emails(oItem)
-WinClip.SetText(sEmailList)
+Clip_Set(sEmailList)
 TrayTipAutoHide("Meeting2Emails", "Attendees Emails were copied to the clipboard!")
 return 
 ; ------------------------------------------------------------------

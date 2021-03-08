@@ -5,7 +5,7 @@
 ; Source : https://github.com/tdalon/ahk/blob/master/TeamsShortcuts.ahk
 ;
 
-LastCompiled = 20210304141918
+LastCompiled = 20210308194554
 
 #Include <Teams>
 #Include <PowerTools>
@@ -31,6 +31,8 @@ Else
   Menu,SubMenuSettings,UnCheck, Teams Personalize Mentions
 
 Menu, SubMenuSettings, Add, Update Personal Information, GetMe
+Menu, SubMenuSettings, Add, Set Favorites Directory, Teams_FavsSetDir
+Menu, SubMenuSettings, Add, Open Favorites Directory, Teams_FavsOpenDir
 
 
 HotkeyIDList = Launcher,Mute,Video,Mute App,Share,Raise Hand,Push To Talk 
@@ -58,8 +60,9 @@ Menu, SubMenuMeeting, Add ; Separator
 
 
 Menu,Tray,NoStandard
-Menu,Tray,Add,Launcher, Teams_Launcher
-Menu,Tray,Add,Add to Teams Favorites, Link2TeamsFavs
+Menu, Tray, Add, Launcher, Teams_Launcher
+Menu, Tray, Add, Add to Teams Favorites (Team or Channel), Link2TeamsFavs
+Menu, Tray, Add, Add to Teams Favorites (Contacts), Email2TeamsFavs
 
 Menu, SubMenuCustomBackgrounds, Add, Open Custom Backgrounds Folder, OpenCustomBackgrounds
 Menu, SubMenuCustomBackgrounds, Add, Open Backgrounds Library, OpenCustomBackgroundsLibrary
@@ -264,12 +267,12 @@ return
 
 ; ----------------------------------------------------------------------
 Link2TeamsFavs:
-If GetKeyState("Ctrl") {
-	Run, "https://connext.conti.de/blogs/tdalon/entry/teams_shortcuts_favorites" ; TODO
-	return
-}
-sUrl := clipboard
-Link2TeamsFav(sUrl)
+Teams_Link2Fav()
+return
+
+; ----------------------------------------------------------------------
+Email2TeamsFavs:
+Teams_Emails2Favs()
 return
 
 ; ----------------------------------------------------------------------

@@ -72,9 +72,17 @@ Run, %sLink%
 } ; eofun
 
 ; -------------------------------------------------------------------------------------------------------------------
-Link2TeamsFav(sUrl:="",FavsDir:="",sFileName :="") {
+Teams_Link2Fav(sUrl:="",FavsDir:="",sFileName :="") {
 ; Called by Email2TeamsFavs
 ; Create Shortcut file
+If GetKeyState("Ctrl") {
+	Run, "https://tdalon.blogspot.com/2021/03/teams-shortcuts-favorites.html"
+	return
+}
+
+If (sUrl="") {
+    sUrl := Clipboard
+}
 
 If (sUrl="") or !(sUrl ~= "https://teams.microsoft.com/*") {
 	
@@ -120,9 +128,8 @@ PowerTools_RegWrite("TeamsFavsDir",FavsDir)
 } ; eofun
 
 ; -------------------------------------------------------------------------------------------------------------------
-TeamsFavsSetDir(){
-sKeyName := "TeamsFavsDir"
-RegRead, StartingFolder, HKEY_CURRENT_USER\Software\PowerTools, %sKeyName%
+Teams_FavsSetDir(){
+RegRead, StartingFolder, HKEY_CURRENT_USER\Software\PowerTools, TeamsFavsDir
 FileSelectFolder, sKeyValue , StartingFolder, Options, Select folder for your Teams Favorites:
 If ErrorLevel
     return
@@ -130,11 +137,39 @@ PowerTools_RegWrite("TeamsFavsDir",sKeyValue)
 return sKeyValue
 } ; eofun
 
+; -------------------------------------------------------------------------------------------------------------------
+Teams_FavsOpenDir(){
+RegRead, FavDir, HKEY_CURRENT_USER\Software\PowerTools, TeamsFavsDir
+If (FavDir ="") {
+    Teams_FavsSetDir()
+    return
+}
+Run, "%FavDir%"
+} ; eofun
+
 ; ----------------------------------------------------------------------
-Teams_Emails2Favs(sEmailList){
+Teams_Emails2Favs(sEmailList:= ""){
+; Calls: Email2TeamsFavs
+
+If GetKeyState("Ctrl") {
+	Run, "https://tdalon.blogspot.com/2021/03/teams-people-favorites.html"
+	return
+}
+If (sEmailList ="") {
+    sSelection := People_GetSelection()
+    If (sSelection = "") { 
+        TrayTipAutoHide("Teams: Email to Fav!","Nothing selected!")   
+        return
+    }
+    sEmailList := People_GetEmailList(sSelection)
+    If (sEmailList = "") { 
+        TrayTipAutoHide("Teams: Email to Fav!","No email could be found from Selection!")   
+        return
+    }
+}
 RegRead, FavsDir, HKEY_CURRENT_USER\Software\PowerTools, TeamsFavsDir
 If ErrorLevel {
-    FavDirs := TeamsFavsSetDir()
+    FavDirs := Teams_FavsSetDir()
     If FavDirs = ""
         return    
 }
@@ -145,19 +180,20 @@ Loop, parse, sEmailList, ";"
 {
     Email2TeamsFavs(A_LoopField,FavsDir)
 }
-Run %FavsDir%	
+Run %FavsDir%	; open Favorites directory
 } ; eofun
 ; ----------------------------------------------------------------------
 
-
 Email2TeamsFavs(sEmail,FavsDir){
+; Calls: Teams_Link2Fav
+
 ; Get Firstname
 sName := RegExReplace(sEmail,"\..*" ,"")
 StringUpper, sName, sName , T
 
 ; 1. Create Chat Shortcut
 sUrl = https://teams.microsoft.com/l/chat/0/0?users=%sEmail% 
-Link2TeamsFav(sUrl,FavsDir,"Chat " + sName)
+Teams_Link2Fav(sUrl,FavsDir,"Chat " + sName)
 
 ; 2. Create Call shortcut
 sFile := FavsDir . "\Call " . sName . ".vbs"
@@ -179,7 +215,7 @@ FileCreateShortcut, %sFile%, %sLnk%,,,, %TeamsExe%
 Emails2TeamsFavGroupChat(sEmailList){
 RegRead, FavsDir, HKEY_CURRENT_USER\Software\PowerTools, TeamsFavsDir
 If ErrorLevel {
-    FavDirs := TeamsFavsSetDir()
+    FavDirs := Teams_FavsSetDir()
     If FavDirs = ""
         return    
 }
@@ -197,7 +233,7 @@ if ErrorLevel
 sName := StrReplace(sName, ":", "")
 sLink := sLink . "&topicName=" . sName
  
-Link2TeamsFav(sUrl,FavsDir,"Group Chat -" . sName)
+Teams_Link2Fav(sUrl,FavsDir,"Group Chat -" . sName)
 } ; eofun
 ; ----------------------------------------------------------------------
 

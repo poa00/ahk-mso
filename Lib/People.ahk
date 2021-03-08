@@ -10,7 +10,25 @@ global PowerTools_ADConnection
 global PowerTools_ADPath
 
 ; ----------------------------------------------------------------------
+People_GetSelection(){
+If WinActive("ahk_exe Excel.exe") {
+    sSelection := GetSelection()
+} Else {
+    sSelection := GetSelection("html")
+    ; Limit to body part (because of Connections profile url as source)
+    If RegExMatch(sSelection,"s)<body>(.*)</body>",sMatch)
+        sSelection := sMatch1
+    If !(sSelection) ; empty
+        sSelection := GetSelection()
+}
 
+If !(sSelection) { ; empty
+    sSelection := Clipboard
+    ;TrayTipAutoHide("People Connector warning!","You need first to select something!")   
+    ;return
+} 
+return sSelection
+} ; eofun
 ; ----------------------------------------------------------------------
 People_GetEmailList(sInput){
 ; Get EmailList from input string

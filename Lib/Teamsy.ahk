@@ -18,12 +18,12 @@ If FoundPos {
 
 Switch sKeyword
 {
-Case "-g": ; gui/ launcher
-    Gui +LastFound +OwnDialogs +AlwaysOnTop ; set window modal
-    InputBox, sCmd , Teamsy, Enter keywords or commands (-h for help):,,300,125,,,,5
-	if ErrorLevel
+Case "-g": ; gui/ launcher    
+	sCmd := TeamsyInputBox()
+    if ErrorLevel
 		return
 	sCmd := Trim(sCmd) 
+
     Teamsy(sCmd)
     return
 Case "w": ; Web App
@@ -134,12 +134,22 @@ Case "n","new","x","nc": ; new expanded conversation
 Case "v","vi": ; Toggle video with background
     Teams_Video()
     return
+Case "fav","of": ; open favorites folder
+    Teams_FavsOpenDir()
+    return
+Case "2fav","2f": ; link 2 favorite
+    Teams_Link2Fav(Clipboard)
+    return
+Case "e2f","p2f": ; email|people 2 favorite
+    Teams_Emails2Favs()
+    return
 } ; End Switch
 
 WinId := Teams_GetMainWindow()
 WinActivate, ahk_id %WinId%
 
 Send ^e ; Select Search bar
+
 If (SubStr(sKeyword,1,1) = "@") {
     SendInput @
     sleep, 300
@@ -167,3 +177,41 @@ sleep, 800
 If !doBreak
     SendInput {enter}
 } ; End function     
+
+
+TeamsyInputBox(){
+    static
+    ButtonOK:=ButtonCancel:= false
+	Gui GuiTeamsy:New,, Teamsy
+    ;Gui, add, Text, ;w600, % Text
+    Gui, add, Edit, w190 vTeamsyEdit
+    Gui, add, Button, w60 gTeamsyOK Default, &OK
+    Gui, add, Button, w60 x+10 gTeamsyHelp, &Help
+
+    Gui +AlwaysOnTop -MinimizeBox ; no minimize button, always on top-> modal window
+	Gui, Show
+    while !(ButtonOK||ButtonCancel)
+        continue
+    if ButtonCancel {
+        ErrorLevel := 1
+        return
+    }
+    Gui, Submit
+    ErrorLevel := 0
+    return TeamsyEdit
+    ;----------------------
+    TeamsyOK:
+    ButtonOK:= true
+    return
+    ;---------------------- 
+    TeamsyHelp:
+    Run, "https://tdalon.github.io/ahk/Teamsy"
+
+    GuiTeamsyGuiEscape:
+	GuiTeamsyGuiClose:
+    
+    ButtonCancel:= true
+    
+    Gui, Cancel
+    return
+}
