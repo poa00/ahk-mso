@@ -17,8 +17,7 @@
       {% include_cached search/algolia-search-scripts.html %}
   {%- endcase -%}
 {% endif %}
-
-{% include analytics.html %}
+<!-- {% include analytics.html %} #TD: moved to head.html for Google Search Console Verification-->
 {% include /comments-providers/scripts.html %}
 
 {% if site.after_footer_scripts %}

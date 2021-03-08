@@ -17,6 +17,6 @@ header:
 
 # Screencast
 
-{% include video id="uhbIKbJ69HM" provider="youtube" %}
+{% include video id="xFDXFB8So3Q" provider="youtube" %}
 
 # [Detailed post](https://tdalon.blogspot.com/2021/03/teams-people-favorites.html)
