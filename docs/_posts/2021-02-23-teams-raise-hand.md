@@ -9,14 +9,16 @@ tags:
   - teamsy
   - teams-shortcuts
 header:
-  image: /assets/images/teams_raise_hand.png
-  og_image: /assets/images/teams_raise_hand.png
-  image_description: "Microsoft Teams: Raise your Hand with PowerTools Teamsy and Teams Shortcuts"
+  image: /assets/images/thumbnails/teams_raise_hand_og.png
+  og_image: /assets/images/thumbnails/teams_raise_hand_og.png
+  image_description: "Microsoft Teams: Raise your Hand with Teamsy and Teams Shortcuts PowerTools"
 ---
 
 # Screencast
 
 {% include video id="Ysytg8_lr74" provider="youtube" %}
+
+# [Detailed Post](https://tdalon.blogspot.com/2021/02/teams-raise-hand.html)
 
 # AutoHotkey code
 

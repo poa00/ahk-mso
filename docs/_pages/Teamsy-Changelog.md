@@ -6,6 +6,8 @@ excerpt: "Release notes for Teamsy and Teamsy Launcher PowerTools."
 
 [Teamsy](Teamsy) Changelog
 
+* 2021-03-08
+  - New Keyword for [add contact to favorites](https://tdalon.blogspot.com/2021/03/teams-people-favorites.html): p2f|e2f
 * 2021-03-05
   - New keywords for [favorites](https://tdalon.blogspot.com/2021/03/teams-shortcuts-favorites.html). of|fav: open favorites folder. 2f|2fav: add link to favorites
 * 2021-03-04

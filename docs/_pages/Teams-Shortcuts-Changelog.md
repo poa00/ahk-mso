@@ -6,6 +6,8 @@ excerpt: "Release notes for Teams Shortcuts PowerTool."
 
 [Teams Shortcuts](Teams-Shortcuts) Changelog
 
+* 2021-03-08
+  - [Add contact to favorites](https://tdalon.blogspot.com/2021/03/teams-people-favorites.html): new menu entry
 * 2021-03-05
   - Added Menu Settings-> Open Favorites Directory and Set Favorites Directory
 * 2021-03-01
