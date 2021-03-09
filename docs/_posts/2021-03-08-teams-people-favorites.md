@@ -10,9 +10,9 @@ tags:
   - teams-shortcuts
   - people-connector
 header:
-  image: /assets/images/thumbnails/teams_favorites_og.png
-  og_image: /assets/images/thumbnails/teams_favorites_og.png
-  image_description: "Microsoft Teams: Manage People Favorites with Teams Shortcuts, Teamsy and People Connector PowerTools"
+  image: /assets/images/thumbnails/Teams_Call_Favorite.gif
+  image: /assets/images/thumbnails/Teams_Call_Favorite.gif
+  image_description: "Microsoft Teams: Quick Call a Favorite Contact"
 ---
 
 # Screencast
