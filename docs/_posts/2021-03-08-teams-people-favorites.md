@@ -10,8 +10,8 @@ tags:
   - teams-shortcuts
   - people-connector
 header:
-  image: /assets/images/thumbnails/Teams_Call_Favorite.gif
-  image: /assets/images/thumbnails/Teams_Call_Favorite.gif
+  image: /assets/images/Teams_Call_Favorite.gif
+  image: /assets/images/Teams_Call_Favorite.gif
   image_description: "Microsoft Teams: Quick Call a Favorite Contact"
 ---
 
