@@ -13,6 +13,7 @@ LastCompiled = 20210308194554
 #Include <WinClip>
 
 #SingleInstance force ; for running from editor
+SetWorkingDir %A_ScriptDir%
 
 SubMenuSettings := PowerTools_MenuTray()
 Menu, SubMenuSettings, Add, Teams PowerShell, MenuCb_ToggleSettingTeamsPowerShell

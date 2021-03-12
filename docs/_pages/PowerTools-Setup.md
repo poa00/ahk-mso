@@ -18,13 +18,15 @@ From each PowerTool you can access functions from the System tray icon context m
 
 From there you have access to basic settings and links. For example you can open the Help, changelogs. You can also set the specific tool to start automatically at startup and activate or deactivate the notification at startup.
 
+## Download All
 
-## PowerTools Bundler
+You can download the whole [PowerTools Directory](https://github.com/tdalon/ahk/raw/master/PowerTools/) [here](https://downgit.github.io/#/home?url=https://github.com/tdalon/ahk/tree/master/PowerTools),
+including the subdirectory with images used for ImageSearch related features like the [Teams Meeting Reactions Shortcuts](Teams-Meeting-Reactions).
+
+## Manage via PowerTools Bundler
 
 If you want to manage multiple PowerTools together, the best way is to use the [PowerTools Bundler](PowerTools-Bundler).
 You can download the standalone version by clicking directly [here](https://github.com/tdalon/ahk/raw/master/PowerTools/PowerToolsBundler.exe).
 
-At the best you store it in a new fresh directory with the name **PowerTools** for example because all other PowerTools will be saved in this directory as well as some helper files (git_updater, ini file...).
-
 From there you can donwload selected PowerTools via the Actions-> Check for Update/ Download.
-![PowerTools Bundler Check for Update/Download](/ahk/img/powertools_bundler_checkforupdate.png)
+![PowerTools Bundler Check for Update/Download](/ahk/assets/images/powertools_bundler_checkforupdate.png)

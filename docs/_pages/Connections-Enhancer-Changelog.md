@@ -6,6 +6,10 @@ excerpt: "Release notes for HCL Connections Enhancer PowerTool."
 
 [Connections Enhancer](Connections-Enhancer) Changelog
 
+* 2021-03-12
+  - Connections 6.5 Update:
+    - Fix for Regression: Ctrl+Shift+U hotkey does not open code view if editor view is HTML Source.
+    - Now support TinyMCE editor (hotkey available)
 * 2021-02-08
 	- Insert TOC: cancel on TOC depth input exits without inserting TOC
 * 2020-12-11

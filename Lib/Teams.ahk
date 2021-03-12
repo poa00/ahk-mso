@@ -1457,3 +1457,71 @@ WinActivate, ahk_id %WinId%
 SendInput ^+k ; toggle video Ctl+Shift+k
 WinActivate, ahk_id %curWinId%
 } ; eofun
+
+
+
+; -------------------------------------------------------------------------------------------------------------------
+Teams_React(sReaction) {
+; sReaction can be Like | Applause| Heart | Laugh
+WinId := Teams_GetMeetingWindow()
+If !WinId ; empty
+    return
+If  A_IsCompiled
+    ImgFile = .\img\Teams_reactions.png
+Else
+    ImgFile = .\PowerTools\img\Teams_reactions.png
+If !FileExist(ImgFile) {
+    ;Tooltip("Teams Meeting Reaction: ERROR: " . ImgFile . " file not found!",1000)
+    TrayTip Teams Meeting Reaction: ERROR, %ImgFile% file does not exist! 
+    ; MsgBox 0x10, Teams Shortcuts: Error, Teams Meeting Reaction: ERROR: %ImgFile% file not found!
+    Run, "https://tdalon.github.io/ahk/Teams-Meeting-Reactions"
+    return
+}
+
+WinGet, curWinId, ID, A
+MouseGetPos , MouseX, MouseY
+WinActivate, ahk_id %WinId%
+
+WinGetPos , , ,WinWidth, WinHeight, A
+
+ImageSearch, FoundX, FoundY, 0, 0, WinWidth, WinHeight, *2 %ImgFile%
+If (ErrorLevel = 0)
+	Click, %FoundX%, %FoundY% Left, 1
+Else {
+    TrayTip Teams Meeting Reaction: ERROR, %ImgFile% image search failed! Create another screenshot!
+    WinActivate, ahk_id %curWinId%
+    Run, "https://tdalon.github.io/ahk/Teams-Meeting-Reactions"
+    Return
+}	
+Sleep 200
+If  A_IsCompiled 
+    ImgFile = .\img\Teams_%sReaction%.png
+Else
+    ImgFile = .\PowerTools\img\Teams_%sReaction%.png
+If !FileExist(ImgFile) {
+    ;Tooltip("Teams Meeting Reaction: ERROR: " . ImgFile . " file not found!",1000)
+    TrayTip Teams Meeting Reaction: ERROR, %ImgFile% file does not exist!
+    WinActivate, ahk_id %curWinId%
+    MouseMove, MouseX, MouseY
+    Run, "https://tdalon.github.io/ahk/Teams-Meeting-Reactions"
+    return
+}
+Retry:
+ImageSearch, FoundX, FoundY, 0, 0, WinWidth, WinHeight, *2 %ImgFile%
+;MsgBox %WinWidth% %WinHeight%
+If (ErrorLevel = 0) {
+    Click, %FoundX%, %FoundY% Left, 1
+} Else {
+      
+    ;TrayTipAutoHide("Teams Meeting Reaction: ERROR:","ERROR: " . ImgFile . " image not found!")
+    TrayTip Teams Meeting Reaction: ERROR, %ImgFile% image search failed! Create another screenshot.
+    WinActivate, ahk_id %curWinId%
+    MouseMove, MouseX, MouseY
+    Run, "https://tdalon.github.io/ahk/Teams-Meeting-Reactions"
+    return
+}
+WinActivate, ahk_id %curWinId%
+MouseMove, MouseX, MouseY
+If (ErrorLevel = 0)
+    Tooltip("Teams Meeting Reaction: " . sReaction,1000) 
+} ; eofun

@@ -83,6 +83,18 @@ Case "l","le","leave": ; leave meeting
 Case "raise","hand","ha","rh","ra":  
     Teams_RaiseHand()
     return
+Case "li","like":
+    Teams_React("Like")
+    return
+Case "ap","clap":
+    Teams_React("Applause")
+    return
+Case "la","lol":
+    Teams_React("Laugh")
+    return
+Case "he","heart":
+    Teams_React("Heart")
+    return
 Case "sh","share":  
     Teams_Share()
     return

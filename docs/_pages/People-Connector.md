@@ -1,7 +1,7 @@
 ---
 permalink: /People-Connector
 title: "People Connector"
-excerpt: "Small but powerful tool interlinking Microsoft Outlook, Microsoft Teams, Skype and HCL Connections."
+excerpt: "Small but powerful tool interlinking Microsoft Outlook, Microsoft Teams, Skype, HCL Connections and much more."
 ---
 
 ## Short Description
