@@ -67,6 +67,8 @@ See [main blog post](https://tdalon.blogspot.com/2020/11/teams-shortcuts-send-me
 
 ![TeamsShortcuts Send Mentions Gif](/ahk/assets/images/TeamsShortcuts_SendMentions.gif)
 
+### [Meeting Live Reactions](Teams-Meeting-Reactions)
+
 ## Source code
 
 Main code is contained in [TeamsShortcuts.ahk](https://github.com/tdalon/ahk/blob/master/TeamsShortcuts.ahk)

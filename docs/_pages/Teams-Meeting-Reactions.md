@@ -12,8 +12,7 @@ It may requires on the user site some fine-tuning like taking screenshots of som
 
 ## Screencast
 
-<div align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/videoseries?list=PLUSZfg60tAwIebdiMlRjF_KFWdWTYnKur" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
-
+<p style="text-align: center;"><iframe width="560" height="315" src="https://www.youtube.com/embed/sPy07IzEGu4" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></p>
 
 
 ## [Related Blog post](https://tdalon.blogspot.com/2021/03/teams-meeting-reactions-shortcuts.html)
