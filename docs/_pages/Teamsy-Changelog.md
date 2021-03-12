@@ -6,6 +6,8 @@ excerpt: "Release notes for Teamsy and Teamsy Launcher PowerTools."
 
 [Teamsy](Teamsy) Changelog
 
+* 2021-03-12
+  - [Meeting Live Reactions](https://tdalon.blogspot.com/2021/03/teams-meeting-reactions-shortcuts.html): Like, Laugh, Applause, Heart
 * 2021-03-08
   - New Keyword for [add contact to favorites](https://tdalon.blogspot.com/2021/03/teams-people-favorites.html): p2f|e2f
 * 2021-03-05
