@@ -38,3 +38,8 @@
     <script src="{{ script | relative_url }}"></script>
   {% endfor %}
 {% endif %}
+
+{%- case site.search_provider -%}
+{%- when "docsearch" -%}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.css" />
+{%- endcase -%}
