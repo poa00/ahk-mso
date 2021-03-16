@@ -15,6 +15,8 @@
       {% include_cached search/google-search-scripts.html %}
     {%- when "algolia" -%}
       {% include_cached search/algolia-search-scripts.html %}
+	{%- when "docsearch" -%}
+      {% include_cached search/docsearch-search-scripts.html %}
   {%- endcase -%}
 {% endif %}
 <!-- {% include analytics.html %} #TD: moved to head.html for Google Search Console Verification-->
