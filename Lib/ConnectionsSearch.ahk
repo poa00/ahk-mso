@@ -6,7 +6,7 @@
 
 ConnectionsSearch(sUrl, newWindow := True){
 If GetKeyState("Ctrl") and !GetKeyState("Shift") {
-	Run, "https://connext.conti.de/blogs/tdalon/entry/connext_search_ahk"
+	Run, "https://connext.conti.de/blogs/tdalon/entry/connext_search_ahk" ; TODO
 	return
 }
 static sWikiSearch, sWikiLabel
@@ -117,10 +117,23 @@ If Connections_IsUrl(sUrl,"wiki") {
 	;sDefSearch := StrReplace(sDefSearch,"%23","#")
 
 	InputBox, sProfileSearch , Profiles Search, Enter search string (use # for tags):,,640,125,,,,,%sProfileSearch% 
-	if ErrorLevel
+	If ErrorLevel
 		return
 	sProfileSearch := Trim(sProfileSearch) 
 	SearchProfiles(sProfileSearch)	
+
+} Else If RegExMatch(sUrl,ReConnectionsRootUrl . ".*\?communityUuid=([^\?&#]*)",sMatch)  {
+	sCommunityId := sMatch1
+	If RegExMatch(sUrl,".*#query=([^&\?]*)",sMatch) 
+		sDefSearch := StrReplace(sMatch1,"+"," ")
+	
+	InputBox, sSearch , Community Search, Enter search string (use # for tags):,,640,125,,,,,%sDefSearch% 
+	If ErrorLevel
+		return
+	sSearch := Trim(sSearch) 
+	sUrl = https://%PowerTools_ConnectionsRootUrl%/communities/service/html/communityoverview?communityUuid=%sCommunityId%#query=%sSearch%
+	Run, "%sUrl%"
+
 } Else {
 	TrayTipAutoHide("NWS PowerTool","No Connections Search available on this page!")
 }

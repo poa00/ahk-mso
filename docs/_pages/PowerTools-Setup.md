@@ -10,18 +10,27 @@ excerpt: "How to Setup the PowerTools"
 
 ## Deployment and Requirements
 
-The PowerTools are provided as compiled standalone executables so you don't need to have AutoHotkey installed on your PC.
+### Standalone executables
 
-These don't require any Admin rights to run.
+The PowerTools are provided as compiled standalone fully portable executables. You don't need to have AutoHotkey installed on your PC.
 
-When running these .exe you might get some Windows warning that it is unsecure. Normally you can check these warnings off, directly from the warning message or see for example (here)[https://www.windowscentral.com/how-fix-app-has-been-blocked-your-protection-windows-10].)
+They don't require any Admin rights to run.
 
-Alternatively you could run the tools from the AutoHotkey source (simply clone the [repository]((https://github.com/tdalon/ahk/))).
-But I don't ensure that the current version of the repository runs properly, because I am human and might have forgotten to push some files. (Contact me)[Contact] if you want to run from the AHK source. (Most of the users I know don't bother about the AutoHotkey source and providing the compiled version allows me _not_ to check 100% consistency between my local version and the repository and quick deployment of a version.)
+When running these executables, you might get some Windows warning that it is unsecure. Normally you can check off these warnings to not be displayed anymore either directly from the warning message or see for example (here)[https://www.windowscentral.com/how-fix-app-has-been-blocked-your-protection-windows-10].)
+
+### Run from the AutoHotkey sources
+
+Alternatively, you could run the tools from the AutoHotkey source: simply clone the [repository]((https://github.com/tdalon/ahk/)).
+
+But I don't ensure that the current version of the repository runs properly, because I am human and might have forgotten to push some files. (Contact me)[Contact] if you want to run from the AHK source.
+
+<a href="https://tdalon.github.io/ahk/contact/"><i class="fa fa-address-card" aria-hidden="true"></i></a>
+
+Most of the users I know don't bother about the AutoHotkey source. Providing the compiled version allows me _not_ to check 100% consistency between my local version and the repository and quick deployment of a version. If the requests are numerous/ the demand high, I might change my way of deploying the sources. Therefore, (Contact me)[Contact] in case.
 
 ## One-by-one Setup
 
-N.B.: For feature based on ImageSearch (like [Teams Shortcuts](Teams-Shortcuts) [Meeting Live reactions](Teams-Meeting-Reactions), the *img* subdirectory is also required, therefore I recommend to always [download all](#download-all) and run what you want only.
+N.B.: For features based on ImageSearch (like [Teams Shortcuts](Teams-Shortcuts) [Meeting Live reactions](Teams-Meeting-Reactions), the *img* subdirectory is also required, therefore I recommend to always [download all](#download-all) and run what you want only.
 
 Still you can download for each PowerTool the .exe file by going here: [repo root](https://github.com/tdalon/ahk/)->[PowerTools](https://github.com/tdalon/ahk/tree/master/PowerTools) and clicking on the .exe file you want and then click the Download button.
 

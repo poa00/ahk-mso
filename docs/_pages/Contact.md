@@ -18,6 +18,8 @@ You can reach out to me on Twitter [@tdalon](https://twitter.com/tdalon).
   href="https://twitter.com/intent/tweet?text=%40tdalon">
 Tweet me</a>
 
+<a href="https://twitter.com/messages/compose?recipient_id=&ref_src=twsrc%5Etfw" class="twitter-dm-button" data-screen-name="tdalon" data-show-count="false">Message @tdalon</a><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
 From the PowerTool corresponding System Tray icon menu, you can also quickly tweet me with the corresponding tool tag.
 
 ## GitHub

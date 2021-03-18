@@ -6,6 +6,15 @@ excerpt: "Release notes for NWS PowerTool."
 
 [NWS PowerTool](NWS-PowerTool) Changelog
 
+* 2021-03-17
+	- Copy nice link from browser: Default to https:// link instead of http:// (Browser_GetUrl)
+	- IntelliPaste nice link: convert to Markdown if in editor .md file
+* 2021-03-16
+	- Fixed: IntelliPaste for Blogpost urls removing .html
+* 2021-03-12
+  - Connections Quick Search: extend for community search
+* 2021-03-11
+  - Remove feature Delete Hotkey in File Explorer: custom action displaying a warning for OneDrive Sync locations
 * 2021-03-03
 	- Bug fix: IntelliPaste uriDecode. Example url with %26 not converted to &
 * 2021-02-11
