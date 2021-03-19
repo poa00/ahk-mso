@@ -50,6 +50,16 @@ From there you can donwload selected PowerTools via the Actions-> Check for Upda
 
 ![PowerTools Bundler Check for Update/Download](/ahk/assets/images/powertools_bundler_checkforupdate.png)
 
-## Set sytem tray icons to be visible
+## Set sytem tray icons to be displayed permanently
 
-The first time you run a PowerTool, the tool system tray icon might be not visible. You can configure it, to be always visible. See for example instructions [here](https://www.ghacks.net/2015/03/11/manage-and-display-system-tray-icons-in-windows-10/).
+The first time you run a PowerTool, the tool system tray icon might be hidden. You can configure it via the Windows Taskbar Settings to be always visible. See for example instructions [here](https://www.ghacks.net/2015/03/11/manage-and-display-system-tray-icons-in-windows-10/).
+
+## Launch on Startup
+
+You can configure each PowerTool to be launched on your PC Startup via its Settings.
+
+## Disable notifications at Startup
+
+By default, a notification is displayed at start to make you aware of the system tray icon functionality.
+
+You can disable these in the Settings. This is a setting for all PowerTools, not tool specific.
