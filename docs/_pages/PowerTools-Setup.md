@@ -28,7 +28,7 @@ Most of the users I know don't bother about the AutoHotkey source. Providing the
 
 ## Download All
 
-<a href="https://downgit.github.io/#/home?url=https://github.com/tdalon/ahk/tree/master/PowerTools"><button class="btn"><i class="fa fa-download"></i> Download</button></a>
+<a href="https://downgit.github.io/#/home?url=https://github.com/tdalon/ahk/tree/master/PowerTools" target="_blank"><button class="btn"><i class="fa fa-download"></i> Download</button></a>
 
 The recommended way to install the PowerTools is to download the whole [PowerTools Directory](https://github.com/tdalon/ahk/raw/master/PowerTools/) [here](https://downgit.github.io/#/home?url=https://github.com/tdalon/ahk/tree/master/PowerTools).
 This includes the subdirectory with images used for ImageSearch related features like the [Teams Meeting Reactions Shortcuts](Teams-Meeting-Reactions).
@@ -65,7 +65,7 @@ You can download the standalone version by clicking directly [here](https://gith
 ## Update procedure
 
 You can update each .exe from each tool systrem tray icon menu: _Check for Update_.
-And also from the [PowerTools Bundler](PowerTools-Bundler) via the Actions-> Check for Update/ Download.
+And also from the [PowerTools Bundler](PowerTools-Bundler) via the _Actions-> Check for Update/ Download_.
 
 ![PowerTools Bundler Check for Update/Download](/ahk/assets/images/powertools_bundler_checkforupdate.png)
 

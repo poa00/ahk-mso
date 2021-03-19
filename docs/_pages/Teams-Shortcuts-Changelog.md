@@ -6,6 +6,8 @@ excerpt: "Release notes for Teams Shortcuts PowerTool."
 
 [Teams Shortcuts](Teams-Shortcuts) Changelog
 
+* 2021-03-19
+	- Added notification at startup
 * 2021-03-12
   - [Meeting Reactions](https://tdalon.blogspot.com/2021/03/teams-meeting-reactions-shortcuts.html): Like, Laugh, Applause, Heart
 * 2021-03-08
