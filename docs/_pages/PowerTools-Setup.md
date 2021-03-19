@@ -26,40 +26,47 @@ But I don't ensure that the current version of the repository runs properly, bec
 
 Most of the users I know don't bother about the AutoHotkey source. Providing the compiled version allows me _not_ to check 100% consistency between my local version and the repository and quick deployment of a version. If the requests are numerous/ the demand high, I might change my way of deploying the sources.
 
+## Download All
+
+<a href="https://downgit.github.io/#/home?url=https://github.com/tdalon/ahk/tree/master/PowerTools"><button class="btn"><i class="fa fa-download"></i> Download</button></a>
+
+The recommended way to install the PowerTools is to download the whole [PowerTools Directory](https://github.com/tdalon/ahk/raw/master/PowerTools/) [here](https://downgit.github.io/#/home?url=https://github.com/tdalon/ahk/tree/master/PowerTools).
+This includes the subdirectory with images used for ImageSearch related features like the [Teams Meeting Reactions Shortcuts](Teams-Meeting-Reactions).
+
 ## One-by-one Setup
 
 N.B.: For features based on ImageSearch (like [Teams Shortcuts](Teams-Shortcuts) [Meeting Live reactions](Teams-Meeting-Reactions), the *img* subdirectory is also required. Therefore I recommend to always [download all](#download-all) and run what you want only.
 
 Still you can download for each PowerTool the .exe file by going here: [repo root](https://github.com/tdalon/ahk/)->[PowerTools](https://github.com/tdalon/ahk/tree/master/PowerTools) and clicking on the .exe file you want and then click the Download button. If you do so, copy it in a separate fresh directory because some auxiliary files will be downloaded or created on the same level (e.g. PowerBundler, git_updater, ini file...).
 
+## First run
+
 From each PowerTool you can access functions like Open help, Add to Startup, Check for update etc. from the tool System tray icon menu.
 
-## Download All
+### Set system tray icons to be displayed permanently
 
-<a href="https://downgit.github.io/#/home?url=https://github.com/tdalon/ahk/tree/master/PowerTools"><button class="btn"><i class="fa fa-download"></i> Download</button></a>
+The first time you run a PowerTool, the tool system tray icon might be hidden. You can configure it via the Windows Taskbar Settings to be always visible. See for example instructions [here](https://www.ghacks.net/2015/03/11/manage-and-display-system-tray-icons-in-windows-10/).
 
-You can download the whole [PowerTools Directory](https://github.com/tdalon/ahk/raw/master/PowerTools/) [here](https://downgit.github.io/#/home?url=https://github.com/tdalon/ahk/tree/master/PowerTools),
-including the subdirectory with images used for ImageSearch related features like the [Teams Meeting Reactions Shortcuts](Teams-Meeting-Reactions).
+### Launch on Startup
+
+You can configure each PowerTool to be launched on your PC Startup via its Settings.
+
+### Disable notifications at Startup
+
+By default, a notification is displayed at start to make you aware of the system tray icon functionality.
+
+You can disable these in the Settings. This is a setting for all PowerTools, not tool specific.
 
 ## Manage via PowerTools Bundler
 
 If you want to manage multiple PowerTools together, the best way is to use the [PowerTools Bundler](PowerTools-Bundler).
 You can download the standalone version by clicking directly [here](https://github.com/tdalon/ahk/raw/master/PowerTools/PowerToolsBundler.exe).
 
-From there you can donwload selected PowerTools via the Actions-> Check for Update/ Download.
+## Update procedure
+
+You can update each .exe from each tool systrem tray icon menu: _Check for Update_.
+And also from the [PowerTools Bundler](PowerTools-Bundler) via the Actions-> Check for Update/ Download.
 
 ![PowerTools Bundler Check for Update/Download](/ahk/assets/images/powertools_bundler_checkforupdate.png)
 
-## Set sytem tray icons to be displayed permanently
-
-The first time you run a PowerTool, the tool system tray icon might be hidden. You can configure it via the Windows Taskbar Settings to be always visible. See for example instructions [here](https://www.ghacks.net/2015/03/11/manage-and-display-system-tray-icons-in-windows-10/).
-
-## Launch on Startup
-
-You can configure each PowerTool to be launched on your PC Startup via its Settings.
-
-## Disable notifications at Startup
-
-By default, a notification is displayed at start to make you aware of the system tray icon functionality.
-
-You can disable these in the Settings. This is a setting for all PowerTools, not tool specific.
+If some images (used in ImageSearch-based features) were updated, you need to update the whole directory manually by re-downloading all and overwriting your previous installation directory. Be careful not to overwrite your images if you have customized some of them.
