@@ -265,7 +265,7 @@ return Config
 ; ----------------------------------------------------------------------
 PowerTools_SetConfig(){
 RegRead, Config, HKEY_CURRENT_USER\Software\PowerTools, Config
-DefListConfig := "Conti|Vitesco|Public|Ini"
+DefListConfig := "Default|Conti|Vitesco|Ini"
 Select := 0
 Loop, parse, DefListConfig, | 
 {
@@ -343,7 +343,7 @@ Switch Config
         PowerTools_RegWrite("ConnectionsRootUrl","invite.vitesco-technologies.net")
         IniWrite, invite.vitesco-technologies.net, %IniFile%, Connections, ConnectionsRootUrl
 
-    Case "Public":
+    Case "Default":
         sEmpty=
         PowerTools_RegWrite("Domain","")
         IniWrite,%sEmpty% , %IniFile%, Main, Domain

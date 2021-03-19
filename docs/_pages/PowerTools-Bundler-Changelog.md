@@ -6,6 +6,8 @@ redirect_from:
   - /powertools-bundler-changelog
 ---
 
+* 2021-03-19
+  - Default configuration renamed from Public to Default and set as Default selected one.
 * 2021-02-01
   - Added Mute PowerTool
   - Change Teamsy icon
